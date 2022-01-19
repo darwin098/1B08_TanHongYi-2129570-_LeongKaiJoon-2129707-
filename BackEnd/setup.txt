@@ -1,0 +1,12 @@
+1)  Run 'npm install' in this folder's directory ("1B08_TanHongYi(2129570)_LeongKaiJoon(2129707)/assignment") in the console.
+2)  Update Controller > databaseConfig.js with correct username, password.
+3)  Go to postman, and import a collection from this link :"https://www.getpostman.com/collections/864b1b369aa69a92d4ca".
+4)	Create a new Schema in mySql Workbench.
+5)	Select the schema. Double click on the title in the schema tab and make sure the name is in bold.
+6)	Create a new SQL tab to execute a new query.
+7)	Paste the contents of “CA1Database.sql” into the query.
+8)	Press the lightning button to run the SQL script.
+9)  Update Controller > databaseConfig.js with correct database name.
+10) Change directory to the assignment folder.
+11) Run "nodemon server.js".
+12) Run the requests accordingly.
