@@ -1,3 +1,5 @@
+// Considerations: Cart function? Checkout function? search promotion?
+
 console.log("----------------------------");
 console.log("Assignment1 > controller > app.js");
 console.log("----------------------------");
@@ -87,7 +89,24 @@ app.use("../uploads", express.static("uploads"));
 // -------------------------------------------------------------
 // Endpoints (users)
 // -------------------------------------------------------------
-// [Done]
+
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (users)
+// -------------------------------------------------------------
+// Login
+// Logout
+// Add user(On sign-up)
+// Show all users(admin)
+// Find user by ID(admin)
+// Edit user
+
+// [Working soon]
+// Login
+
+// [Working soon]
+// Logout
+
+// [Working]
 // Add User
 // http://localhost:3000/users/
 app.post("/users/", printDebugInfo, function (req, res) {
@@ -125,7 +144,7 @@ app.post("/users/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Show all users
 // http://localhost:3000/users/
 app.get("/users/", printDebugInfo, function (req, res) {
@@ -149,7 +168,7 @@ app.get("/users/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Find user by ID
 // http://localhost:3000/users/24/
 app.get("/users/:id/", printDebugInfo, function (req, res) {
@@ -183,7 +202,7 @@ app.get("/users/:id/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Edit User
 // http://localhost:3000/users/28
 app.put("/users/:id/", printDebugInfo, function (req, res) {
@@ -237,7 +256,14 @@ app.put("/users/:id/", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 // Endpoints (category)
 // -------------------------------------------------------------
-// [Done]
+
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (category)
+// -------------------------------------------------------------
+// Add category
+// Show all categories
+
+// [Working]
 // Add Category
 // http://localhost:3000/category
 app.post("/category", printDebugInfo, function (req, res) {
@@ -269,7 +295,7 @@ app.post("/category", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Show all categories
 // http://localhost:3000/category
 app.get("/category", printDebugInfo, function (req, res) {
@@ -296,7 +322,18 @@ app.get("/category", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 // Endpoints (product)
 // -------------------------------------------------------------
-// [Done]
+
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (product)
+// -------------------------------------------------------------
+// Add product
+// Get product by name
+// Get product by brand
+// Get products by category
+// Edit product
+// Remove product
+
+// [Working]
 // Add Product
 // http://localhost:3000/product
 app.post("/product/", printDebugInfo, function (req, res) {
@@ -336,41 +373,19 @@ app.post("/product/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
-// Get product by ID
-// http://localhost:3000/product/24/
-app.get("/product/:id", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.id);
+// [Working]
+// Get product by name
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
+// [Working]
+// Get product by brand
 
-    return;
-  }
+// [Working]
+// Get product by category
 
-  console.log(`Product ID: ${pid}`);
+// [Working]
+// Edit product
 
-  // Step 2 and 3: Process and respond
-  Product.findByID(pid, function (err, result) {
-    if (err) {
-      // Send error message response
-      res.status(500).send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result).end();
-      } else {
-        // Send error message response
-        res.status(404).send("No such ID!").end();
-      }
-    }
-  });
-});
-
-// [Done]
+// [Working]
 // Remove product and it's associated reviews
 // http://localhost:3000/product/7
 app.delete("/product/:id/", printDebugInfo, function (req, res) {
@@ -408,11 +423,51 @@ app.delete("/product/:id/", printDebugInfo, function (req, res) {
   });
 });
 
+// [Done]
+// Get product by ID
+// http://localhost:3000/product/24/
+app.get("/product/:id", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let pid = parseInt(req.params.id);
+
+  if (isNaN(pid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  console.log(`Product ID: ${pid}`);
+
+  // Step 2 and 3: Process and respond
+  Product.findByID(pid, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No such ID!").end();
+      }
+    }
+  });
+});
+
 // -------------------------------------------------------------
 // Endpoints (review)
 // -------------------------------------------------------------
 
-// [Done]
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (review)
+// -------------------------------------------------------------
+// Add new reviews
+// Show reviews
+
+// [Working]
 // Add Product review
 // http://localhost:3000/product/12/review/
 app.post("/product/:id/review/", printDebugInfo, function (req, res) {
@@ -452,7 +507,7 @@ app.post("/product/:id/review/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Show reviews
 // http://localhost:3000/product/13/reviews
 app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
@@ -486,7 +541,13 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // Endpoints (interests)
 // -------------------------------------------------------------
 
-// [Done]
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (interests)
+// -------------------------------------------------------------
+// Add category interest
+// Get interests
+
+// [Working]
 // Add Category interest
 // http://localhost:3000/interest/28
 app.post("/interest/:userid", printDebugInfo, function (req, res) {
@@ -511,11 +572,20 @@ app.post("/interest/:userid", printDebugInfo, function (req, res) {
   });
 });
 
+// [Working]
+// Get category interests
+
 // -------------------------------------------------------------
 // Endpoints (Image Uploading)
 // -------------------------------------------------------------
 
-// [Done]
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (Image uploading)
+// -------------------------------------------------------------
+// Upload image(admin) while creating product
+// Show image with getting product
+
+// [Working]
 // Add image to existing product listing
 app.put(
   "/product/addimage/:itemid",
@@ -548,7 +618,7 @@ app.put(
   }
 );
 
-// [Done]
+// [Working]
 // Show Image
 app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
   // Step 1: extraction
@@ -578,7 +648,16 @@ app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
 // Endpoints (Promotional Events)
 // -------------------------------------------------------------
 
-// [Done]
+// -------------------------------------------------------------
+// CA2 Needed Endpoints (Promotional Events)
+// -------------------------------------------------------------
+// Add promotion
+// Search for promotions(?)
+//    - By item
+// Show all promotions
+// Remove promotions(admin)
+
+// [Working]
 // Add promotion
 // http://localhost:3000/promotion/add
 app.post("/promotion/addpromotion", printDebugInfo, function (req, res) {
@@ -613,7 +692,7 @@ app.post("/promotion/addpromotion", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Show all promos
 // http://localhost:3000//promo/getall
 app.get("/promotion/getall", printDebugInfo, function (req, res) {
@@ -634,36 +713,7 @@ app.get("/promotion/getall", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
-// Show promo by promoid
-// http://localhost:3000/promotion/promotionid/7
-app.get("/promotion/promotionid/:promoid", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.promoid);
-
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-    return;
-  }
-
-  // Step 2 and 3: Process and respond
-  Promotion.findByPromoID(pid, function (err, result) {
-    if (err) {
-      res.status(500).type("json").send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result).end();
-      } else {
-        res.status(404).type("json").send("No such promotion found.").end();
-      }
-    }
-  });
-});
-
-// [Done]
+// [Working]
 // Show promo by itemid
 // http://localhost:3000/promotion/byitem/13
 app.get("/promotion/byitem/:itemid", printDebugInfo, function (req, res) {
@@ -696,7 +746,7 @@ app.get("/promotion/byitem/:itemid", printDebugInfo, function (req, res) {
   });
 });
 
-// [Done]
+// [Working]
 // Remove promotion
 // http://localhost:3000/product/7
 app.delete("/promotion/remove/:promoid", printDebugInfo, function (req, res) {
@@ -722,6 +772,35 @@ app.delete("/promotion/remove/:promoid", printDebugInfo, function (req, res) {
         res.status(404).send("Promotion ID not found!").end();
       } else {
         res.status(200).send("Product Successfully Deleted.").end();
+      }
+    }
+  });
+});
+
+// [Done]
+// Show promo by promoid
+// http://localhost:3000/promotion/promotionid/7
+app.get("/promotion/promotionid/:promoid", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let pid = parseInt(req.params.promoid);
+
+  if (isNaN(pid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+    return;
+  }
+
+  // Step 2 and 3: Process and respond
+  Promotion.findByPromoID(pid, function (err, result) {
+    if (err) {
+      res.status(500).type("json").send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        res.status(404).type("json").send("No such promotion found.").end();
       }
     }
   });
