@@ -152,6 +152,7 @@ app.post("/api/login", printDebugInfo, function (req, res) {
               email: result.f_userInfo.ci_email,
               role: result.f_userInfo.ci_role,
               pic: result.f_userInfo.ci_pic,
+              contact: result.f_userInfo.ci_contact,
             },
           ],
         };
@@ -210,7 +211,7 @@ app.post("/users/", printDebugInfo, function (req, res) {
 // [Working]
 // Show all users(admin)
 // http://localhost:3000/users/
-app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
+app.get("/users/", printDebugInfo, function (req, res) {
   // Step 1: extraction
 
   // Step 2 and 3: Process and respond

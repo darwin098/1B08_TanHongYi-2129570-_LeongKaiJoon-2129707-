@@ -171,6 +171,83 @@ let User = {
       }
     });
   },
+  // [Working]
+  loginUser: function (email, password, callback) {
+    var conn = db.getConnection();
+    conn.connect(function (err) {
+      if (err) {
+        console.log(err);
+        return callback(err, null);
+      } else {
+        console.log("Connected!");
+
+        var sql = `
+        select 
+          userid,
+          username,
+          email,
+          contact,
+          type,
+          profile_pic_url
+        from 
+          users
+        where 
+          email = "terry@gmail.com" AND 
+          password = "abc123456"
+        `;
+
+        conn.query(sql, [email, password], function (err, result) {
+          conn.end();
+
+          if (err) {
+            console.log(err);
+            return callback(err, null);
+          } else {
+            if (result.length == 0) {
+              return callback(null, null);
+            } else {
+              // it must be that we have only ONE result here,
+              // since the email is unique.
+
+              // confirm we have the key
+              console.log("Secret key:" + config.key);
+
+              // Generate the token
+              let token = jwt.sign(
+                //  (1) Payload
+                {
+                  id: result[0].userid,
+                  role: result[0].role,
+                },
+                // (2) Secret Key
+                config.key,
+                // (3) Lifetime of token
+                {
+                  //expires in 24 hrs(in)
+                  expiresIn: 86400,
+                }
+              );
+
+              let finalResult = {
+                f_token: token,
+                f_userInfo: {
+                  ci_uid: result[0].userid,
+                  ci_username: result[0].username,
+                  ci_email: result[0].email,
+                  ci_role: result[0].type,
+                  ci_pic: result[0].profile_pic_url,
+                  ci_contact: result[0].contact,
+                },
+              };
+
+              return callback(null, finalResult);
+              // return callback(null, token);
+            }
+          }
+        });
+      }
+    });
+  },
 };
 
 // -------------------------------------------------------------
