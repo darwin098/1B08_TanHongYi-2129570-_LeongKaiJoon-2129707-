@@ -1,5 +1,7 @@
 console.log("----------------------------");
-console.log("Assignment1 > Controller > databaseConfig.js");
+console.log(
+  "1B08_TanHongYi-2129570-_LeongKaiJoon-2129707- > BackEnd > Controller > databaseConfig.js"
+);
 console.log("----------------------------");
 
 // -------------------------------------------------------------
@@ -16,7 +18,7 @@ var dbconnect = {
       host: "localhost",
       user: "root",
       password: "JkC33wYjaP+yD9*p",
-      database: "ca1",
+      database: "ca2",
       dateStrings: true,
     });
 

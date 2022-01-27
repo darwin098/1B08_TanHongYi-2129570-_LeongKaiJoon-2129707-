@@ -1,7 +1,9 @@
 // Considerations: Cart function? Checkout function? search promotion?
 
 console.log("----------------------------");
-console.log("Assignment1 > controller > app.js");
+console.log(
+  "1B08_TanHongYi-2129570-_LeongKaiJoon-2129707- > BackEnd > controller > app.js"
+);
 console.log("----------------------------");
 
 // -------------------------------------------------------------
@@ -52,6 +54,7 @@ const Product = require("../model/product");
 const Review = require("../model/review");
 const Interest = require("../model/interest");
 const Promotion = require("../model/promotion");
+const verifyToken = require("../auth/verifyToken");
 
 // -------------------------------------------------------------
 // Config
@@ -87,6 +90,22 @@ app.use(jsonParser);
 app.use("../uploads", express.static("uploads"));
 
 // -------------------------------------------------------------
+// Endpoints (default)
+// -------------------------------------------------------------
+
+// Default endpoint
+// http://localhost:3000/
+app.get("/", (req, res) => {
+  console.log("> GET > '/'");
+
+  res.statusCode = 200;
+  res.send("GET > (ca2) > '/'");
+  res.end();
+
+  console.log("--------------------------------------");
+});
+
+// -------------------------------------------------------------
 // Endpoints (users)
 // -------------------------------------------------------------
 
@@ -97,7 +116,7 @@ app.use("../uploads", express.static("uploads"));
 // [Working]
 // Login User
 // http://localhost:3000/api/login
-app.post("/api/login", function (req, res) {
+app.post("/api/login", printDebugInfo, function (req, res) {
   // 1. extract
   // Retrieve and set necessary datafields.
   var email = req.body.email;
@@ -147,6 +166,7 @@ app.post("/api/login", function (req, res) {
 
   // To get a token
 });
+
 // Logout
 
 // [Working]
@@ -190,7 +210,7 @@ app.post("/users/", printDebugInfo, function (req, res) {
 // [Working]
 // Show all users(admin)
 // http://localhost:3000/users/
-app.get("/users/", printDebugInfo, function (req, res) {
+app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
 
   // Step 2 and 3: Process and respond
@@ -214,7 +234,7 @@ app.get("/users/", printDebugInfo, function (req, res) {
 // [Working]
 // Find user by ID(admin)
 // http://localhost:3000/users/24/
-app.get("/users/:id/", printDebugInfo, function (req, res) {
+app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -248,7 +268,7 @@ app.get("/users/:id/", printDebugInfo, function (req, res) {
 // [Working]
 // Edit User
 // http://localhost:3000/users/28
-app.put("/users/:id/", printDebugInfo, function (req, res) {
+app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -305,9 +325,9 @@ app.put("/users/:id/", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 
 // [Working]
-// Add Category
+// Add Category (admin)
 // http://localhost:3000/category
-app.post("/category", printDebugInfo, function (req, res) {
+app.post("/category", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let data = {
     d_category: req.body.category,
@@ -371,7 +391,7 @@ app.get("/category", printDebugInfo, function (req, res) {
 // [Working]
 // Add Product (admin)
 // http://localhost:3000/product
-app.post("/product/", printDebugInfo, function (req, res) {
+app.post("/product/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let data = {
     d_name: req.body.name,
@@ -508,8 +528,8 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
 });
 
 // [Working]
-// Edit product (admin) add edit image as well
-app.put("/users/:id/", printDebugInfo, function (req, res) {
+// Edit product (admin) and edit image as well
+app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -560,7 +580,7 @@ app.put("/users/:id/", printDebugInfo, function (req, res) {
 // [Working]
 // Remove product and it's associated reviews(admin)
 // http://localhost:3000/product/7
-app.delete("/product/:id/", printDebugInfo, function (req, res) {
+app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let pid = parseInt(req.params.id);
 
@@ -640,42 +660,47 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
 // [Working]
 // Add Product review(users)
 // http://localhost:3000/product/12/review/
-app.post("/product/:id/review/", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.id);
+app.post(
+  "/product/:id/review/",
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // Step 1: extraction
+    let pid = parseInt(req.params.id);
 
-  let data = {
-    d_userid: req.body.userid,
-    d_rating: req.body.rating,
-    d_review: req.body.review,
-  };
+    let data = {
+      d_userid: req.body.userid,
+      d_rating: req.body.rating,
+      d_review: req.body.review,
+    };
 
-  let dataJSON = {
-    reviewid: 0,
-  };
+    let dataJSON = {
+      reviewid: 0,
+    };
 
-  // Step 2 and 3: Process and respond
-  Review.insert(pid, data, function (err, result) {
-    if (err) {
-      if (err.code == "ER_DUP_ENTRY") {
-        res
-          .status(422)
-          .type("json")
-          .send({ Error: "The product review already exists" })
-          .end();
+    // Step 2 and 3: Process and respond
+    Review.insert(pid, data, function (err, result) {
+      if (err) {
+        if (err.code == "ER_DUP_ENTRY") {
+          res
+            .status(422)
+            .type("json")
+            .send({ Error: "The product review already exists" })
+            .end();
+        } else {
+          res.status(500).type("json").send("Internal Server Error").end();
+        }
       } else {
-        res.status(500).type("json").send("Internal Server Error").end();
+        if (result.affectedRows == 1) {
+          dataJSON.reviewid = result.insertId;
+          res.status(201).type("json").send(dataJSON).end();
+        } else {
+          res.status(500).type("json").send("Internal Server Error").end();
+        }
       }
-    } else {
-      if (result.affectedRows == 1) {
-        dataJSON.reviewid = result.insertId;
-        res.status(201).type("json").send(dataJSON).end();
-      } else {
-        res.status(500).type("json").send("Internal Server Error").end();
-      }
-    }
-  });
-});
+    });
+  }
+);
 
 // [Working]
 // Show reviews
@@ -718,7 +743,7 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // [Working]
 // Add Category interest (user)
 // http://localhost:3000/interest/28
-app.post("/interest/:userid", printDebugInfo, function (req, res) {
+app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.userid);
 
@@ -788,11 +813,12 @@ app.get("/users/:userID", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 
 // [Working]
-// Add image to product listing
+// Add image to product listing (admin)
 app.put(
   "/product/addimage/:itemid",
   upload.single("picture"),
   printDebugInfo,
+  verifyToken,
   function (req, res) {
     // Step 1: extraction
     let pid = parseInt(req.params.itemid);
@@ -855,70 +881,80 @@ app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 
 // [Working]
-// Add promotion
+// Add promotion (admin)
 // http://localhost:3000/promotion/add
-app.post("/promotion/addpromotion", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let data = {
-    d_productid: req.body.productid,
-    d_promotion: req.body.promotion,
-    d_discountamount: req.body.discountamount,
-    d_description: req.body.description,
-    d_promostart: req.body.promostart,
-    d_promoend: req.body.promoend,
-    d_duration: req.body.duration,
-  };
-  // Step 2 and 3: Process and respond
-  Promotion.insert(data, function (err, result) {
-    if (err) {
-      res.status(500).type("json").send("Internal Server Error").end();
-    } else {
-      if (result.affectedRows == 1) {
-        res
-          .status(201)
-          .type("json")
-          .send(
-            "Promotion Successfully Created!\nPromotion ID: " +
-              JSON.stringify(result.insertId)
-          )
-          .end();
-      } else {
+app.post(
+  "/promotion/addpromotion",
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // Step 1: extraction
+    let data = {
+      d_productid: req.body.productid,
+      d_promotion: req.body.promotion,
+      d_discountamount: req.body.discountamount,
+      d_description: req.body.description,
+      d_promostart: req.body.promostart,
+      d_promoend: req.body.promoend,
+      d_duration: req.body.duration,
+    };
+    // Step 2 and 3: Process and respond
+    Promotion.insert(data, function (err, result) {
+      if (err) {
         res.status(500).type("json").send("Internal Server Error").end();
+      } else {
+        if (result.affectedRows == 1) {
+          res
+            .status(201)
+            .type("json")
+            .send(
+              "Promotion Successfully Created!\nPromotion ID: " +
+                JSON.stringify(result.insertId)
+            )
+            .end();
+        } else {
+          res.status(500).type("json").send("Internal Server Error").end();
+        }
       }
-    }
-  });
-});
+    });
+  }
+);
 
 // [Working]
 // Remove promotion(admin)
 // http://localhost:3000/product/7
-app.delete("/promotion/remove/:promoid", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.promoid);
+app.delete(
+  "/promotion/remove/:promoid",
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // Step 1: extraction
+    let pid = parseInt(req.params.promoid);
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
+    if (isNaN(pid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
 
-    return;
-  }
-
-  // Step 2 and 3: Process and respond
-  Promotion.deletePromo(pid, function (err, result) {
-    if (err) {
-      // Send error message response
-      res.status(500).send("Internal Server Error").end();
-    } else {
-      if (result.affectedRows == 0) {
-        // Send error message response
-        res.status(404).send("Promotion ID not found!").end();
-      } else {
-        res.status(200).send("Product Successfully Deleted.").end();
-      }
+      return;
     }
-  });
-});
+
+    // Step 2 and 3: Process and respond
+    Promotion.deletePromo(pid, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        if (result.affectedRows == 0) {
+          // Send error message response
+          res.status(404).send("Promotion ID not found!").end();
+        } else {
+          res.status(200).send("Product Successfully Deleted.").end();
+        }
+      }
+    });
+  }
+);
 
 // [Working]
 // Show all promos
@@ -1002,6 +1038,7 @@ app.get("/promotion/promotionid/:promoid", printDebugInfo, function (req, res) {
     }
   });
 });
+
 // -------------------------------------------------------------
 // Exports
 // -------------------------------------------------------------
