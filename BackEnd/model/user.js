@@ -358,14 +358,14 @@ let User = {
       } else {
         const findUserByIDQuery = `
           SELECT 
-              picture
+              profile_pic_url
           FROM 
-              ca1.product
+              ca1.users
           WHERE 
-              productid = ?
+              userid = ?
           `;
 
-        dbConn.query(findUserByIDQuery, [productID], (error, resultSet) => {
+        dbConn.query(findUserByIDQuery, [userID], (error, resultSet) => {
           dbConn.end();
           if (error) {
             console.log("query error");
