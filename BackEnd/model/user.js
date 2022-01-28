@@ -8,6 +8,8 @@ console.log("----------------------------");
 // Imports
 // -------------------------------------------------------------
 const db = require("../Controller/databaseConfig");
+var config = require("../config.js");
+var jwt = require("jsonwebtoken");
 
 // -------------------------------------------------------------
 // main code implementations
@@ -25,7 +27,7 @@ let User = {
       } else {
         const sql = `
         INSERT INTO 
-        ca1.users (username, email, contact, password, type, profile_pic_url)
+        ca1.users (username, email, contact, password, role, profile_pic_url)
         VALUES
         (?, ?, ?, ?, ?, ?);
         `;
@@ -37,7 +39,7 @@ let User = {
             user.d_email,
             user.d_contact,
             user.d_password,
-            user.d_type,
+            user.d_role,
             user.d_profilePic,
           ],
           (error, q_result) => {
@@ -135,7 +137,7 @@ let User = {
           email = ?,
           contact = ?,
           password = ?,
-          type = ?,
+          role = ?,
           profile_pic_url = ?
         WHERE
           userid = ?
@@ -148,7 +150,7 @@ let User = {
             user.d_email,
             user.d_contact,
             user.d_password,
-            user.d_type,
+            user.d_role,
             user.d_profilePic,
             userID,
           ],
@@ -171,7 +173,7 @@ let User = {
       }
     });
   },
-  // [Working]
+  // [Done]
   loginUser: function (email, password, callback) {
     var conn = db.getConnection();
     conn.connect(function (err) {
@@ -179,21 +181,19 @@ let User = {
         console.log(err);
         return callback(err, null);
       } else {
-        console.log("Connected!");
-
         var sql = `
         select 
           userid,
           username,
           email,
           contact,
-          type,
+          role,
           profile_pic_url
         from 
           users
         where 
-          email = "terry@gmail.com" AND 
-          password = "abc123456"
+          email = ? AND 
+          password = ?
         `;
 
         conn.query(sql, [email, password], function (err, result) {
@@ -234,7 +234,7 @@ let User = {
                   ci_uid: result[0].userid,
                   ci_username: result[0].username,
                   ci_email: result[0].email,
-                  ci_role: result[0].type,
+                  ci_role: result[0].role,
                   ci_pic: result[0].profile_pic_url,
                   ci_contact: result[0].contact,
                 },
@@ -243,6 +243,83 @@ let User = {
               return callback(null, finalResult);
               // return callback(null, token);
             }
+          }
+        });
+      }
+    });
+  },
+
+  // [Done]
+  // Image Extra Feature
+  // Saving Images
+  addImageById: function (userID, picture, callback) {
+    // Get the access card
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+        UPDATE
+          ca1.product 
+        SET
+          product.picture = ?
+        WHERE
+          product.productid = ?
+        `;
+
+        dbConn.query(sql, [picture, userID], (error, q_result) => {
+          dbConn.end();
+
+          if (error) {
+            console.log("query error");
+            console.log(error);
+            return callback(error, null);
+          }
+
+          console.log(q_result);
+
+          return callback(null, q_result);
+        });
+      }
+    });
+  },
+
+  // [Done]
+  // Retrieving Images
+  getImageById: function (productID, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const findUserByIDQuery = `
+          SELECT 
+              picture
+          FROM 
+              ca1.product
+          WHERE 
+              productid = ?
+          `;
+
+        dbConn.query(findUserByIDQuery, [productID], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
           }
         });
       }

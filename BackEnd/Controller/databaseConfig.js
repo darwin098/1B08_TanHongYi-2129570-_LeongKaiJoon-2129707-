@@ -18,7 +18,7 @@ var dbconnect = {
       host: "localhost",
       user: "root",
       password: "JkC33wYjaP+yD9*p",
-      database: "ca2",
+      database: "ca1",
       dateStrings: true,
     });
 
