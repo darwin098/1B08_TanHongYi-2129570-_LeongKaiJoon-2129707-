@@ -168,8 +168,8 @@ app.post("/api/login", printDebugInfo, function (req, res) {
   // To get a token
 });
 
-// [Working]
-// Add user(On sign-up) - Add profile picture as well
+// [Done]
+// Add user(On sign-up)
 // http://localhost:3000/users/
 app.post("/users/", printDebugInfo, function (req, res) {
   // Step 1: extraction
@@ -178,8 +178,6 @@ app.post("/users/", printDebugInfo, function (req, res) {
     d_email: req.body.email,
     d_contact: req.body.contact,
     d_password: req.body.password,
-    d_role: req.body.role,
-    d_profilePic: req.body.profile_pic_url,
   };
 
   // Step 2 and 3: Process and respond
@@ -395,6 +393,66 @@ app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
       console.log(result[0].picture);
       let abImgPath = path.resolve(result[0].picture);
       res.status(201).sendFile(abImgPath);
+    }
+  });
+});
+
+// [Done]
+// Delete User
+// http://localhost:3000/user/6
+app.delete("/user/:userID", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin" && req.role != "user") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
+  // Step 1: extraction
+  let uid = parseInt(req.params.userID);
+
+  if (isNaN(uid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  // Step 2 and 3: Process and respond
+  User.delete(uid, function (err, result) {
+    let dataJSON = {
+      status: 0,
+      message: "",
+    };
+
+    if (err) {
+      dataJSON.message = "bad..";
+
+      res.status(500).type("json").send(dataJSON).end();
+    } else {
+      /*
+        affectedRows    changedRows
+        0               0 <-- user not found
+        0               1 <-- impossible
+        1               0 <-- not updated
+        1               1 <-- good news
+      */
+      if (result.affectedRows == 0) {
+        dataJSON.message = `User(id:${uid}) not found`;
+
+        res.status(404).type("json").send(dataJSON).end();
+      } else {
+        dataJSON.status = 1;
+        dataJSON.message = `User(id:${uid}) deleted`;
+
+        res.status(200).type("json").send(dataJSON).end();
+      }
     }
   });
 });
@@ -756,7 +814,7 @@ app.get("/product/search/:id", printDebugInfo, function (req, res) {
 // -------------------------------------------------------------
 
 // [Done]
-// Add Product review(users)
+// Add Product review (users)
 // http://localhost:3000/product/12/review/
 app.post(
   "/product/:id/review/",
@@ -766,7 +824,7 @@ app.post(
     // -------------------------------------------------------------
     // Authorisation check
     // -------------------------------------------------------------
-    if (req.role != "admin" || req.role != "user") {
+    if (req.role != "admin" && req.role != "user") {
       let errData = {
         msg: "you are not authorised to perform this operation",
       };
@@ -812,7 +870,7 @@ app.post(
   }
 );
 
-// [Working]
+// [Done]
 // Show reviews
 // http://localhost:3000/product/13/reviews
 app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
@@ -850,14 +908,15 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (interests)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done(?)]
 // Add Category interest (user)
 // http://localhost:3000/interest/28
 app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
-  if (req.role != "admin" || req.role != "user") {
+  if (req.role != "admin" && req.role != "user") {
+    console.log(req.role == "admin");
     let errData = {
       msg: "you are not authorised to perform this operation",
     };
@@ -889,8 +948,8 @@ app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
 
 // [Working]
 // Get category interests
-// http://localhost:3000/users/1
-app.get("/users/:userID", printDebugInfo, function (req, res) {
+// http://localhost:3000/users/interests/1
+app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.userID);
 
@@ -903,7 +962,7 @@ app.get("/users/:userID", printDebugInfo, function (req, res) {
   }
 
   // Step 2 and 3: Process and respond
-  User.showFriends(uid, function (err, result) {
+  User.getInterests(uid, function (err, result) {
     let dataJSON = {
       status: 0,
       message: "",

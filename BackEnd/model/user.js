@@ -27,21 +27,14 @@ let User = {
       } else {
         const sql = `
         INSERT INTO 
-        ca1.users (username, email, contact, password, role, profile_pic_url)
+        ca1.users (username, email, contact, password)
         VALUES
-        (?, ?, ?, ?, ?, ?);
+        (?, ?, ?, ?);
         `;
 
         dbConn.query(
           sql,
-          [
-            user.d_userName,
-            user.d_email,
-            user.d_contact,
-            user.d_password,
-            user.d_role,
-            user.d_profilePic,
-          ],
+          [user.d_userName, user.d_email, user.d_contact, user.d_password],
           (error, q_result) => {
             dbConn.end();
 
@@ -244,6 +237,70 @@ let User = {
               // return callback(null, token);
             }
           }
+        });
+      }
+    });
+  },
+  // [Working]
+  getInterests: function (userID, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const findUserByIDQuery = "SELECT * FROM ca1.users WHERE userid = ?;";
+
+        dbConn.query(findUserByIDQuery, [userID], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet[0]);
+          }
+        });
+      }
+    });
+  },
+
+  // [Done]
+  delete: function (userID, callback) {
+    // Get the access card
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+          DELETE FROM
+            users
+          WHERE 
+            userid = ?
+          `;
+
+        dbConn.query(sql, [userID], (error, q_result) => {
+          dbConn.end();
+
+          if (error) {
+            console.log("query error");
+            console.log(error);
+            return callback(error, null);
+          }
+
+          console.log(q_result);
+
+          return callback(null, q_result);
         });
       }
     });
