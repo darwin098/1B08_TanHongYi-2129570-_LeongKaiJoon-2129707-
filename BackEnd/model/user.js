@@ -8,6 +8,8 @@ console.log("----------------------------");
 // Imports
 // -------------------------------------------------------------
 const db = require("../Controller/databaseConfig");
+var config = require("../config.js");
+var jwt = require("jsonwebtoken");
 
 // -------------------------------------------------------------
 // main code implementations
@@ -25,21 +27,14 @@ let User = {
       } else {
         const sql = `
         INSERT INTO 
-        ca1.users (username, email, contact, password, type, profile_pic_url)
+        ca1.users (username, email, contact, password)
         VALUES
-        (?, ?, ?, ?, ?, ?);
+        (?, ?, ?, ?);
         `;
 
         dbConn.query(
           sql,
-          [
-            user.d_userName,
-            user.d_email,
-            user.d_contact,
-            user.d_password,
-            user.d_type,
-            user.d_profilePic,
-          ],
+          [user.d_userName, user.d_email, user.d_contact, user.d_password],
           (error, q_result) => {
             dbConn.end();
 
@@ -135,7 +130,7 @@ let User = {
           email = ?,
           contact = ?,
           password = ?,
-          type = ?,
+          role = ?,
           profile_pic_url = ?
         WHERE
           userid = ?
@@ -148,7 +143,7 @@ let User = {
             user.d_email,
             user.d_contact,
             user.d_password,
-            user.d_type,
+            user.d_role,
             user.d_profilePic,
             userID,
           ],
@@ -168,6 +163,222 @@ let User = {
             return callback(null, q_result);
           }
         );
+      }
+    });
+  },
+  // [Done]
+  loginUser: function (email, password, callback) {
+    var conn = db.getConnection();
+    conn.connect(function (err) {
+      if (err) {
+        console.log(err);
+        return callback(err, null);
+      } else {
+        var sql = `
+        select 
+          userid,
+          username,
+          email,
+          contact,
+          role,
+          profile_pic_url
+        from 
+          users
+        where 
+          email = ? AND 
+          password = ?
+        `;
+
+        conn.query(sql, [email, password], function (err, result) {
+          conn.end();
+
+          if (err) {
+            console.log(err);
+            return callback(err, null);
+          } else {
+            if (result.length == 0) {
+              return callback(null, null);
+            } else {
+              // it must be that we have only ONE result here,
+              // since the email is unique.
+
+              // confirm we have the key
+              console.log("Secret key:" + config.key);
+
+              // Generate the token
+              let token = jwt.sign(
+                //  (1) Payload
+                {
+                  id: result[0].userid,
+                  role: result[0].role,
+                },
+                // (2) Secret Key
+                config.key,
+                // (3) Lifetime of token
+                {
+                  //expires in 24 hrs(in)
+                  expiresIn: 86400,
+                }
+              );
+
+              let finalResult = {
+                f_token: token,
+                f_userInfo: {
+                  ci_uid: result[0].userid,
+                  ci_username: result[0].username,
+                  ci_email: result[0].email,
+                  ci_role: result[0].role,
+                  ci_pic: result[0].profile_pic_url,
+                  ci_contact: result[0].contact,
+                },
+              };
+
+              return callback(null, finalResult);
+              // return callback(null, token);
+            }
+          }
+        });
+      }
+    });
+  },
+  // [Working]
+  getInterests: function (userID, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const findUserByIDQuery = "SELECT * FROM ca1.users WHERE userid = ?;";
+
+        dbConn.query(findUserByIDQuery, [userID], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet[0]);
+          }
+        });
+      }
+    });
+  },
+
+  // [Done]
+  delete: function (userID, callback) {
+    // Get the access card
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+          DELETE FROM
+            users
+          WHERE 
+            userid = ?
+          `;
+
+        dbConn.query(sql, [userID], (error, q_result) => {
+          dbConn.end();
+
+          if (error) {
+            console.log("query error");
+            console.log(error);
+            return callback(error, null);
+          }
+
+          console.log(q_result);
+
+          return callback(null, q_result);
+        });
+      }
+    });
+  },
+
+  // [Done]
+  // Image Extra Feature
+  // Saving Images
+  addImageById: function (userID, picture, callback) {
+    // Get the access card
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+        UPDATE
+          ca1.product 
+        SET
+          product.picture = ?
+        WHERE
+          product.productid = ?
+        `;
+
+        dbConn.query(sql, [picture, userID], (error, q_result) => {
+          dbConn.end();
+
+          if (error) {
+            console.log("query error");
+            console.log(error);
+            return callback(error, null);
+          }
+
+          console.log(q_result);
+
+          return callback(null, q_result);
+        });
+      }
+    });
+  },
+
+  // [Done]
+  // Retrieving Images
+  getImageById: function (productID, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const findUserByIDQuery = `
+          SELECT 
+              profile_pic_url
+          FROM 
+              ca1.users
+          WHERE 
+              userid = ?
+          `;
+
+        dbConn.query(findUserByIDQuery, [userID], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
       }
     });
   },

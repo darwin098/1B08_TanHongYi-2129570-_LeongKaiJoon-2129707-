@@ -113,7 +113,7 @@ app.get("/", (req, res) => {
 // CA2 Needed Endpoints (users)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done]
 // Login User
 // http://localhost:3000/api/login
 app.post("/api/login", printDebugInfo, function (req, res) {
@@ -152,6 +152,7 @@ app.post("/api/login", printDebugInfo, function (req, res) {
               email: result.f_userInfo.ci_email,
               role: result.f_userInfo.ci_role,
               pic: result.f_userInfo.ci_pic,
+              contact: result.f_userInfo.ci_contact,
             },
           ],
         };
@@ -167,9 +168,7 @@ app.post("/api/login", printDebugInfo, function (req, res) {
   // To get a token
 });
 
-// Logout
-
-// [Working]
+// [Done]
 // Add user(On sign-up)
 // http://localhost:3000/users/
 app.post("/users/", printDebugInfo, function (req, res) {
@@ -179,8 +178,6 @@ app.post("/users/", printDebugInfo, function (req, res) {
     d_email: req.body.email,
     d_contact: req.body.contact,
     d_password: req.body.password,
-    d_type: req.body.type,
-    d_profilePic: req.body.profile_pic_url,
   };
 
   // Step 2 and 3: Process and respond
@@ -208,9 +205,21 @@ app.post("/users/", printDebugInfo, function (req, res) {
 });
 
 // [Working]
-// Show all users(admin)
+// Show all users(admin) - Show profile picture as well
 // http://localhost:3000/users/
-app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
+app.get("/users/", printDebugInfo, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
 
   // Step 2 and 3: Process and respond
@@ -232,9 +241,21 @@ app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
 });
 
 // [Working]
-// Find user by ID(admin)
+// Find user by ID(admin) - Show profile picture as well
 // http://localhost:3000/users/24/
 app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -266,7 +287,7 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
 });
 
 // [Working]
-// Edit User
+// Edit User - Edit profile picture as well
 // http://localhost:3000/users/28
 app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
@@ -285,7 +306,7 @@ app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
     d_email: req.body.email,
     d_contact: req.body.contact,
     d_password: req.body.password,
-    d_type: req.body.type,
+    d_role: req.body.role,
     d_profilePic: req.body.profile_pic_url,
   };
 
@@ -316,6 +337,126 @@ app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
+// [Reference]
+// Add image
+app.put(
+  "/user/addimage/:itemid",
+  upload.single("picture"),
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // Step 1: extraction
+    let uid = parseInt(req.params.itemid);
+    console.log(req.file);
+    if (isNaN(uid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
+      return;
+    } else if (req.file === undefined) {
+      res.statusCode = 500;
+      res.send("Internal Server Error");
+      res.end;
+      return;
+    } else {
+      // Step 2 and 3: Process and respond
+      User.addImageById(uid, req.file.path, function (err, result) {
+        if (err) {
+          res.status(500).type("json").send("Internal Server Error").end();
+        } else {
+          res.status(201).end();
+        }
+      });
+    }
+  }
+);
+
+// [Reference]
+// Show Image
+app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let uid = parseInt(req.params.itemid);
+
+  if (isNaN(uid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  // Step 2 and 3: Process and respond
+  Product.getImageById(uid, function (err, result) {
+    if (err) {
+      res.status(500).type("json").send("Internal Server Error").end();
+    } else {
+      console.log(result[0].picture);
+      let abImgPath = path.resolve(result[0].picture);
+      res.status(201).sendFile(abImgPath);
+    }
+  });
+});
+
+// [Done]
+// Delete User
+// http://localhost:3000/user/6
+app.delete("/user/:userID", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin" && req.role != "user") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
+  // Step 1: extraction
+  let uid = parseInt(req.params.userID);
+
+  if (isNaN(uid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  // Step 2 and 3: Process and respond
+  User.delete(uid, function (err, result) {
+    let dataJSON = {
+      status: 0,
+      message: "",
+    };
+
+    if (err) {
+      dataJSON.message = "bad..";
+
+      res.status(500).type("json").send(dataJSON).end();
+    } else {
+      /*
+        affectedRows    changedRows
+        0               0 <-- user not found
+        0               1 <-- impossible
+        1               0 <-- not updated
+        1               1 <-- good news
+      */
+      if (result.affectedRows == 0) {
+        dataJSON.message = `User(id:${uid}) not found`;
+
+        res.status(404).type("json").send(dataJSON).end();
+      } else {
+        dataJSON.status = 1;
+        dataJSON.message = `User(id:${uid}) deleted`;
+
+        res.status(200).type("json").send(dataJSON).end();
+      }
+    }
+  });
+});
+
 // -------------------------------------------------------------
 // Endpoints (category)
 // -------------------------------------------------------------
@@ -324,10 +465,22 @@ app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
 // CA2 Needed Endpoints (category)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done]
 // Add Category (admin)
 // http://localhost:3000/category
-app.post("/category", printDebugInfo, verifyToken, function (req, res) {
+app.post("/category/add", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
   let data = {
     d_category: req.body.category,
@@ -356,7 +509,7 @@ app.post("/category", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Show all categories
 // http://localhost:3000/category
 app.get("/category", printDebugInfo, function (req, res) {
@@ -388,10 +541,22 @@ app.get("/category", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (product)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done]
 // Add Product (admin)
 // http://localhost:3000/product
 app.post("/product/", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
   let data = {
     d_name: req.body.name,
@@ -428,24 +593,17 @@ app.post("/product/", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Get product by name
-app.get("/product/:id", printDebugInfo, function (req, res) {
+// http://localhost:3000/search/name
+app.get("/product/search/name", printDebugInfo, function (req, res) {
   // Step 1: extraction
-  let pid = parseInt(req.params.id);
+  let name = req.body.productName;
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-
-    return;
-  }
-
-  console.log(`Product ID: ${pid}`);
+  console.log(`Product name: ${name}`);
 
   // Step 2 and 3: Process and respond
-  Product.findByID(pid, function (err, result) {
+  Product.findByName(name, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();
@@ -455,30 +613,23 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
         res.status(200).send(result).end();
       } else {
         // Send error message response
-        res.status(404).send("No such ID!").end();
+        res.status(404).send("No results found").end();
       }
     }
   });
 });
 
-// [Working]
+// [Done]
 // Get product by brand
-app.get("/product/:id", printDebugInfo, function (req, res) {
+// http://localhost:3000/search/name
+app.get("/product/search/brand", printDebugInfo, function (req, res) {
   // Step 1: extraction
-  let pid = parseInt(req.params.id);
+  let brand = req.body.productBrand;
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-
-    return;
-  }
-
-  console.log(`Product ID: ${pid}`);
+  console.log(`Product brand: ${brand}`);
 
   // Step 2 and 3: Process and respond
-  Product.findByID(pid, function (err, result) {
+  Product.findByBrand(brand, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();
@@ -494,24 +645,17 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Get product by category
-app.get("/product/:id", printDebugInfo, function (req, res) {
+// http://localhost:3000/search/category
+app.get("/product/search/category", printDebugInfo, function (req, res) {
   // Step 1: extraction
-  let pid = parseInt(req.params.id);
+  let category = req.body.productCategory;
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-
-    return;
-  }
-
-  console.log(`Product ID: ${pid}`);
+  console.log(`Product category: ${category}`);
 
   // Step 2 and 3: Process and respond
-  Product.findByID(pid, function (err, result) {
+  Product.findByCategory(category, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();
@@ -530,6 +674,18 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
 // [Working]
 // Edit product (admin) and edit image as well
 app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -546,7 +702,7 @@ app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
     d_email: req.body.email,
     d_contact: req.body.contact,
     d_password: req.body.password,
-    d_type: req.body.type,
+    d_role: req.body.role,
     d_profilePic: req.body.profile_pic_url,
   };
 
@@ -577,7 +733,7 @@ app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Remove product and it's associated reviews(admin)
 // http://localhost:3000/product/7
 app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
@@ -615,10 +771,10 @@ app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Done](?)
+// [Done]
 // Get product by ID
 // http://localhost:3000/product/24/
-app.get("/product/:id", printDebugInfo, function (req, res) {
+app.get("/product/search/:id", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let pid = parseInt(req.params.id);
 
@@ -657,14 +813,26 @@ app.get("/product/:id", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (review)
 // -------------------------------------------------------------
 
-// [Working]
-// Add Product review(users)
+// [Done]
+// Add Product review (users)
 // http://localhost:3000/product/12/review/
 app.post(
   "/product/:id/review/",
   printDebugInfo,
   verifyToken,
   function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin" && req.role != "user") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
     // Step 1: extraction
     let pid = parseInt(req.params.id);
 
@@ -702,7 +870,7 @@ app.post(
   }
 );
 
-// [Working]
+// [Done]
 // Show reviews
 // http://localhost:3000/product/13/reviews
 app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
@@ -740,10 +908,23 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (interests)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done(?)]
 // Add Category interest (user)
 // http://localhost:3000/interest/28
 app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
+  // -------------------------------------------------------------
+  // Authorisation check
+  // -------------------------------------------------------------
+  if (req.role != "admin" && req.role != "user") {
+    console.log(req.role == "admin");
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   // Step 1: extraction
   let uid = parseInt(req.params.userid);
 
@@ -767,8 +948,8 @@ app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
 
 // [Working]
 // Get category interests
-// http://localhost:3000/users/1
-app.get("/users/:userID", printDebugInfo, function (req, res) {
+// http://localhost:3000/users/interests/1
+app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.userID);
 
@@ -781,7 +962,7 @@ app.get("/users/:userID", printDebugInfo, function (req, res) {
   }
 
   // Step 2 and 3: Process and respond
-  User.showFriends(uid, function (err, result) {
+  User.getInterests(uid, function (err, result) {
     let dataJSON = {
       status: 0,
       message: "",
@@ -820,6 +1001,18 @@ app.put(
   printDebugInfo,
   verifyToken,
   function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
     // Step 1: extraction
     let pid = parseInt(req.params.itemid);
     console.log(req.file);
@@ -888,6 +1081,18 @@ app.post(
   printDebugInfo,
   verifyToken,
   function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
     // Step 1: extraction
     let data = {
       d_productid: req.body.productid,
@@ -928,6 +1133,18 @@ app.delete(
   printDebugInfo,
   verifyToken,
   function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
     // Step 1: extraction
     let pid = parseInt(req.params.promoid);
 

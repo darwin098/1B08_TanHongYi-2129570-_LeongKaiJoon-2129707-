@@ -58,7 +58,7 @@ let Product = {
     });
   },
   // [Done]
-  findByID: function (productID, callback) {
+  findByCategory: function (productCategory, callback) {
     var dbConn = db.getConnection();
 
     dbConn.connect(function (err) {
@@ -67,8 +67,97 @@ let Product = {
         console.log(err);
         return callback(err, null);
       } else {
-        const findUserByIDQuery = `
+        const sql = `
+          SELECT 
+              P.productid,
+              P.name,
+              P.description,
+              P.categoryid,
+              C.category AS categoryname,
+              P.brand,
+              P.price
+          FROM 
+              ca1.product AS P,
+              ca1.category AS C 
+          WHERE 
+              P.categoryid = C.categoryid AND
+              C.category = ?
+          `;
+
+        dbConn.query(sql, [productCategory], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findByBrand: function (categoryBrand, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+          SELECT 
+              P.productid,
+              P.name,
+              P.description,
+              P.categoryid,
+              C.category AS categoryname,
+              P.brand,
+              P.price
+          FROM 
+              ca1.product AS P,
+              ca1.category AS C 
+          WHERE 
+              P.categoryid = C.categoryid AND
+              P.brand = ?
+          `;
+
+        dbConn.query(sql, [categoryBrand], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findByName: function (productName, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
         SELECT 
+            P.productid,
             P.name,
             P.description,
             P.categoryid,
@@ -79,11 +168,55 @@ let Product = {
             ca1.product AS P,
             ca1.category AS C 
         WHERE 
-            P.productid = C.id AND
+            P.categoryid = C.categoryid AND
+            P.name = ?
+        `;
+
+        dbConn.query(sql, [productName], (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findByID: function (productID, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+        SELECT 
+            P.productid,
+            P.name,
+            P.description,
+            P.categoryid,
+            C.category AS categoryname,
+            P.brand,
+            P.price
+        FROM 
+            ca1.product AS P,
+            ca1.category AS C 
+        WHERE 
+            P.categoryid = C.categoryid AND
             P.productid = ?
         `;
 
-        dbConn.query(findUserByIDQuery, [productID], (error, resultSet) => {
+        dbConn.query(sql, [productID], (error, resultSet) => {
           dbConn.end();
           if (error) {
             console.log("query error");
@@ -134,8 +267,7 @@ let Product = {
       }
     });
   },
-
-  // [Done]
+  // [Working]
   // Image Extra Feature
   // Saving Images
   addImageById: function (productID, picture, callback) {
@@ -173,7 +305,7 @@ let Product = {
       }
     });
   },
-  // [Done]
+  // [Working]
   // Retrieving Images
   getImageById: function (productID, callback) {
     var dbConn = db.getConnection();
