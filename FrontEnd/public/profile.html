@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Friendbook</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/users/">All Users</a>
+      </nav>
+
+      <div class="row" style="margin-top: 2rem">
+        <div class="col-md-8 col-xs-12">
+          <div id="user-profile"></div>
+
+          <div id="friendOption"></div>
+
+          <div id="posts"></div>
+        </div>
+
+        <div class="col-md-4 col-xs-12">
+          <h2>Friends</h2>
+          <ul
+            id="friends-list"
+            class="item-group"
+            style="list-style: none; padding-left: 0"
+          ></ul>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+
+      if (token === null || isNaN(loggedInUserID)) {
+        // window.location.href = "/login/";
+      } else {
+        // What do we need to do?
+        // We need to check and verify the user's ID
+        // If the login user's ID is the link's userID,
+        // We will not render the "Friend" button
+
+        // Else, we will check whether the login'ed user is a friend of the searched user.
+        // If user's retrieved friend ID's = current profile's ID
+
+        // If so, we will show an un-friend user button
+        // else, we will render a friend user button
+
+        const url = window.location.toString();
+        const userID = parseInt(url.split("/").slice(-1)[0]);
+        let posts;
+
+        axios.get(`${baseUrl}/users/${userID}`).then((response) => {
+          // append user profile
+          const user = response.data;
+          $("#user-profile").append(`
+                <h1>${user.full_name}</h1>
+                <p style="margin-top: 1rem;">${user.bio}</p>
+                `);
+        });
+
+        //   Check if user is viewing himself
+        // He is not viewing himself
+        // render the friend/un-friend button
+        // fetch user's friends
+        axios.get(`${baseUrl}/users/${userID}/friends/`).then((response) => {
+          const friendHtml = `
+                      <button class="btn btn-primary friend-button" friendID="${userID}">
+                          Friend
+                      </button>
+                      `;
+
+          const unFriendHtml = `
+                          <button
+                          class="btn btn-danger unFriend-button"
+                          friendID="${userID}"
+                          >
+                              Remove Friend
+                          </button>
+                      `;
+
+          var areFriends = false;
+
+          const friends = response.data;
+          friends.forEach((friend) => {
+            $("#friends-list").append(`
+                  <li class="list-group-item">
+                      <a href="/users/${friend.id}">${friend.full_name}<a/>
+                  </li>
+                  `);
+            if (loggedInUserID == friend.id) {
+              // set show friendHtml to true
+              areFriends = true;
+            }
+          });
+
+          // Check if they are friends
+          const friendOptionHtml = `
+                          ${areFriends ? unFriendHtml : friendHtml}
+                      `;
+          if (loggedInUserID != userID) {
+            $("#friendOption").append(friendOptionHtml);
+          }
+        });
+
+        // fetch and append user post
+        axios.get(`${baseUrl}/users/${userID}/posts/`).then((response) => {
+          console.log(response.data);
+          if (response.data != "") {
+            posts = response.data;
+            posts.forEach((post, index) => {
+              const likeHtml = `
+                              <button class="btn btn-primary like-button" data-index=${index}>Like</button>
+                              `;
+
+              const unlikeHtml = `
+                              <button class="btn btn-danger unlike-button" data-index=${index}>Unlike</button>
+                              `;
+
+              const hasLiked = post.likers
+                .map((liker) => liker.id)
+                .includes(loggedInUserID);
+
+              const postHtml = `
+                              <div class="card" style="margin-top: 2rem;">
+                                  <div class="card-body">
+                                      <p class="card-text">${post.text_body}</p>
+                                      ${hasLiked ? unlikeHtml : likeHtml}
+                                      <h5 style="margin-top: 1rem;">Likers</h5>
+                                      <ul class="list-group">
+                                          ${post.likers
+                                            .map(
+                                              (liker) => `
+                                                  <li class="list-group-item">
+                                                      <a href="/users/${liker.id}">${liker.full_name}</a>
+                                                  </li>
+                                                  `
+                                            )
+                                            .join("")}
+                                      </ul>
+                                  </div>
+                                  <div class="card-footer text-muted">
+                                      ${post.created_at}
+                                  </div>
+                              </div>
+                              `;
+
+              $("#posts").append(postHtml);
+            });
+          }
+        });
+
+        // listens for like button clicks
+        // we have to use the .on method instead of $(".like-button").click because this
+        // supports listening to dynamically added like/unlike buttons.
+        // IMPORTANT: DO NOT USE arrow functions because then `this` will not refer to the button!
+        $(document).on("click", ".like-button", function () {
+          const index = parseInt($(this).attr("data-index"));
+          const post = posts[index];
+          axios
+            .post(
+              `${baseUrl}/posts/${post.id}/likers/${loggedInUserID}`,
+              {},
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              // change button to unlike on success
+              const unlikeHtml = `
+                    <button class="btn btn-danger unlike-button" data-index=${index}>Unlike</button>
+                    `;
+              $(this).replaceWith(unlikeHtml);
+            });
+        });
+
+        // listens for unlike button clicks
+        $(document).on("click", ".unlike-button", function () {
+          const index = parseInt($(this).attr("data-index"));
+          const post = posts[index];
+
+          axios
+            .delete(
+              `${baseUrl}/posts/${post.id}/likers/${loggedInUserID}`,
+              {},
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              // change button to like on success
+              const likeHtml = `
+                    <button class="btn btn-primary like-button" data-index=${index}>Like</button>
+                    `;
+              $(this).replaceWith(likeHtml);
+            });
+        });
+
+        //   Listens for friend button clicks
+        $(document).on("click", ".friend-button", function () {
+          axios
+            .put(`${baseUrl}/users/${loggedInUserID}/${userID}`)
+            .then((res) => {
+              // change button to un-friend on success
+              const unFriendHtml = `
+                          <button
+                          class="btn btn-danger unFriend-button"
+                          friendID="${userID}"
+                          >
+                              Remove Friend
+                          </button>
+                      `;
+
+              $(this).replaceWith(unFriendHtml);
+            });
+        });
+
+        //   Listens for un-friend button clicks
+        $(document).on("click", ".unFriend-button", function () {
+          axios
+            .delete(`${baseUrl}/users/${loggedInUserID}/${userID}`)
+            .then((res) => {
+              // change button to friend on success
+              const friendHtml = `
+                      <button class="btn btn-primary friend-button" friendID="${userID}">
+                          Friend
+                      </button>
+                      `;
+
+              $(this).replaceWith(friendHtml);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

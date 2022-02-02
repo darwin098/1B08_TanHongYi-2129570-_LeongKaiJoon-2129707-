@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>All Products</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/allProducts/">All products</a>
+        <button class="btn btn-primary logout-button">Sign-in / Sign-up</button>
+      </nav>
+
+      <div style="margin-top: 2rem">
+        <div class="col-md-8 col-xs-12">
+          <h1>Promotions</h1>
+
+          <form id="create-post-form" style="margin-top: 2rem">
+            <div class="form-group">
+              <input
+                class="form-control"
+                id="search-bar-form-body"
+                rows="3"
+                placeholder="Search for a product and it's promotions"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+      </div>
+      <div style="margin-top: 2rem">
+        <div class="col-md-4 col-xs-12">
+          <h2>Filters</h2>
+          <div id="Filters">
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Category Select
+              </button>
+              <div
+                class="dropdown-menu"
+                id="categorySelect"
+                aria-labelledby="dropdownMenuButton"
+              >
+                <a class="dropdown-item" href="#">All</a>
+                <a class="dropdown-item" href="#">Laptops</a>
+              </div>
+            </div>
+            <p></p>
+            <button type="submit" class="btn btn-primary">Filter</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 2rem">
+        <div class="col-md-4 col-xs-12">
+          <h2>Sort by</h2>
+          <div id="Filters">
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Sorting Select
+              </button>
+              <div
+                class="dropdown-menu"
+                id="sortBy"
+                aria-labelledby="dropdownMenuButton"
+              >
+                <a class="dropdown-item" href="#">Price</a>
+                <a class="dropdown-item" href="#">Date added</a>
+                <a class="dropdown-item" href="#">Date ending</a>
+                <a class="dropdown-item" href="#">Rating</a>
+              </div>
+            </div>
+            <p></p>
+            <button type="submit" class="btn btn-primary">Sort</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 2rem">
+        <div class="col-md-4 col-xs-12">
+          <h2>Results</h2>
+        </div>
+        <div id="results">
+          <div style="border: solid 1px red; width: 50%">
+            <a href="#" style="text-decoration: none; color: black">
+              <img
+                src="../Images/istockphoto-1182241805-170667a.jpg"
+                alt="No image for this product :("
+                width="500em"
+              />
+              <p>
+                Price:
+                <del>$999.00</del>
+                <ins>$669.33</ins>
+              </p>
+              <p>
+                Description: Get a little something special for your loved ones
+                this Christmas!
+              </p>
+              <p>Promotion period: 26/12/2021 - 31/12/2021</p>
+              <p>Rating: 4 stars</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </body>
+</html>
