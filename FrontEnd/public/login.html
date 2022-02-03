@@ -71,10 +71,12 @@
         axios
           .post(`${baseUrl}/login/`, requestBody)
           .then((response) => {
-            const token = "Bearer " + response.data.token;
+            const token = response.data.token;
             const loggedInUserID = response.data.userInfo[0].uid;
+            const role = response.data.userInfo[0].role;
             localStorage.setItem("token", token);
             localStorage.setItem("loggedInUserID", loggedInUserID);
+            localStorage.setItem("role", role);
             window.location.href = "/";
           })
           .catch((error) => {

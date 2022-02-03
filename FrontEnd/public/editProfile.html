@@ -45,15 +45,24 @@
     <script>
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      console.log("Bearer " + token);
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+      console.log(loggedInUserID);
 
       const url = window.location.toString();
       const userID = parseInt(url.split("/").slice(-1)[0]);
 
-      axios.get(`${baseUrl}/users/32`).then((response) => {
-        console.log("Axios");
-        const user = response.data;
-        $("#user-profile").append(`
+      axios
+        .get(`${baseUrl}/users/32/`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          console.log("Axios");
+          const user = response.data;
+          $("#user-profile").append(`
           <div class="container">
           <h1 class="text-primary">Edit Profile</h1>
           <hr />
@@ -111,7 +120,7 @@
           </div>
         </div>
                 `);
-      });
+        });
     </script>
   </body>
 </html>
