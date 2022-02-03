@@ -59,19 +59,9 @@
       // 3. Admin editing one user
       // 4. User editing himself
 
-      // 1. Someone random, not logged in, trying to access the page
-      if (role == undefined) {
-        window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
-      // 2. Some other user trying to edit another user
-      else if (loggedInUserID != userID) {
-        window.location.href = "/";
-        alert("Try not to edit another user! -_-");
-      }
-      // 3. Admin editing one user
-      // 4. User editing himself
-      else {
+      if (loggedInUserID == userID || role == "admin") {
+        // 3. Admin editing one user
+        // 4. User editing himself
         axios
           .get(`${baseUrl}/users/${userID}/`, {
             headers: {
@@ -140,6 +130,12 @@
         </div>
                 `);
           });
+      }
+      // 1. Someone random, not logged in, trying to access the page
+      // 2. Some other user trying to edit another user
+      else {
+        window.location.href = "/signIn/";
+        alert("Hacking the website? Naughty~~ ;)");
       }
     </script>
   </body>
