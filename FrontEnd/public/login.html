@@ -72,7 +72,7 @@
           .post(`${baseUrl}/login/`, requestBody)
           .then((response) => {
             const token = "Bearer " + response.data.token;
-            const loggedInUserID = response.data.userid;
+            const loggedInUserID = response.data.userInfo[0].uid;
             localStorage.setItem("token", token);
             localStorage.setItem("loggedInUserID", loggedInUserID);
             window.location.href = "/";
