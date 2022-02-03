@@ -23,7 +23,7 @@ app.get("/signIn/", (req, res) => {
   res.sendFile("/public/login.html", { root: __dirname });
 });
 
-app.get("/signUp/", (req, res) => {
+app.get("/register/", (req, res) => {
   res.sendFile("/public/signUp.html", { root: __dirname });
 });
 
