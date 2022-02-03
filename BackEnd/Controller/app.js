@@ -651,28 +651,36 @@ app.get("/product/search/brand", printDebugInfo, function (req, res) {
 // [Done]
 // Get product by category
 // http://localhost:3000/search/category
-app.get("/product/search/category", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let category = req.body.productCategory;
+app.get(
+  "/product/search/category/:categoryid",
+  printDebugInfo,
+  function (req, res) {
+    // Step 1: extraction
+    let cid = req.params.categoryid;
 
-  console.log(`Product category: ${category}`);
-
-  // Step 2 and 3: Process and respond
-  Product.findByCategory(category, function (err, result) {
-    if (err) {
-      // Send error message response
-      res.status(500).send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result).end();
-      } else {
-        // Send error message response
-        res.status(404).send("No such ID!").end();
-      }
+    if (isNaN(cid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
     }
-  });
-});
+
+    // Step 2 and 3: Process and respond
+    Product.findByCategory(cid, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        if (result) {
+          // Report good news
+          res.status(200).send(result).end();
+        } else {
+          // Send error message response
+          res.status(404).send("No such ID!").end();
+        }
+      }
+    });
+  }
+);
 
 // [Working]
 // Edit product (admin) and edit image as well
@@ -981,7 +989,7 @@ app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
         res.status(200).send(result);
         res.end();
       } else {
-        res.status(404).send("No friends found!");
+        res.status(200);
         res.end();
       }
     }

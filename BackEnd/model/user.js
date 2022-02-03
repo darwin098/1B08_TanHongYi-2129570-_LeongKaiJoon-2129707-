@@ -251,7 +251,14 @@ let User = {
         console.log(err);
         return callback(err, null);
       } else {
-        const findUserByIDQuery = "SELECT * FROM ca1.users WHERE userid = ?;";
+        const findUserByIDQuery = `
+        SELECT 
+          fk_category_id
+        FROM 
+          interests
+        WHERE
+          fk_user_id = ?;
+        `;
 
         dbConn.query(findUserByIDQuery, [userID], (error, resultSet) => {
           dbConn.end();
@@ -264,7 +271,7 @@ let User = {
           if (resultSet.length == 0) {
             return callback(null, null);
           } else {
-            return callback(null, resultSet[0]);
+            return callback(null, resultSet);
           }
         });
       }

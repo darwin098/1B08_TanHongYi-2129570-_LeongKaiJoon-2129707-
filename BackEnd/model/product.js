@@ -81,7 +81,7 @@ let Product = {
               ca1.category AS C 
           WHERE 
               P.categoryid = C.categoryid AND
-              C.category = ?
+              C.categoryid = ?
           `;
 
         dbConn.query(sql, [productCategory], (error, resultSet) => {

@@ -70,9 +70,14 @@ let Promotion = {
       } else {
         const findAllQuery = `
         SELECT 
-            promoid, productid, promotion, discountamount, description, promotionperiodstart, promotionperiodend, duration
+          pm.*,
+          pd.name,
+          pd.price
         FROM 
-            ca1.promotions
+          promotions AS pm,
+            product AS pd
+        WHERE
+          pm.productid = pd.productid;
         `;
         dbConn.query(findAllQuery, (error, results) => {
           dbConn.end();
