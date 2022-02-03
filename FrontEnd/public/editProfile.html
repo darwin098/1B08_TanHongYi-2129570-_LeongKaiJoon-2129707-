@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>All Products</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/allProducts/">All products</a>
+        <div id="signInOutUp">
+          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
+        </div>
+      </nav>
+
+      <div style="margin-top: 2rem" id="user-profile"></div>
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+
+      const url = window.location.toString();
+      const userID = parseInt(url.split("/").slice(-1)[0]);
+
+      axios.get(`${baseUrl}/users/32`).then((response) => {
+        console.log("Axios");
+        const user = response.data;
+        $("#user-profile").append(`
+          <div class="container">
+          <h1 class="text-primary">Edit Profile</h1>
+          <hr />
+          <div class="row">
+            <!-- left column -->
+            <div class="col-md-3">
+              <div class="text-center">
+                <img
+                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                  class="avatar img-circle img-thumbnail"
+                  alt="avatar"
+                />
+                <h6>Upload a different photo...</h6>
+
+                <input type="file" class="form-control" />
+              </div>
+            </div>
+
+            <!-- edit form column -->
+            <div class="col-md-9 personal-info">
+              <div class="alert alert-info alert-dismissable">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee"></i>
+                This is an <strong>.alert</strong>. Use this to show important
+                messages to the user.
+              </div>
+              <h3>Personal info</h3>
+
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Username:</label>
+                  <div class="col-lg-8">
+                    <input class="form-control" type="text" value="${user.username}" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Contact:</label>
+                  <div class="col-lg-8">
+                    <input class="form-control" type="text" value="${user.contact}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Email:</label>
+                  <div class="col-lg-8">
+                    <input
+                      class="form-control"
+                      type="text"
+                      value="${user.email}"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+                `);
+      });
+    </script>
+  </body>
+</html>

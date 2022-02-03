@@ -19,6 +19,10 @@ app.get("/allProducts/", (req, res) => {
   res.sendFile("/public/allProducts.html", { root: __dirname });
 });
 
+app.get("/editProfile/", (req, res) => {
+  res.sendFile("/public/editProfile.html", { root: __dirname });
+});
+
 app.get("/signIn/", (req, res) => {
   res.sendFile("/public/login.html", { root: __dirname });
 });

@@ -13,7 +13,7 @@ const path = require("path");
 
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 const bodyParser = require("body-parser");
 
 // Multer helps to process form-data elements, like how body-parser helps with process body elements/data
@@ -88,6 +88,9 @@ function printDebugInfo(req, res, next) {
 app.use(urlEncodedParser);
 app.use(jsonParser);
 app.use("../uploads", express.static("uploads"));
+app.use(cors());
+
+app.options("*", cors());
 
 // -------------------------------------------------------------
 // Endpoints (default)
