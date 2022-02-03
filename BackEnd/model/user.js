@@ -167,7 +167,7 @@ let User = {
     });
   },
   // [Done]
-  loginUser: function (email, password, callback) {
+  loginUser: function (username, password, callback) {
     var conn = db.getConnection();
     conn.connect(function (err) {
       if (err) {
@@ -185,11 +185,11 @@ let User = {
         from 
           users
         where 
-          email = ? AND 
+          username = ? AND 
           password = ?
         `;
 
-        conn.query(sql, [email, password], function (err, result) {
+        conn.query(sql, [username, password], function (err, result) {
           conn.end();
 
           if (err) {

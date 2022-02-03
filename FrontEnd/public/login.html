@@ -71,8 +71,8 @@
         axios
           .post(`${baseUrl}/login/`, requestBody)
           .then((response) => {
-            const token = response.data.token;
-            const loggedInUserID = response.data.user_id;
+            const token = "Bearer " + response.data.token;
+            const loggedInUserID = response.data.userid;
             localStorage.setItem("token", token);
             localStorage.setItem("loggedInUserID", loggedInUserID);
             window.location.href = "/";

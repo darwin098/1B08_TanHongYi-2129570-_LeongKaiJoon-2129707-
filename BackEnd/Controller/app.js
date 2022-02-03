@@ -116,10 +116,10 @@ app.get("/", (req, res) => {
 // [Done]
 // Login User
 // http://localhost:3000/api/login
-app.post("/api/login", printDebugInfo, function (req, res) {
+app.post("/login/", printDebugInfo, function (req, res) {
   // 1. extract
   // Retrieve and set necessary datafields.
-  var email = req.body.email;
+  var username = req.body.username;
   var password = req.body.password;
 
   // 2. validate
@@ -127,7 +127,7 @@ app.post("/api/login", printDebugInfo, function (req, res) {
   // 3. compile
 
   // Pass data to the back-end side
-  User.loginUser(email, password, function (err, result) {
+  User.loginUser(username, password, function (err, result) {
     //    err     result
     //    false   false ---|
     //    false   true ----|

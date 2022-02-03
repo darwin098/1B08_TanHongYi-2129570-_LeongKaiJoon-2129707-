@@ -44,26 +44,17 @@
         <div class="col-md-4 col-xs-12">
           <h2>Filters</h2>
           <div id="Filters">
-            <div class="dropdown">
-              <button
-                class="btn btn-secondary dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Category Select
-              </button>
-              <div
-                class="dropdown-menu"
-                id="categorySelect"
-                aria-labelledby="dropdownMenuButton"
-              >
-                <a class="dropdown-item" href="#">All</a>
-                <a class="dropdown-item" href="#">Laptops</a>
-              </div>
-            </div>
+            <form>
+              <input type="checkbox" id="all" name="all" value="15" />
+              <label for="all">All</label>
+              <br />
+              <input type="checkbox" id="laptop" name="laptop" value="15" />
+              <label for="laptop">Laptop</label>
+              <br />
+              <input type="checkbox" id="phones" name="phones" value="10" />
+              <label for="phones">phones</label>
+              <br />
+            </form>
             <p></p>
             <button type="submit" class="btn btn-primary">Filter</button>
           </div>
@@ -73,31 +64,25 @@
         <div class="col-md-4 col-xs-12">
           <h2>Sort by</h2>
           <div id="Filters">
-            <div class="dropdown">
-              <button
-                class="btn btn-secondary dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Sorting Select
-              </button>
-              <div
-                class="dropdown-menu"
-                id="sortBy"
-                aria-labelledby="dropdownMenuButton"
-              >
-                <a class="dropdown-item" href="#">A - Z</a>
-                <a class="dropdown-item" href="#">Z - A</a>
-                <a class="dropdown-item" href="#">Price</a>
-                <a class="dropdown-item" href="#">Date added</a>
-                <a class="dropdown-item" href="#">Rating</a>
-              </div>
-            </div>
+            <form>
+              <input type="checkbox" id="AZ" name="AZ" value="15" />
+              <label for="AZ">A - Z</label>
+              <br />
+              <input type="checkbox" id="ZA" name="ZA" value="10" />
+              <label for="ZA">Z - A</label>
+              <br />
+              <input type="checkbox" id="ZA" name="ZA" value="10" />
+              <label for="ZA">Z - A</label>
+              <br />
+              <input type="checkbox" id="price" name="price" value="10" />
+              <label for="price">Price</label>
+              <br />
+              <input type="checkbox" id="rating" name="rating" value="10" />
+              <label for="rating">Rating</label>
+              <br />
+            </form>
             <p></p>
-            <button type="submit" class="btn btn-primary">Sort</button>
+            <button type="submit" class="btn btn-primary">Filter</button>
           </div>
         </div>
       </div>
@@ -106,12 +91,9 @@
           <h2>Results</h2>
         </div>
         <div id="results">
-          <div style="border: solid 1px red; width: fit-content">
+          <div style="border: solid 1px red; width: fit-content; padding: 1em">
             <a href="#" style="text-decoration: none; color: black">
-              <img
-                src="../Images/istockphoto-1182241805-170667a.jpg"
-                alt="No image for this product :("
-              />
+              <h4>SP AMD Ryzen 3600 Laptop</h4>
               <p>
                 Price:
                 <del>$999.00</del>
