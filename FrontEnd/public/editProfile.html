@@ -53,16 +53,35 @@
       const url = window.location.toString();
       const userID = parseInt(url.split("/").slice(-1)[0]);
 
-      axios
-        .get(`${baseUrl}/users/32/`, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((response) => {
-          console.log("Axios");
-          const user = response.data;
-          $("#user-profile").append(`
+      // Scenarios for people editing profiles:
+      // 1. Someone random, not logged in, trying to access the page
+      // 2. Some other user trying to edit another user
+      // 3. Admin editing one user
+      // 4. User editing himself
+
+      // 1. Someone random, not logged in, trying to access the page
+      if (role == undefined) {
+        window.location.href = "/signIn/";
+        alert("Hacking the website? Naughty~~ ;)");
+      }
+      // 2. Some other user trying to edit another user
+      else if (loggedInUserID != userID) {
+        window.location.href = "/";
+        alert("Try not to edit another user! -_-");
+      }
+      // 3. Admin editing one user
+      // 4. User editing himself
+      else {
+        axios
+          .get(`${baseUrl}/users/${userID}/`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            console.log("Axios");
+            const user = response.data;
+            $("#user-profile").append(`
           <div class="container">
           <h1 class="text-primary">Edit Profile</h1>
           <hr />
@@ -120,7 +139,8 @@
           </div>
         </div>
                 `);
-        });
+          });
+      }
     </script>
   </body>
 </html>

@@ -30,21 +30,12 @@
           <input type="text" class="form-control" id="username" required />
         </div>
         <div class="form-group">
-          <label for="full_name">Full Name</label>
-          <input type="text" class="form-control" id="full_name" required />
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" required />
         </div>
         <div class="form-group">
-          <label for="bio">Bio</label>
-          <input type="text" class="form-control" id="bio" required />
-        </div>
-        <div class="form-group">
-          <label for="date-of-birth">Date of Birth</label>
-          <input
-            type="password"
-            class="form-control"
-            id="date-of-birth"
-            placeholder="dd/mm/yyyy"
-          />
+          <label for="contact">Contact Number</label>
+          <input type="number" class="form-control" id="contact" required />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -77,35 +68,22 @@
         event.preventDefault();
 
         const username = $("#username").val();
-        const full_name = $("#full_name").val();
-        const bio = $("#bio").val();
-        const dateOfBirth = $("#date-of-birth").val();
+        const email = $("#email").val();
+        const contact = $("#contact").val();
         const password = $("#password").val();
 
-        function requestBody() {
-          if (dateOfBirth != "") {
-            return {
-              fullName: full_name,
-              username: username,
-              bio: bio,
-              dateOfBirth: dateOfBirth,
-              password: password,
-            };
-          } else {
-            return {
-              fullName: full_name,
-              username: username,
-              bio: bio,
-              password: password,
-            };
-          }
-        }
+        requestBody = {
+          username: username,
+          email: email,
+          contact: contact,
+          password: password,
+        };
 
         axios
-          .post(`${baseUrl}/users`, requestBody())
+          .post(`${baseUrl}/users`, requestBody)
           .then((response) => {
             alert("You have been registered!");
-            window.location.href = "/login/";
+            window.location.href = "/signIn/";
           })
           .catch((error) => {
             console.log(error);
