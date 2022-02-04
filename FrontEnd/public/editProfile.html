@@ -104,7 +104,7 @@
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      var exstingCateList = [];
+      var exstingCateList = [[], []];
       var interestsList = {};
 
       var somethingChanged = false;
@@ -177,6 +177,7 @@
 
           // For every category in category table
           allCategories.forEach((category) => {
+            exstingCateList[0].push(`${category.category}Checkbox`);
             // If there's an interest enter possibility check for putting a checked box
             var effCheck = 0; // Variable to detect whenever interests has been matched ith box, to prevent looping if all interests are already matched
             if (interestsList != effCheck) {
@@ -197,7 +198,7 @@
                   // Check Box HTML
                   $("#checkboxLine").append(`
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option" checked>
+                      <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox" checked>
                       <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                     </div>
                   `);
@@ -211,7 +212,7 @@
               if (!check) {
                 $("#checkboxLine").append(`
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option">
+                    <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox">
                     <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                   </div>
                 `);
@@ -219,7 +220,7 @@
             } else {
               $("#checkboxLine").append(`
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option">
+                  <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox">
                   <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                 </div>
               `);
@@ -237,19 +238,23 @@
       $("#edit-prof-form").submit((event) => {
         // Prevent page reload
         event.preventDefault();
+        $("input:checkbox[name='categories']:checked").each(function () {
+          exstingCateList[1].push(this.value);
+        });
+
+        console.log(exstingCateList[1][0]);
 
         const usernameEnter = $("#username").val();
         const emailEnter = $("#email").val();
         const contactEnter = $("#contact").val();
-
         const passwordTemp = $("#password").val();
 
         if (passwordTemp == "") {
           passwordEnter = `${user.password}`;
 
           if (
-            usernameEnter == `${user.username}` ||
-            emailEnter == `${user.email}` ||
+            usernameEnter == `${user.username}` &&
+            emailEnter == `${user.email}` &&
             contactEnter == `${user.contact}`
           ) {
             somethingChanged = true;
@@ -257,6 +262,8 @@
         } else {
           passwordEnter = passwordTemp;
         }
+
+        const requestBodyPreferences = {};
 
         const requestBodyUser = {
           username: usernameEnter,
@@ -277,7 +284,6 @@
             .then((response) => {
               alert("Success");
               console.log("Profile Update Success");
-              window.location.reload();
             })
             .catch((error) => {
               alert("Error! Something went wrong! :>@\n");
