@@ -1256,7 +1256,7 @@ app.get("/promotion/byitem/:itemid", printDebugInfo, function (req, res) {
         res.status(200).send(result).end();
       } else {
         res
-          .status(404)
+          .status(200)
           .type("json")
           .send("No promotions for product found.")
           .end();
