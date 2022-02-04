@@ -106,70 +106,15 @@
           <h2>Newly Added Products</h2>
         </div>
         <div
-          id="carouselExampleControls"
+          id="newProductsControls"
           class="carousel slide"
           data-ride="carousel"
           style="background-color: grey"
         >
-          <div class="carousel-inner" id="newProducts" align="center">
-            <div class="carousel-item active">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>SP AMD Ryzen 3600 Laptop</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>SP AMD Ryzen 3600</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>zen 3600 Laptop</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-          </div>
+          <div class="carousel-inner" id="newProducts" align="center"></div>
           <a
             class="carousel-control-prev"
-            href="#carouselExampleControls"
+            href="#newProductsControls"
             role="button"
             data-slide="prev"
           >
@@ -178,95 +123,7 @@
           </a>
           <a
             class="carousel-control-next"
-            href="#carouselExampleControls"
-            role="button"
-            data-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Popular products section -->
-      <div style="margin-top: 2rem">
-        <div class="col-md-4 col-xs-12">
-          <h2>Popular products</h2>
-        </div>
-        <div
-          id="carouselExampleControls"
-          class="carousel slide"
-          data-ride="carousel"
-          style="background-color: grey"
-        >
-          <div class="carousel-inner" id="popularProducts" align="center">
-            <div class="carousel-item active">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>SP AMD Ryzen 3600 Laptop</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>SP AMD Ryzen 3600</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
-                  <h4>zen 3600 Laptop</h4>
-                  <p>
-                    Price:
-                    <del>$999.00</del>
-                    <ins>$669.33</ins>
-                  </p>
-                  <p>
-                    Description: Get a little something special for your loved
-                    ones this Christmas!
-                  </p>
-                  <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-                  <p>Rating: 4 stars</p>
-                </a>
-              </div>
-            </div>
-          </div>
-          <a
-            class="carousel-control-prev"
-            href="#carouselExampleControls"
-            role="button"
-            data-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a
-            class="carousel-control-next"
-            href="#carouselExampleControls"
+            href="#newProductsControls"
             role="button"
             data-slide="next"
           >
@@ -322,7 +179,6 @@
           }
           if (promotion) {
             promotion.forEach((promotion, index) => {
-              console.log(index);
               const firstPromotionHTML = `
               <div class="carousel-item active">
               <div style="width: 50%; padding: 1em">
@@ -330,9 +186,9 @@
                   <h4>${promotion.name}</h4>
                   <p>
                     Price:
-                    <del>$${promotion.price}</del>
+                    <del>$${promotion.price.toFixed(2)}</del>
                     <ins>$${newPrice(
-                      promotion.price,
+                      promotion.price.toFixed(2),
                       promotion.promotion
                     )}</ins>
                   </p>
@@ -355,9 +211,9 @@
                   <h4>${promotion.name}</h4>
                   <p>
                     Price:
-                    <del>$${promotion.price}</del>
+                    <del>$${promotion.price.toFixed(2)}</del>
                     <ins>$${newPrice(
-                      promotion.price,
+                      promotion.price.toFixed(2),
                       promotion.promotion
                     )}</ins>
                   </p>
@@ -390,11 +246,13 @@
         .get(`${baseUrl}/users/interests/${loggedInUserID}`)
         .then((response) => {
           const data = response.data;
-          console.log("data = " + data);
           // forEach value of category ID,
           if (data) {
             data.forEach((category, index) => {
               // Get products based on category ID
+              console.log(
+                `Getting Products for category ` + category.fk_category_id
+              );
               axios
                 .get(
                   `${baseUrl}/product/search/category/${category.fk_category_id}`
@@ -404,16 +262,53 @@
                   if (categoryContents) {
                     categoryContents.forEach(
                       (categoryContents, contentsIndex) => {
-                        console.log(categoryContents);
+                        let priceHTML;
+
+                        // Check if there is a promotion for the current product
+                        axios
+                          .get(
+                            `${baseUrl}/promotion/byitem/${categoryContents.productid}`
+                          )
+                          .then((promoResponse) => {
+                            if (promoResponse) {
+                              function newPrice(orgPrice, discount) {
+                                return (
+                                  (orgPrice / 100) *
+                                  (100 - discount)
+                                ).toFixed(2);
+                              }
+                              // There is a promo price
+                              // Set promotion price html
+                              console.log(`Setting promo pricehtml`);
+                              priceHTML = `
+                              <p>
+                                Price:
+                                <del>$${categoryContents.price.toFixed(2)}</del>
+                                <ins>$${newPrice(
+                                  categoryContents.price,
+                                  promoResponse.promotion
+                                )}</ins>
+                              </p>
+                              `;
+                              console.log(priceHTML);
+                            } else {
+                              // There is no promo price
+                              // set normal price html
+                              console.log(`Setting normal price html`);
+                              priceHTML = `
+                              <p>
+                                Price: $${categoryContents.price.toFixed(2)}
+                              </p>
+                              `;
+                            }
+                          });
+
                         const firstContentHTML = `
                       <div class="carousel-item active">
                           <div style="width: 50%; padding: 1em">
                             <a href="#" style="text-decoration: none; color: black">
                               <h4>${categoryContents.name}</h4>
-                              <p>
-                                Price:
-                                $${categoryContents.price}
-                              </p>
+                              ${priceHTML}
                               <p>
                                 Description: ${categoryContents.description}
                               </p>
@@ -428,10 +323,7 @@
                           <div style="width: 50%; padding: 1em">
                             <a href="#" style="text-decoration: none; color: black">
                               <h4>${categoryContents.name}</h4>
-                              <p>
-                                Price:
-                                $${categoryContents.price}
-                              </p>
+                              ${priceHTML}
                               <p>
                                 Description: ${categoryContents.description}
                               </p>
@@ -442,10 +334,8 @@
                                 `;
 
                         if (contentsIndex == 0 && index == 0) {
-                          console.log(`showing`);
                           $("#forUser").append(firstContentHTML);
                         } else {
-                          console.log(`appending second`);
                           $("#forUser").append(ContentHTML);
                         }
                       }
@@ -462,151 +352,58 @@
           console.log(error);
         });
 
-      // // Get newly added products
-      // axios
-      //   .get(`${baseUrl}/promotion/getall`)
-      //   .then((response) => {
-      //     const promotion = response.data;
-      //     function newPrice(orgPrice, discount) {
-      //       return ((orgPrice / 100) * (100 - discount)).toFixed(2);
-      //     }
-      //     if (promotion) {
-      //       promotion.forEach((promotion, index) => {
-      //         console.log(index);
-      //         const firstPromotionHTML = `
-      //         <div class="carousel-item active">
-      //         <div style="width: 50%; padding: 1em">
-      //           <a href="#" style="text-decoration: none; color: black">
-      //             <h4>${promotion.name}</h4>
-      //             <p>
-      //               Price:
-      //               <del>$${promotion.price}</del>
-      //               <ins>$${newPrice(
-      //                 promotion.price,
-      //                 promotion.promotion
-      //               )}</ins>
-      //             </p>
-      //             <p>
-      //               Description: ${promotion.description}
-      //             </p>
-      //             <p>Promotion period: ${promotion.promotionperiodstart} - ${
-      //           promotion.promotionperiodend
-      //         }</p>
-      //             <p>Rating: 4 stars</p>
-      //           </a>
-      //         </div>
-      //       </div>
-      //                         `;
+      // Get newly added products (Working)
+      axios
+        .get(`${baseUrl}/product/search/creation/desc`)
+        .then((response) => {
+          const newProducts = response.data;
+          if (newProducts) {
+            newProducts.forEach((newProducts, index) => {
+              const firstNewProductHTML = `
+              <div class="carousel-item active">
+              <div style="width: 50%; padding: 1em">
+                <a href="#" style="text-decoration: none; color: black">
+                  <h4>${newProducts.name}</h4>
+                  <p>
+                    Price: $${newProducts.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${newProducts.description}
+                  </p>
+                  <p>Rating: 4 stars</p>
+                </a>
+              </div>
+            </div>
+                              `;
 
-      //         const promotionHTML = `
-      //         <div class="carousel-item">
-      //         <div style="width: 50%; padding: 1em">
-      //           <a href="#" style="text-decoration: none; color: black">
-      //             <h4>${promotion.name}</h4>
-      //             <p>
-      //               Price:
-      //               <del>$${promotion.price}</del>
-      //               <ins>$${newPrice(
-      //                 promotion.price,
-      //                 promotion.promotion
-      //               )}</ins>
-      //             </p>
-      //             <p>
-      //               Description: ${promotion.description}
-      //             </p>
-      //             <p>Promotion period: ${promotion.promotionperiodstart} - ${
-      //           promotion.promotionperiodend
-      //         } </p>
-      //             <p>Rating: 4 stars</p>
-      //           </a>
-      //         </div>
-      //       </div>
-      //                         `;
+              const productHTML = `
+              <div class="carousel-item">
+                <div style="width: 50%; padding: 1em">
+                <a href="#" style="text-decoration: none; color: black">
+                  <h4>${newProducts.name}</h4>
+                  <p>
+                    Price: $${newProducts.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${newProducts.description}
+                  </p>
+                  <p>Rating: 4 stars</p>
+                </a>
+              </div>
+            </div>
+                              `;
 
-      //         if (index == 0) {
-      //           $("#promotions").append(firstPromotionHTML);
-      //         } else {
-      //           $("#promotions").append(promotionHTML);
-      //         }
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-
-      // // Get popular
-      // axios
-      //   .get(`${baseUrl}/promotion/getall`)
-      //   .then((response) => {
-      //     const promotion = response.data;
-      //     function newPrice(orgPrice, discount) {
-      //       return ((orgPrice / 100) * (100 - discount)).toFixed(2);
-      //     }
-      //     if (promotion) {
-      //       promotion.forEach((promotion, index) => {
-      //         console.log(index);
-      //         const firstPromotionHTML = `
-      //         <div class="carousel-item active">
-      //         <div style="width: 50%; padding: 1em">
-      //           <a href="#" style="text-decoration: none; color: black">
-      //             <h4>${promotion.name}</h4>
-      //             <p>
-      //               Price:
-      //               <del>$${promotion.price}</del>
-      //               <ins>$${newPrice(
-      //                 promotion.price,
-      //                 promotion.promotion
-      //               )}</ins>
-      //             </p>
-      //             <p>
-      //               Description: ${promotion.description}
-      //             </p>
-      //             <p>Promotion period: ${promotion.promotionperiodstart} - ${
-      //           promotion.promotionperiodend
-      //         }</p>
-      //             <p>Rating: 4 stars</p>
-      //           </a>
-      //         </div>
-      //       </div>
-      //                         `;
-
-      //         const promotionHTML = `
-      //         <div class="carousel-item">
-      //         <div style="width: 50%; padding: 1em">
-      //           <a href="#" style="text-decoration: none; color: black">
-      //             <h4>${promotion.name}</h4>
-      //             <p>
-      //               Price:
-      //               <del>$${promotion.price}</del>
-      //               <ins>$${newPrice(
-      //                 promotion.price,
-      //                 promotion.promotion
-      //               )}</ins>
-      //             </p>
-      //             <p>
-      //               Description: ${promotion.description}
-      //             </p>
-      //             <p>Promotion period: ${promotion.promotionperiodstart} - ${
-      //           promotion.promotionperiodend
-      //         } </p>
-      //             <p>Rating: 4 stars</p>
-      //           </a>
-      //         </div>
-      //       </div>
-      //                         `;
-
-      //         if (index == 0) {
-      //           $("#promotions").append(firstPromotionHTML);
-      //         } else {
-      //           $("#promotions").append(promotionHTML);
-      //         }
-      //       });
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+              if (index == 0) {
+                $("#newProducts").append(firstNewProductHTML);
+              } else {
+                $("#newProducts").append(productHTML);
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     </script>
   </body>
 </html>

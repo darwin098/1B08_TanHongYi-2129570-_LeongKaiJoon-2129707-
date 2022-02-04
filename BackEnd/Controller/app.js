@@ -566,7 +566,7 @@ app.post("/product/", printDebugInfo, verifyToken, function (req, res) {
     d_description: req.body.description,
     d_categoryid: req.body.categoryid,
     d_brand: req.body.brand,
-    d_price: req.body.price,
+    d_price: req.body.price.toFixed(2),
   };
 
   let dataJSON = {
@@ -607,6 +607,33 @@ app.get("/product/search/name", printDebugInfo, function (req, res) {
 
   // Step 2 and 3: Process and respond
   Product.findByName(name, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No results found").end();
+      }
+    }
+  });
+});
+
+// [Working]
+// Get all products by date
+// http://localhost:3000/search/name
+app.get("/product/search/creation/:order", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let order = req.params.order;
+
+  if (order != "asc" || order != "desc") {
+    res.status(200).end;
+  }
+  // Step 2 and 3: Process and respond
+  Product.findAllByDate(order, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();
