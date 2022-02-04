@@ -69,6 +69,11 @@
                   <label class="col-lg-3 control-label">Password:</label>
                   <div class="col-lg-8" id="passwordValue"></div>
                 </div>
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Preferences:</label>
+                  <div class="col-lg-8" id="checkboxLine"></div>
+                </div>
+
                 <button type="submit">Submit</button>
                 <button type="reset">Reset To Original</button>
               </form>
@@ -98,9 +103,17 @@
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
-      console.log("Bearer " + token);
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      console.log(loggedInUserID);
+      var exstingCateList = [];
+      var interestsList = {};
+
+      var somethingChanged = false;
+
+      let requestToken = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
 
       const url = window.location.toString();
       // const userID = parseInt(url.split("/").slice(-1)[0]);
@@ -116,46 +129,103 @@
         // 3. Admin editing one user
         // 4. User editing himself
         axios
-          .get(`${baseUrl}/users/${userID}/`, {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+          .get(`${baseUrl}/users/${userID}/`, requestToken)
           .then((response) => {
             user = response.data;
             $("#usernameValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.username}"
-                      id="username"
-                    />
-                `);
+              <input
+                class="form-control"
+                type="tel"
+                value="${user.username}"
+                id="username"
+              />
+             `);
             $("#contactValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.contact}"
-                      id="contact"
-                    />
-                `);
+              <input
+                class="form-control"
+                type="tel"
+                value="${user.contact}"
+                id="contact"
+              />
+            `);
             $("#emailValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.email}"
-                      id="email"
-                    />
-                `);
+              <input
+                class="form-control"
+                type="email"
+                value="${user.email}"
+                id="email"
+              />
+            `);
             $("#passwordValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.password}"
-                      id="password"
-                    />
-                `);
+              <input
+                class="form-control"
+                type="password"
+                password=""
+                id="password"
+              />
+            `);
           });
+
+        axios.get(`${baseUrl}/users/interests/${userID}`).then((response) => {
+          console.log("Retrieved");
+          const tmpInterests = response.data;
+          interestsList = tmpInterests;
+        });
+
+        axios.get(`${baseUrl}/category`).then((response) => {
+          const allCategories = response.data;
+
+          // For every category in category table
+          allCategories.forEach((category) => {
+            // If there's an interest enter possibility check for putting a checked box
+            var effCheck = 0; // Variable to detect whenever interests has been matched ith box, to prevent looping if all interests are already matched
+            if (interestsList != effCheck) {
+              // Sets check
+              var check = false;
+              for (var i = 0; i < interestsList.length; i++) {
+                // Sanity Check
+                console.log("Entering Loop");
+
+                // If there are interests for the user
+                // And when the user preference matches
+                // Append pre-checked box
+                if (
+                  parseInt(interestsList[i].fk_category_id) ==
+                  parseInt(category.categoryid)
+                ) {
+                  console.log("Checked");
+                  // Check Box HTML
+                  $("#checkboxLine").append(`
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option" checked>
+                      <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
+                    </div>
+                  `);
+                  check = true;
+                  effCheck += 1;
+                  break;
+                }
+              }
+              // If current category has not caught the interest *wink wink* of the user
+              // Append the non-checked box
+              if (!check) {
+                $("#checkboxLine").append(`
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option">
+                    <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
+                  </div>
+                `);
+              }
+            } else {
+              $("#checkboxLine").append(`
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="${category.category}Checkbox" value="${category.category}option">
+                  <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
+                </div>
+              `);
+            }
+          });
+        });
       }
       // 1. Someone random, not logged in, trying to access the page
       // 2. Some other user trying to edit another user
@@ -165,37 +235,58 @@
       }
 
       $("#edit-prof-form").submit((event) => {
-        // prevent page reload
+        // Prevent page reload
         event.preventDefault();
-        const username = $("#username").val();
-        const password = $("#password").val();
-        const email = $("#email").val();
-        const contact = $("#contact").val();
 
-        const requestBody = {
-          username: username,
-          email: email,
-          contact: contact,
-          password: password,
+        const usernameEnter = $("#username").val();
+        const emailEnter = $("#email").val();
+        const contactEnter = $("#contact").val();
+
+        const passwordTemp = $("#password").val();
+
+        if (passwordTemp == "") {
+          passwordEnter = `${user.password}`;
+
+          if (
+            usernameEnter == `${user.username}` ||
+            emailEnter == `${user.email}` ||
+            contactEnter == `${user.contact}`
+          ) {
+            somethingChanged = true;
+          }
+        } else {
+          passwordEnter = passwordTemp;
+        }
+
+        const requestBodyUser = {
+          username: usernameEnter,
+          email: emailEnter,
+          contact: contactEnter,
+          password: passwordEnter,
           role: role,
           profile_pic_url: user.profile_pic_url,
         };
 
-        axios
-          .put(`${baseUrl}/users/edit/${userID}`, requestBody, {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
-          .then((response) => {
-            alert("Success");
-            console.log("Profile Update Success");
-            window.location.reload();
-          })
-          .catch((error) => {
-            alert("Error! Something went wrong! :>@\n" + error);
-            console.log("Error! Something went wrong! :>@");
-          });
+        if (!somethingChanged) {
+          axios
+            .put(
+              `${baseUrl}/users/edit/${userID}`,
+              requestBodyUser,
+              requestToken
+            )
+            .then((response) => {
+              alert("Success");
+              console.log("Profile Update Success");
+              window.location.reload();
+            })
+            .catch((error) => {
+              alert("Error! Something went wrong! :>@\n");
+              console.log("Error! Something went wrong! :>@");
+            });
+        } else {
+          somethingChanged = true;
+          console.log("Nothing Changed");
+        }
       });
     </script>
   </body>
