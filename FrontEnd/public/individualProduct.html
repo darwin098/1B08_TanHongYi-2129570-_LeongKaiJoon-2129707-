@@ -16,7 +16,12 @@
       rel="stylesheet"
     />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="css/styles.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <!-- Product section-->
@@ -29,10 +34,22 @@
       </div>
     </section>
 
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
@@ -55,7 +72,7 @@
         // 3. Admin editing one user
         // 4. User editing himself
         axios
-          .get(`${baseUrl}/users/13/`, {
+          .get(`${baseUrl}/product/search/13/`, {
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -71,13 +88,13 @@
             />
           </div>
           <div class="col-md-6">
-            <div class="small mb-1">SKU: BST-498</div>
-            <h1 class="display-5 fw-bolder">Shop item template</h1>
+            <div class="small mb-1">${user.categoryname}-${user.categoryid}${user.productid}</div>
+            <h1 class="display-5 fw-bolder">${user.name}</h1>
             <div class="fs-5 mb-5">
-              <del class="text-decoration-line-through">$45.00</del>
-              <ins>$40.00</ins>
+              <del>$${user.price}</del>
+              <ins>$${user.price}</de;>
             </div>
-            <p class="lead">This is the description text.</p>
+            <p class="lead">${user.description}</p>
             <div class="d-flex">
               <input
                 class="form-control text-center me-3"

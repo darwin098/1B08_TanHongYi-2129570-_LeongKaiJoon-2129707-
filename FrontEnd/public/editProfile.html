@@ -22,8 +22,60 @@
           <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
         </div>
       </nav>
+      <div style="margin-top: 2rem" id="user-profile">
+        <div class="container">
+          <h1 class="text-primary">Edit Profile</h1>
+          <hr />
+          <div class="row">
+            <!-- left column -->
+            <div class="col-md-3">
+              <div class="text-center">
+                <img
+                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                  class="avatar img-circle img-thumbnail"
+                  alt="avatar"
+                />
+                <h6>Upload a different photo...</h6>
 
-      <div style="margin-top: 2rem" id="user-profile"></div>
+                <input type="file" class="form-control" />
+              </div>
+            </div>
+
+            <!-- edit form column -->
+            <div class="col-md-9 personal-info">
+              <div class="alert alert-info alert-dismissable">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee"></i>
+                This is an <strong>.alert</strong>. Use this to show important
+                messages to the user.
+              </div>
+              <h3>Personal info</h3>
+
+              <form class="form-horizontal" role="form" id="edit-prof-form">
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Username:</label>
+                  <div class="col-lg-8" id="usernameValue"></div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Contact:</label>
+                  <div class="col-lg-8" id="contactValue"></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Email:</label>
+                  <div class="col-lg-8" id="emailValue"></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Password:</label>
+                  <div class="col-lg-8" id="passwordValue"></div>
+                </div>
+                <button type="submit">Submit</button>
+                <button type="reset">Reset To Original</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
       <p></p>
     </div>
     <script
@@ -52,7 +104,7 @@
 
       const url = window.location.toString();
       // const userID = parseInt(url.split("/").slice(-1)[0]);
-      const userID = 34;
+      const userID = 35;
 
       // Scenarios for people editing profiles:
       // 1. Someone random, not logged in, trying to access the page
@@ -70,65 +122,38 @@
             },
           })
           .then((response) => {
-            console.log("Axios");
-            const user = response.data;
-            $("#user-profile").append(`
-          <div class="container">
-          <h1 class="text-primary">Edit Profile</h1>
-          <hr />
-          <div class="row">
-            <!-- left column -->
-            <div class="col-md-3">
-              <div class="text-center">
-                <img
-                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                  class="avatar img-circle img-thumbnail"
-                  alt="avatar"
-                />
-                <h6>Upload a different photo...</h6>
-
-                <input type="file" class="form-control" />
-              </div>
-            </div>
-
-            <!-- edit form column -->
-            <div class="col-md-9 personal-info">
-              <div class="alert alert-info alert-dismissable">
-                <a class="panel-close close" data-dismiss="alert">×</a>
-                <i class="fa fa-coffee"></i>
-                This is an <strong>.alert</strong>. Use this to show important
-                messages to the user.
-              </div>
-              <h3>Personal info</h3>
-
-              <form class="form-horizontal" role="form">
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Username:</label>
-                  <div class="col-lg-8">
-                    <input class="form-control" type="text" value="${user.username}" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Contact:</label>
-                  <div class="col-lg-8">
-                    <input class="form-control" type="text" value="${user.contact}" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Email:</label>
-                  <div class="col-lg-8">
-                    <input
+            user = response.data;
+            $("#usernameValue").append(`
+            <input
                       class="form-control"
-                      type="text"
-                      value="${user.email}"
+                      type="tel"
+                      value="${user.username}"
+                      id="username"
                     />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+                `);
+            $("#contactValue").append(`
+            <input
+                      class="form-control"
+                      type="tel"
+                      value="${user.contact}"
+                      id="contact"
+                    />
+                `);
+            $("#emailValue").append(`
+            <input
+                      class="form-control"
+                      type="tel"
+                      value="${user.email}"
+                      id="email"
+                    />
+                `);
+            $("#passwordValue").append(`
+            <input
+                      class="form-control"
+                      type="tel"
+                      value="${user.password}"
+                      id="password"
+                    />
                 `);
           });
       }
@@ -138,6 +163,40 @@
         window.location.href = "/signIn/";
         alert("Hacking the website? Naughty~~ ;)");
       }
+
+      $("#edit-prof-form").submit((event) => {
+        // prevent page reload
+        event.preventDefault();
+        const username = $("#username").val();
+        const password = $("#password").val();
+        const email = $("#email").val();
+        const contact = $("#contact").val();
+
+        const requestBody = {
+          username: username,
+          email: email,
+          contact: contact,
+          password: password,
+          role: role,
+          profile_pic_url: user.profile_pic_url,
+        };
+
+        axios
+          .put(`${baseUrl}/users/edit/${userID}`, requestBody, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            alert("Success");
+            console.log("Profile Update Success");
+            window.location.reload();
+          })
+          .catch((error) => {
+            alert("Error! Something went wrong! :>@\n" + error);
+            console.log("Error! Something went wrong! :>@");
+          });
+      });
     </script>
   </body>
 </html>

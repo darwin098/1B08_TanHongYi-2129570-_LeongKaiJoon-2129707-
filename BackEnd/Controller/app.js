@@ -292,7 +292,7 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
 // [Working]
 // Edit User - Edit profile picture as well
 // http://localhost:3000/users/28
-app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
+app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
@@ -684,7 +684,7 @@ app.get(
 
 // [Working]
 // Edit product (admin) and edit image as well
-app.put("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
+app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
