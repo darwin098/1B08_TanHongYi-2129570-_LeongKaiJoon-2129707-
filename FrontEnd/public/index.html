@@ -68,37 +68,7 @@
       </div>
 
       <!-- For you section -->
-      <div style="margin-top: 2rem">
-        <div class="col-md-4 col-xs-12">
-          <h2>For you</h2>
-        </div>
-        <div
-          id="forYou"
-          class="carousel slide"
-          data-ride="carousel"
-          style="background-color: grey"
-        >
-          <div class="carousel-inner" id="forUser" align="center"></div>
-          <a
-            class="carousel-control-prev"
-            href="#forYou"
-            role="button"
-            data-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a
-            class="carousel-control-next"
-            href="#forYou"
-            role="button"
-            data-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
-      </div>
+      <div style="margin-top: 2rem" id="forYouSection"></div>
 
       <!-- Newly added products section -->
       <div style="margin-top: 2rem">
@@ -154,20 +124,131 @@
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
       console.log("Bearer " + token);
-      // const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      const loggedInUserID = 32;
+
+      const loggedInUserID = localStorage.getItem("loggedInUserID");
       console.log(loggedInUserID);
 
-      const url = window.location.toString();
+      if (token && loggedInUserID != null) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
 
-      // Load Products of each type on load
-      // Run get requests for:
-      //    1) Promotions
-      //    2) For-you
-      //    3) Newly Added Products
-      //    4) Popular
-      // Append them to their respective divisions
-      // On-click of the product, the user will be sent to the individual product page
+        let recomendations = `
+          <div class="col-md-4 col-xs-12">
+            <h2>For you</h2>
+          </div>
+          <div
+            id="forYou"
+            class="carousel slide"
+            data-ride="carousel"
+            style="background-color: grey"
+          >
+            <div class="carousel-inner" id="forUser" align="center"></div>
+            <a
+              class="carousel-control-prev"
+              href="#forYou"
+              role="button"
+              data-slide="prev"
+            >
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a
+              class="carousel-control-next"
+              href="#forYou"
+              role="button"
+              data-slide="next"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        `;
+        $("#forYouSection").append(recomendations);
+
+        // Get recommended (Working)
+        // Get user's interests
+        axios
+          .get(`${baseUrl}/users/interests/${loggedInUserID}`)
+          .then((response) => {
+            const data = response.data;
+
+            // forEach category ID,
+            if (data) {
+              data.forEach((category, interestIndex) => {
+                // Get all products
+                axios
+                  .get(
+                    `${baseUrl}/product/search/category/${category.fk_category_id}`
+                  )
+                  .then((productResponse) => {
+                    products = productResponse.data;
+
+                    // Append all products
+                    products.forEach((product, productsIndex) => {
+                      console.log(product);
+
+                      // For this one product
+
+                      // If it is the first one being appended to the carousel
+                      const firstContentHTML = `
+                            <div class="carousel-item active">
+                              <div style="width: 50%; padding: 1em">
+                                <a href="/product/${
+                                  product.productid
+                                }" style="text-decoration: none; color: black">
+                                  <h4>${product.name}</h4>
+                                  <p>
+                                    Price: $${product.price.toFixed(2)}
+                                  </p>
+                                  <p>
+                                    Description: ${product.description}
+                                  </p>
+                                  <p>Rating: 4 stars</p>
+                                </a>
+                              </div>
+                            </div>
+                                `;
+
+                      // It is not the first one to be appended
+                      const ContentHTML = `
+                            <div class="carousel-item">
+                              <div style="width: 50%; padding: 1em">
+                                <a href="/product/${
+                                  product.productid
+                                }" style="text-decoration: none; color: black">
+                                  <h4>${product.name}</h4>
+                                  <p>
+                                    Price: $${product.price.toFixed(2)}
+                                  </p>
+                                  <p>
+                                    Description: ${product.description}
+                                  </p>
+                                  <p>Rating: 4 stars</p>
+                                </a>
+                              </div>
+                            </div>
+                                `;
+
+                      if (interestIndex == 0 && productsIndex == 0) {
+                        $("#forUser").append(firstContentHTML);
+                      } else {
+                        $("#forUser").append(ContentHTML);
+                      }
+                    });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+                // Append them to the carousel
+              });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
 
       // Get promotions (Done)
       axios
@@ -182,7 +263,9 @@
               const firstPromotionHTML = `
               <div class="carousel-item active">
               <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
+                <a href="/product/${
+                  promotion.productid
+                }" style="text-decoration: none; color: black">
                   <h4>${promotion.name}</h4>
                   <p>
                     Price:
@@ -207,7 +290,9 @@
               const promotionHTML = `
               <div class="carousel-item">
               <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
+                <a href="/product/${
+                  promotion.productid
+                }" style="text-decoration: none; color: black">
                   <h4>${promotion.name}</h4>
                   <p>
                     Price:
@@ -241,192 +326,7 @@
           console.log(error);
         });
 
-      // Get reccommended (Working)
-      axios
-        .get(`${baseUrl}/users/interests/${loggedInUserID}`)
-        .then((response) => {
-          const data = response.data;
-
-          // forEach value of category ID,
-          if (data) {
-            data.forEach((category) => {
-              // Get all categories which the user is interested in
-              axios
-                .get(`${baseUrl}/users/interests/${loggedInUserID}`)
-                .then((response) => {
-                  categoryInterests = response.data;
-
-                  // Get all products from those categories
-                  categoryInterests.forEach((interestID, interestIndex) => {
-                    // Get products for this one category
-                    axios
-                      .get(`${baseUrl}/product/search/category/${interestID}`)
-                      .then((productResponse) => {
-                        products = productResponse.data;
-
-                        // Append all products
-                        products.forEach((product, productsIndex) => {
-                          // For this one product
-
-                          // If it is the first one being appended to the carousel
-                          const firstContentHTML = `
-                            <div class="carousel-item active">
-                              <div style="width: 50%; padding: 1em">
-                                <a href="#" style="text-decoration: none; color: black">
-                                  <h4>${product.name}</h4>
-                                  <p>
-                                    Price: $${product.price.toFixed(2)}
-                                  </p>
-                                  <p>
-                                    Description: ${product.description}
-                                  </p>
-                                  <p>Rating: 4 stars</p>
-                                </a>
-                              </div>
-                            </div>
-                                `;
-
-                          // It is not the first one to be appended
-                          const ContentHTML = `
-                            <div class="carousel-item">
-                              <div style="width: 50%; padding: 1em">
-                                <a href="#" style="text-decoration: none; color: black">
-                                  <h4>${product.name}</h4>
-                                  <p>
-                                    Price: $${product.price.toFixed(2)}
-                                  </p>
-                                  <p>
-                                    Description: ${product.description}
-                                  </p>
-                                  <p>Rating: 4 stars</p>
-                                </a>
-                              </div>
-                            </div>
-                                `;
-
-                          if (interestIndex == 0 && productsIndex == 0) {
-                            $("#forUser").append(firstContentHTML);
-                          } else {
-                            $("#forUser").append(ContentHTML);
-                          }
-                        });
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                    // Append them to the carousel
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            });
-            // data.forEach((category, index) => {
-            //   // Get products based on category ID
-            //   console.log(
-            //     `Getting Products for category ` + category.fk_category_id
-            //   );
-            //   axios
-            //     .get(
-            //       `${baseUrl}/product/search/category/${category.fk_category_id}`
-            //     )
-            //     .then((response) => {
-            //       categoryContents = response.data;
-            //       if (categoryContents) {
-            //         categoryContents.forEach(
-            //           (categoryContents, contentsIndex) => {
-            //             let priceHTML;
-            //             // Check if there is a promotion for the current product
-            //             axios
-            //               .get(
-            //                 `${baseUrl}/promotion/byitem/${categoryContents.productid}`
-            //               )
-            //               .then((promoResponse) => {
-            //                 promoData = promoResponse.data;
-            //                 function newPrice(orgPrice, discount) {
-            //                   return (
-            //                     (orgPrice / 100) *
-            //                     (100 - discount)
-            //                   ).toFixed(2);
-            //                 }
-            //                 if (promoData) {
-            //                   console.log(
-            //                     `promoData.promotion = ${promoData.promotion}`
-            //                   );
-            //                   // There are promotions!
-            //                   // For this promotion,
-            //                   // Set promotion price html
-            //                   priceHTML = `
-            //                     <p>
-            //                       Price:
-            //                       <del>$${categoryContents.price.toFixed(
-            //                         2
-            //                       )}</del>
-            //                       <ins>$${newPrice(
-            //                         categoryContents.price,
-            //                         promoData.promotion
-            //                       )}</ins>
-            //                     </p>
-            //                   `;
-            //                 } else {
-            //                   // There is no promo price
-            //                   // set normal price html
-            //                   console.log(`Setting normal price html`);
-            //                   priceHTML = `
-            //                   <p>
-            //                     Price: $${categoryContents.price.toFixed(2)}
-            //                   </p>
-            //                   `;
-            //                 }
-            //               });
-            //             const firstContentHTML = `
-            //           <div class="carousel-item active">
-            //               <div style="width: 50%; padding: 1em">
-            //                 <a href="#" style="text-decoration: none; color: black">
-            //                   <h4>${categoryContents.name}</h4>
-            //                   ${priceHTML}
-            //                   <p>
-            //                     Description: ${categoryContents.description}
-            //                   </p>
-            //                   <p>Rating: 4 stars</p>
-            //                 </a>
-            //               </div>
-            //             </div>
-            //                     `;
-            //             const ContentHTML = `
-            //           <div class="carousel-item">
-            //               <div style="width: 50%; padding: 1em">
-            //                 <a href="#" style="text-decoration: none; color: black">
-            //                   <h4>${categoryContents.name}</h4>
-            //                   ${priceHTML}
-            //                   <p>
-            //                     Description: ${categoryContents.description}
-            //                   </p>
-            //                   <p>Rating: 4 stars</p>
-            //                 </a>
-            //               </div>
-            //             </div>
-            //                     `;
-            //             if (contentsIndex == 0 && index == 0) {
-            //               $("#forUser").append(firstContentHTML);
-            //             } else {
-            //               $("#forUser").append(ContentHTML);
-            //             }
-            //           }
-            //         );
-            //       }
-            //     })
-            //     .catch((error) => {
-            //       console.log(error);
-            //     });
-            // });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      // Get newly added products (Working)
+      // Get newly added products (Done)
       axios
         .get(`${baseUrl}/product/search/creation/desc`)
         .then((response) => {
@@ -436,7 +336,9 @@
               const firstNewProductHTML = `
               <div class="carousel-item active">
               <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
+                <a href="/product/${
+                  newProducts.productid
+                }" style="text-decoration: none; color: black">
                   <h4>${newProducts.name}</h4>
                   <p>
                     Price: $${newProducts.price.toFixed(2)}
@@ -453,7 +355,9 @@
               const productHTML = `
               <div class="carousel-item">
                 <div style="width: 50%; padding: 1em">
-                <a href="#" style="text-decoration: none; color: black">
+                <a href="/product/${
+                  newProducts.productid
+                }" style="text-decoration: none; color: black">
                   <h4>${newProducts.name}</h4>
                   <p>
                     Price: $${newProducts.price.toFixed(2)}
@@ -478,6 +382,14 @@
         .catch((error) => {
           console.log(error);
         });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
     </script>
   </body>
 </html>

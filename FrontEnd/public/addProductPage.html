@@ -18,10 +18,11 @@
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/promotions/">Promotions</a>
         <a class="nav-link" href="/allProducts/">All products</a>
-        <div id="signInOutUp">
-          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
-        </div>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <button class="btn btn-danger logout-button">Logout</button>
       </nav>
+
       <div style="margin-top: 2rem" id="user-profile">
         <div class="container">
           <h1 class="text-primary">Edit Profile</h1>
@@ -196,6 +197,14 @@
             alert("Error! Something went wrong! :>@\n" + error);
             console.log("Error! Something went wrong! :>@");
           });
+      });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
       });
     </script>
   </body>

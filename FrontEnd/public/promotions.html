@@ -18,6 +18,8 @@
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/promotions/">Promotions</a>
         <a class="nav-link" href="/allProducts/">All products</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
         <div id="signInOutUp">
           <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
         </div>
@@ -26,9 +28,16 @@
       <div style="margin-top: 2rem">
         <div class="col-md-8 col-xs-12">
           <h1>Promotions</h1>
+        </div>
 
+        <div style="margin-top: 2rem " class="col-md-8 col-xs-12">
           <form id="create-post-form" style="margin-top: 2rem">
             <div class="form-group">
+              <select class="form-select" aria-label="Default select example">
+                <option selected>Title</option>
+                <option value="brand">Brand</option>
+                <option value="category">Category</option>
+              </select>
               <input
                 class="form-control"
                 id="search-bar-form-body"
@@ -39,7 +48,7 @@
             <button type="submit" class="btn btn-primary">Search</button>
           </form>
         </div>
-      </div>
+      
       <div style="margin-top: 2rem">
         <div class="col-md-4 col-xs-12">
           <h2>Filters</h2>
@@ -64,22 +73,17 @@
         <div class="col-md-4 col-xs-12">
           <h2>Sort by</h2>
           <div id="Filters">
-            <form>
-              <input type="checkbox" id="price" name="price" value="10" />
-              <label for="price">Price</label>
-              <br />
-              <input type="checkbox" id="added" name="added" value="15" />
-              <label for="added">Date added</label>
-              <br />
-              <input type="checkbox" id="ending" name="ending" value="10" />
-              <label for="ending">Ending Soon</label>
-              <br />
-              <input type="checkbox" id="rating" name="rating" value="10" />
-              <label for="rating">Rating</label>
-              <br />
-            </form>
+            <select class="form-select" aria-label="Default select example">
+              <option selected>Filter</option>
+              <option value="price">Price</option>
+              <option value="dateAdded">Date added</option>
+              <option value="endingSoon">Ending soon</option>
+              <option value="rating">Rating</option>
+            </select>
+
             <p></p>
-            <button type="submit" class="btn btn-primary">Filter</button>
+
+            <button type="submit" class="btn btn-primary">Sort</button>
           </div>
         </div>
       </div>
@@ -124,5 +128,29 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      console.log("Bearer " + token);
+
+      const loggedInUserID = localStorage.getItem("loggedInUserID");
+      console.log(loggedInUserID);
+
+      if (token && loggedInUserID != null) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
   </body>
 </html>

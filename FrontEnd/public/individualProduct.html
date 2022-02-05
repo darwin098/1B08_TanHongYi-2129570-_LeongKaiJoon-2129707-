@@ -24,15 +24,29 @@
     />
   </head>
   <body>
-    <!-- Product section-->
-    <section class="py-5">
-      <div class="container px-4 px-lg-5 my-5">
-        <div
-          class="row gx-4 gx-lg-5 align-items-center"
-          id="product-display"
-        ></div>
-      </div>
-    </section>
+    <div class="container">
+      <!-- Navigation -->
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/allProducts/">All products</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <div id="signInOutUp">
+          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
+        </div>
+      </nav>
+
+      <!-- Product section-->
+      <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+          <div
+            class="row gx-4 gx-lg-5 align-items-center"
+            id="product-display"
+          ></div>
+        </div>
+      </section>
+    </div>
 
     <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -59,8 +73,6 @@
       console.log(loggedInUserID);
 
       const url = window.location.toString();
-      // const userID = parseInt(url.split("/").slice(-1)[0]);
-      const userID = 34;
 
       // Scenarios for people editing profiles:
       // 1. Someone random, not logged in, trying to access the page
@@ -68,19 +80,24 @@
       // 3. Admin editing one user
       // 4. User editing himself
 
-      if (loggedInUserID == userID || role == "admin") {
-        // 3. Admin editing one user
-        // 4. User editing himself
-        axios
-          .get(`${baseUrl}/product/search/13/`, {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
-          .then((response) => {
-            console.log("Axios");
-            const user = response.data;
-            $("#product-display").append(`<div class="col-md-6">
+      if (token && loggedInUserID != null) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+      // 3. Admin editing one user
+      // 4. User editing himself
+      axios
+        .get(`${baseUrl}/product/search/13/`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((response) => {
+          console.log("Axios");
+          const user = response.data;
+          $("#product-display").append(`<div class="col-md-6">
             <img
               class="card-img-top mb-5 mb-md-0"
               src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg"
@@ -109,14 +126,15 @@
               </button>
             </div>
           </div>`);
-          });
-      }
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      else {
+        });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
         window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
+      });
     </script>
   </body>
 </html>

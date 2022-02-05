@@ -18,14 +18,20 @@
         <a class="nav-link" href="/">Home</a>
         <a class="nav-link" href="/promotions/">Promotions</a>
         <a class="nav-link" href="/allProducts/">All products</a>
-        <div id="signInOutUp">
-          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
-        </div>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
       </nav>
 
       <h1>Login</h1>
       <p>Don't have an account?</p>
       <a href="/register/" class="btn btn-primary">Register</a>
+
+      <br />
+      <div style="padding: 1em 0px">
+        <div id="userMessage"></div>
+      </div>
+
       <form id="login-form">
         <div class="form-group">
           <label for="username">Username</label>
@@ -56,6 +62,15 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
       const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      console.log("Bearer " + token);
+      // const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+      const loggedInUserID = localStorage.getItem("loggedInUserID");
+      if (token && loggedInUserID != null) {
+        alert("You have already signed in!");
+        window.location.href = "/";
+      }
 
       $("#login-form").submit((event) => {
         // prevent page reload
@@ -78,10 +93,14 @@
             localStorage.setItem("token", token);
             localStorage.setItem("loggedInUserID", loggedInUserID);
             localStorage.setItem("role", role);
+            $("#userMessage").replaceWith("Successful log in!");
             window.location.href = "/";
+            alert("You have logged in!");
           })
           .catch((error) => {
-            alert("The entered username or password is incorrect!");
+            $("#userMessage").replaceWith(
+              "The entered username or password is incorrect!"
+            );
             console.log(error);
           });
       });
