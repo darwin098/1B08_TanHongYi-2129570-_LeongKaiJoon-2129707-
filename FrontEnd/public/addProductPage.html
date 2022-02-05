@@ -11,6 +11,16 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+    <script>
+      const role = localStorage.getItem("role");
+
+      if (role != "admin") {
+        // 1. Someone random, not logged in, trying to access this page
+        // 2. Some other user trying to edit the product
+        window.location.href = "/signIn/";
+        alert("You are not an admin!");
+      }
+    </script>
   </head>
   <body>
     <div class="container" style="margin-bottom: 10rem">
@@ -148,26 +158,12 @@
 
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
 
       let requestToken = {
         headers: {
           Authorization: "Bearer " + token,
         },
       };
-
-      // Scenarios for people editing profiles:
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      // 3. Admin editing one user
-      // 4. User editing himself
-
-      if (role != "admin") {
-        // 1. Someone random, not logged in, trying to access this page
-        // 2. Some other user trying to edit the product
-        window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
 
       axios
         .get(`${baseUrl}/category`)

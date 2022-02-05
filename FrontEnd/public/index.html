@@ -11,6 +11,15 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+    <script>
+      const token = localStorage.getItem("token");
+      if (token) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+    </script>
   </head>
   <body>
     <div class="container">
@@ -121,20 +130,11 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
       const baseUrl = "http://localhost:3000";
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
-      console.log("Bearer " + token);
 
       const loggedInUserID = localStorage.getItem("loggedInUserID");
       console.log(loggedInUserID);
 
-      if (token && loggedInUserID != null) {
-        let logoutButton = `
-        <button class="btn btn-danger logout-button">Logout</button>
-        `;
-        $("#signInOutUp").replaceWith(logoutButton);
-
-        let recomendations = `
+      let recomendations = `
           <div class="col-md-4 col-xs-12">
             <h2>For you</h2>
           </div>
@@ -165,32 +165,30 @@
             </a>
           </div>
         `;
-        $("#forYouSection").append(recomendations);
+      $("#forYouSection").append(recomendations);
 
-        // Get recommended (Working)
-        // Get user's interests
-        axios
-          .get(`${baseUrl}/users/interests/${loggedInUserID}`)
-          .then((response) => {
-            const data = response.data;
+      // Get recommended (Working)
+      // Get user's interests
+      axios
+        .get(`${baseUrl}/users/interests/${loggedInUserID}`)
+        .then((response) => {
+          const data = response.data;
 
-            // forEach category ID,
-            if (data) {
-              data.forEach((category, interestIndex) => {
-                // Get all products
-                axios
-                  .get(
-                    `${baseUrl}/interest/category/${category.fk_category_id}`
-                  )
-                  .then((productResponse) => {
-                    products = productResponse.data;
+          // forEach category ID,
+          if (data) {
+            data.forEach((category, interestIndex) => {
+              // Get all products
+              axios
+                .get(`${baseUrl}/interest/category/${category.fk_category_id}`)
+                .then((productResponse) => {
+                  products = productResponse.data;
 
-                    // Append all products
-                    products.forEach((product, productsIndex) => {
-                      // For this one product
+                  // Append all products
+                  products.forEach((product, productsIndex) => {
+                    // For this one product
 
-                      // If it is the first one being appended to the carousel
-                      const firstContentHTML = `
+                    // If it is the first one being appended to the carousel
+                    const firstContentHTML = `
                             <div class="carousel-item active">
                               <div style="width: 50%; padding: 1em">
                                 <a href="/product/${
@@ -209,8 +207,8 @@
                             </div>
                                 `;
 
-                      // It is not the first one to be appended
-                      const ContentHTML = `
+                    // It is not the first one to be appended
+                    const ContentHTML = `
                             <div class="carousel-item">
                               <div style="width: 50%; padding: 1em">
                                 <a href="/product/${
@@ -229,28 +227,27 @@
                             </div>
                                 `;
 
-                      if (interestIndex == 0 && productsIndex == 0) {
-                        $("#forUser").append(firstContentHTML);
-                      } else {
-                        $("#forUser").append(ContentHTML);
-                      }
-                    });
-                  })
-                  .catch((error) => {
-                    console.log(error);
+                    if (interestIndex == 0 && productsIndex == 0) {
+                      $("#forUser").append(firstContentHTML);
+                    } else {
+                      $("#forUser").append(ContentHTML);
+                    }
                   });
-                // Append them to the carousel
-              });
-            } else {
-              $("#forYouSection").append(`
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+              // Append them to the carousel
+            });
+          } else {
+            $("#forYouSection").append(`
                 <h2 style="text-align: center; margin: 2.5em; border: solid black 0.1em">You are currently not interested in any categories of products! </br> </br> Add some from a product page!</h2>
               `);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       // Get promotions (Done)
       axios

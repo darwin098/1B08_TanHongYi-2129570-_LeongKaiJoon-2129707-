@@ -11,6 +11,17 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+
+    <script>
+      const role = localStorage.getItem("role");
+
+      if (role != "admin") {
+        // 1. Someone random, not logged in, trying to access this page
+        // 2. Some other user trying to edit the product
+        window.location.href = "/signIn/";
+        alert("You are not an admin!");
+      }
+    </script>
   </head>
   <body>
     <div class="container" style="margin-bottom: 10rem">
@@ -56,32 +67,15 @@
       const productID = parseInt(url.split("/").slice(-1)[0]);
 
       const baseUrl = "http://localhost:3000";
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
 
-      // Scenarios for people editing profiles:
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      // 3. Admin editing one user
-      // 4. User editing himself
+      // Get product data
+      axios
+        .get(`${baseUrl}/product/search/${productID}`)
+        .then((response) => {
+          product = response.data;
 
-      if (role != "admin") {
-        // 1. Someone random, not logged in, trying to access this page
-        // 2. Some other user trying to edit the product
-        window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
-
-      // 3. Admin is editing product
-      else {
-        // Get product data
-        axios
-          .get(`${baseUrl}/product/search/${productID}`)
-          .then((response) => {
-            product = response.data;
-
-            $("#productSection")
-              .replaceWith(`<div class="row" id="productSection">
+          $("#productSection")
+            .replaceWith(`<div class="row" id="productSection">
             <!-- left column -->
             <!-- Image Section -->
             <div class="col-md-3">
@@ -146,8 +140,8 @@
             </div>
           </div>`);
 
-            // Set product data-fields
-            $("#productName").append(`
+          // Set product data-fields
+          $("#productName").append(`
                 <input
                     class="form-control"
                     type="text"
@@ -155,7 +149,7 @@
                     id="productNameInput"
                 />
               `);
-            $("#productDescription").append(`
+          $("#productDescription").append(`
                 <input
                     class="form-control"
                     type="text"
@@ -163,7 +157,7 @@
                     id="productNameInput"
                 />
               `);
-            $("#productCategory").append(`
+          $("#productCategory").append(`
                 <input
                     class="form-control"
                     type="tel"
@@ -171,7 +165,7 @@
                     id="productNameInput"
                 />
               `);
-            $("#productBrand").append(`
+          $("#productBrand").append(`
                 <input
                     class="form-control"
                     type="text"
@@ -179,7 +173,7 @@
                     id="productNameInput"
                 />
               `);
-            $("#productPrice").append(`
+          $("#productPrice").append(`
                 <input
                     class="form-control"
                     type="number"
@@ -187,21 +181,20 @@
                     id="productNameInput"
                 />
               `);
-          })
-          .catch((error) => {
-            console.log(error);
+        })
+        .catch((error) => {
+          console.log(error);
 
-            if (error.response.status == 404) {
-              // Send message no product found
-              $("#productSection").replaceWith(`
+          if (error.response.status == 404) {
+            // Send message no product found
+            $("#productSection").replaceWith(`
                 <h2 style="text-align: center">Product not found...</h2>
                 <a href="#">
                  <p style="text-align: center; margin-top: 5em">Add new product instead</p>
                 </a>
               `);
-            }
-          });
-      }
+          }
+        });
 
       $("#edit-prod-form").submit((event) => {
         // Prevent page reload

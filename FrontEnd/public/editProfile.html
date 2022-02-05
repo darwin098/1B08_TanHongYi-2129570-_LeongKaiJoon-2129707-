@@ -11,6 +11,19 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+    <script>
+      const role = localStorage.getItem("role");
+      const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+      if (loggedInUserID == userID || role == "admin") {
+        if (loggedInUserID != userID) {
+          window.location.href = "/";
+          alert("This is not your account!");
+        } else {
+          window.location.href = "/signIn/";
+          alert("You are not an admin!");
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="container" style="margin-bottom: 10rem">
@@ -107,8 +120,6 @@
     <script>
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
-      const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
       var exstingCateList = [[], [], []];
       var interestsList = {};
       var somethingChanged = false;
@@ -129,14 +140,13 @@
       // 3. Admin editing one user
       // 4. User editing himself
 
-      if (loggedInUserID == userID || role == "admin") {
-        // 3. Admin editing one user
-        // 4. User editing himself
-        axios
-          .get(`${baseUrl}/users/${userID}/`, requestToken)
-          .then((response) => {
-            user = response.data;
-            $("#usernameValue").append(`
+      // 3. Admin editing one user
+      // 4. User editing himself
+      axios
+        .get(`${baseUrl}/users/${userID}/`, requestToken)
+        .then((response) => {
+          user = response.data;
+          $("#usernameValue").append(`
               <input
                 class="form-control"
                 type="tel"
@@ -144,7 +154,7 @@
                 id="username"
               />
              `);
-            $("#contactValue").append(`
+          $("#contactValue").append(`
               <input
                 class="form-control"
                 type="tel"
@@ -152,7 +162,7 @@
                 id="contact"
               />
             `);
-            $("#emailValue").append(`
+          $("#emailValue").append(`
               <input
                 class="form-control"
                 type="email"
@@ -160,7 +170,7 @@
                 id="email"
               />
             `);
-            $("#passwordValue").append(`
+          $("#passwordValue").append(`
               <input
                 class="form-control"
                 type="password"
@@ -168,84 +178,72 @@
                 id="password"
               />
             `);
-          });
-
-        axios.get(`${baseUrl}/users/interests/${userID}`).then((response) => {
-          console.log("Retrieved");
-          const tmpInterests = response.data;
-          interestsList = tmpInterests;
         });
 
-        axios.get(`${baseUrl}/category`).then((response) => {
-          const allCategories = response.data;
+      axios.get(`${baseUrl}/users/interests/${userID}`).then((response) => {
+        console.log("Retrieved");
+        const tmpInterests = response.data;
+        interestsList = tmpInterests;
+      });
 
-          // For every category in category table
-          allCategories.forEach((category) => {
-            exstingCateList[0].push(`${category.category}`);
-            exstingCateList[1].push(parseInt(`${category.categoryid}`));
-            // If there's an interest enter possibility check for putting a checked box
-            var effCheck = 0; // Variable to detect whenever interests has been matched ith box, to prevent looping if all interests are already matched
-            if (interestsList != effCheck) {
-              // Sets check
-              var check = false;
-              for (var i = 0; i < interestsList.length; i++) {
-                // Sanity Check
-                console.log("Entering Loop");
+      axios.get(`${baseUrl}/category`).then((response) => {
+        const allCategories = response.data;
 
-                // If there are interests for the user
-                // And when the user preference matches
-                // Append pre-checked box
-                if (
-                  parseInt(interestsList[i].fk_category_id) ==
-                  parseInt(category.categoryid)
-                ) {
-                  console.log("Checked");
-                  // Check Box HTML
-                  $("#checkboxLine").append(`
+        // For every category in category table
+        allCategories.forEach((category) => {
+          exstingCateList[0].push(`${category.category}`);
+          exstingCateList[1].push(parseInt(`${category.categoryid}`));
+          // If there's an interest enter possibility check for putting a checked box
+          var effCheck = 0; // Variable to detect whenever interests has been matched ith box, to prevent looping if all interests are already matched
+          if (interestsList != effCheck) {
+            // Sets check
+            var check = false;
+            for (var i = 0; i < interestsList.length; i++) {
+              // Sanity Check
+              console.log("Entering Loop");
+
+              // If there are interests for the user
+              // And when the user preference matches
+              // Append pre-checked box
+              if (
+                parseInt(interestsList[i].fk_category_id) ==
+                parseInt(category.categoryid)
+              ) {
+                console.log("Checked");
+                // Check Box HTML
+                $("#checkboxLine").append(`
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox" checked>
                       <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                     </div>
                   `);
-                  check = true;
-                  effCheck += 1;
-                  break;
-                }
+                check = true;
+                effCheck += 1;
+                break;
               }
-              // If current category has not caught the interest *wink wink* of the user
-              // Append the non-checked box
-              if (!check) {
-                console.log("Unchecked");
-                $("#checkboxLine").append(`
+            }
+            // If current category has not caught the interest *wink wink* of the user
+            // Append the non-checked box
+            if (!check) {
+              console.log("Unchecked");
+              $("#checkboxLine").append(`
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox">
                     <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                   </div>
                 `);
-                check = true;
-              }
-            } else {
-              $("#checkboxLine").append(`
+              check = true;
+            }
+          } else {
+            $("#checkboxLine").append(`
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox">
                   <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                 </div>
               `);
-            }
-          });
+          }
         });
-      }
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      else {
-        if (loggedInUserID != userID) {
-          window.location.href = "/";
-          alert("This is not your account!");
-        } else {
-          window.location.href = "/signIn/";
-          alert("Hacking the website? Naughty~~ ;)");
-        }
-      }
+      });
 
       $("#edit-prof-form").submit((event) => {
         somethingChanged = false;

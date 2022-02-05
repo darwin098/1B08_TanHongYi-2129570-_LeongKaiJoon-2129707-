@@ -22,6 +22,16 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+
+    <script>
+      const token = localStorage.getItem("token");
+      if (token != null) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+    </script>
   </head>
   <body>
     <div class="container">
@@ -117,21 +127,12 @@
 
     <script>
       const baseUrl = "http://localhost:3000";
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
       console.log("Bearer " + token);
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      console.log(loggedInUserID);
 
       const url = window.location.toString();
       const productID = parseInt(url.split("/").slice(-1)[0]);
 
-      if (token && loggedInUserID != null) {
-        let logoutButton = `
-        <button class="btn btn-danger logout-button">Logout</button>
-        `;
-        $("#signInOutUp").replaceWith(logoutButton);
-      }
       // 3. Admin editing one user
       // 4. User editing himself
       axios

@@ -11,6 +11,15 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+
+    <script>
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      if (token && loggedInUserID != null) {
+        alert("You have already signed in!");
+        window.location.href = "/";
+      }
+    </script>
   </head>
   <body>
     <div class="container">
@@ -62,11 +71,6 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
       const baseUrl = "http://localhost:3000";
-
-      if (token && loggedInUserID != null) {
-        alert("You have already signed in!");
-        window.location.href = "/";
-      }
 
       $("#login-form").submit((event) => {
         console.log("Submitting");

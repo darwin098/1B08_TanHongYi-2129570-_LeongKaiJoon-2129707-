@@ -139,12 +139,7 @@ app.post("/login/", printDebugInfo, function (req, res) {
     if (!err) {
       // -------|
       if (!result) {
-        let dataJSON = {
-          token: "",
-          userInfo: {},
-        };
-
-        res.status(200).type("json").send(dataJSON);
+        res.status(401).type("json").send("Invalid login credentials");
       } else {
         let dataJSON = {
           token: result.f_token,
@@ -798,6 +793,15 @@ app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let pid = parseInt(req.params.id);
 
+  if (req.role != "admin") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
+
   if (isNaN(pid)) {
     res.statusCode = 400;
     res.send("Invalid Input");
@@ -986,7 +990,7 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // [Done]
 // Get review by ID
 // http://localhost:3000/review/24/
-app.get("/review/:rid", printDebugInfo, function (req, res) {
+app.get("/review/:rid", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let rid = parseInt(req.params.rid);
 

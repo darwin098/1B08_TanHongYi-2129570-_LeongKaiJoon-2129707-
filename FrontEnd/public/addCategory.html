@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Add Category</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <script>
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      if (role != "admin") {
+        // 1. Someone random, not logged in, trying to access this page
+        // 2. Some other user trying to edit the product
+        window.location.href = "/signIn/";
+        alert("You are not an admin!");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/search/">Search</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <button class="btn btn-danger logout-button">Logout</button>
+      </nav>
+
+      <div style="margin-top: 2rem" id="user-profile">
+        <div class="container">
+          <!-- Header -->
+          <h1 class="text-primary">Add Category</h1>
+          <hr />
+
+          <div class="" id="productSection">
+            <!-- edit form column -->
+            <!-- Info Section -->
+            <div id="product-info">
+              <div class="alert alert-info alert-dismissable">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee">
+                  <div id="alertMessage">You are adding a category :)</div>
+                </i>
+              </div>
+
+              <h3>Category info</h3>
+
+              <!-- Edit product section -->
+              <form class="form-horizontal" role="form" id="add-cat-form">
+                <!-- Product brand -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Category name:</label>
+                  <input
+                    class="form-control col-lg-9"
+                    type="text"
+                    id="catName"
+                  />
+                </div>
+
+                <!-- Product brand -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Description:</label>
+                  <input
+                    class="form-control col-lg-9"
+                    type="text"
+                    id="catDesc"
+                  />
+                </div>
+
+                <button type="submit">Add</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const url = window.location.toString();
+      const productID = parseInt(url.split("/").slice(-1)[0]);
+
+      const baseUrl = "http://localhost:3000";
+
+      let requestToken = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      // Scenarios for people editing profiles:
+      // 1. Someone random, not logged in, trying to access the page
+      // 2. Some other user trying to edit another user
+      // 3. Admin editing one user
+      // 4. User editing himself
+
+      axios
+        .get(`${baseUrl}/category`)
+        .then((response) => {
+          const allCategories = response.data;
+          // For every category in category table
+          allCategories.forEach((category) => {
+            $("#productCategoryInput").append(
+              `<option value="${category.categoryid}">${category.category}</option>`
+            );
+          });
+        })
+        .catch((error) => {
+          console.log("Error Getting Categories");
+        });
+
+      $("#add-cat-form").submit((event) => {
+        // Prevent page reload
+        event.preventDefault();
+
+        const name = $("#catName").val();
+        const desc = $("#catDesc").val();
+
+        requestBody = {
+          category: name,
+          description: desc,
+        };
+
+        // Update product
+        axios
+          .post(`${baseUrl}/category/add`, requestBody, requestToken)
+          .then((response) => {
+            alert("Successfully Added Product");
+          })
+          .catch((error) => {
+            if (error.response.status == 422) {
+              // Send message no product found
+              $("#alertMessage").replaceWith(`
+                <div id="alertMessage">Category already exists!</div>
+              `);
+            }
+          });
+      });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
+  </body>
+</html>
