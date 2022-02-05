@@ -765,7 +765,7 @@ app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   };
 
   // Step 2 and 3: Process and respond
-  User.edit(uid, data, function (err, result) {
+  Product.edit(uid, data, function (err, result) {
     if (err) {
       res.status(500).send("Internal Server Error").end();
     } else {

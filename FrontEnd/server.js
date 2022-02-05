@@ -27,6 +27,10 @@ app.get("/editProfile/", (req, res) => {
   res.sendFile("/public/editProfile.html", { root: __dirname });
 });
 
+app.get("/products/edit/:pid", (req, res) => {
+  res.sendFile("/public/editProduct.html", { root: __dirname });
+});
+
 app.get("/signIn/", (req, res) => {
   res.sendFile("/public/login.html", { root: __dirname });
 });

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Edit Product</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/search/">Search</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <button class="btn btn-danger logout-button">Logout</button>
+      </nav>
+
+      <div style="margin-top: 2rem" id="user-profile">
+        <div class="container">
+          <!-- Header -->
+          <h1 class="text-primary">Edit Product</h1>
+          <hr />
+
+          <div class="row" id="productSection"></div>
+        </div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const url = window.location.toString();
+      const productID = parseInt(url.split("/").slice(-1)[0]);
+
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+
+      // Scenarios for people editing profiles:
+      // 1. Someone random, not logged in, trying to access the page
+      // 2. Some other user trying to edit another user
+      // 3. Admin editing one user
+      // 4. User editing himself
+
+      if (role != "admin") {
+        // 1. Someone random, not logged in, trying to access this page
+        // 2. Some other user trying to edit the product
+        window.location.href = "/signIn/";
+        alert("Hacking the website? Naughty~~ ;)");
+      }
+
+      // 3. Admin is editing product
+      else {
+        // Get product data
+        axios
+          .get(`${baseUrl}/product/search/${productID}`)
+          .then((response) => {
+            product = response.data;
+
+            $("#productSection")
+              .replaceWith(`<div class="row" id="productSection">
+            <!-- left column -->
+            <!-- Image Section -->
+            <div class="col-md-3">
+              <div class="text-center">
+                <img
+                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                  class="avatar img-circle img-thumbnail"
+                  alt="avatar"
+                />
+                <h6>Upload a different photo...</h6>
+
+                <input type="file" class="form-control" />
+              </div>
+            </div>
+
+            <!-- edit form column -->
+            <!-- Info Section -->
+            <div class="col-md-9" id="product-info">
+              <div class="alert alert-info alert-dismissable">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee"></i>
+                This product's ID is ${productID}
+              </div>
+
+              <h3>Product info</h3>
+
+              <!-- Edit product section -->
+              <form class="form-horizontal" role="form" id="edit-prod-form">
+                <!-- Product name -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Name:</label>
+                  <div class="col-lg-8" id="productName"></div>
+                </div>
+
+                <!-- Product description -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Description:</label>
+                  <div class="col-lg-8" id="productDescription"></div>
+                </div>
+
+                <!-- Product category -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Category:</label>
+                  <div class="col-lg-8" id="productCategory"></div>
+                </div>
+
+                <!-- Product brand -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Brand:</label>
+                  <div class="col-lg-8" id="productBrand"></div>
+                </div>
+
+                <!-- Product Price -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Price:</label>
+                  <div class="col-lg-8" id="productPrice"></div>
+                </div>
+
+                <button type="submit">Update</button>
+                <button type="reset">Abort</button>
+              </form>
+            </div>
+          </div>`);
+
+            // Set product data-fields
+            $("#productName").append(`
+                <input
+                    class="form-control"
+                    type="text"
+                    value="${product.name}"
+                    id="productNameInput"
+                />
+              `);
+            $("#productDescription").append(`
+                <input
+                    class="form-control"
+                    type="text"
+                    value="${product.description}"
+                    id="productNameInput"
+                />
+              `);
+            $("#productCategory").append(`
+                <input
+                    class="form-control"
+                    type="tel"
+                    value="${product.categoryname}"
+                    id="productNameInput"
+                />
+              `);
+            $("#productBrand").append(`
+                <input
+                    class="form-control"
+                    type="text"
+                    value="${product.brand}"
+                    id="productNameInput"
+                />
+              `);
+            $("#productPrice").append(`
+                <input
+                    class="form-control"
+                    type="number"
+                    value="${product.price}"
+                    id="productNameInput"
+                />
+              `);
+          })
+          .catch((error) => {
+            console.log(error);
+
+            if (error.response.status == 404) {
+              // Send message no product found
+              $("#productSection").replaceWith(`
+                <h2 style="text-align: center">Product not found...</h2>
+                <a href="#">
+                 <p style="text-align: center; margin-top: 5em">Add new product instead</p>
+                </a>
+              `);
+            }
+          });
+      }
+
+      $("#edit-prod-form").submit((event) => {
+        // Prevent page reload
+        event.preventDefault();
+
+        const name = $("#productName").val();
+        const desc = $("#productDescription").val();
+        const category = $("#productCategory").val();
+        const brand = $("#productBrand").val();
+        const price = $("#productPrice").val();
+
+        // Update product
+        axios;
+      });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
+  </body>
+</html>

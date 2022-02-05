@@ -353,6 +353,31 @@ let Product = {
       }
     });
   },
+  edit: function (newProductInfo, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+        UPDATE
+          ca1.users
+        SET
+          username = ?,
+          email = ?,
+          contact = ?,
+          password = ?,
+          role = ?,
+          profile_pic_url = ?
+        WHERE
+          userid = ?
+        `;
+      }
+    });
+  },
   // [Working]
   // Image Extra Feature
   // Saving Images
