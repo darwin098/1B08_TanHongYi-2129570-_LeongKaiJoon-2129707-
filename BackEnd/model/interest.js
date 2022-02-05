@@ -81,6 +81,7 @@ let Interest = {
           return callback(null, q_result);
         });
       }
+    });
   },
 };
 
