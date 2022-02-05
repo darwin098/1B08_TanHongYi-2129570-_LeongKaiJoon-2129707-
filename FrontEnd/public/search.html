@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Search</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <!-- Navigation  -->
+      <nav class="nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/search/">Search</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <div id="signInOutUp">
+          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
+        </div>
+      </nav>
+
+      <!-- Header -->
+      <div class="col-md-8 col-xs-12">
+        <h1>Search</h1>
+      </div>
+
+      <!-- Search -->
+      <div style="margin-top: 2rem" class="col-md-8 col-xs-12">
+        <form id="search-form" style="margin-top: 2rem">
+          <div class="form-group">
+            <!-- Select type of search -->
+
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="searchType"
+            >
+              <option value="name">Name</option>
+              <option value="brand">Brand</option>
+              <option value="category">Category</option>
+            </select>
+
+            <br />
+
+            <div id="selection"></div>
+
+            <br />
+
+            <!-- Text input -->
+            <input
+              class="form-control"
+              id="search-bar"
+              rows="3"
+              placeholder="Search for a product and it's promotions"
+            />
+          </div>
+
+          <!-- Search button -->
+          <div id="selectionButton"></div>
+        </form>
+      </div>
+
+      <!-- Results container -->
+      <div style="margin-top: 2rem">
+        <!-- Results header -->
+        <div>
+          <div id="resultsHeader">
+            <h2>Results</h2>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results"></div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      console.log("Bearer " + token);
+
+      const loggedInUserID = localStorage.getItem("loggedInUserID");
+      console.log(loggedInUserID);
+
+      // Check if user is logged in
+      if (token && loggedInUserID != null) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+
+      // When the document is ready
+      $(document).ready(function () {
+        let buttonHTML = `
+          <button type="submit" class="btn btn-primary">Search</button>
+        `;
+        $("#selectionButton").replaceWith(buttonHTML);
+
+        $("#searchType").on("change", function () {
+          // Search by name
+          if (this.value == "name") {
+            let nameHTML = `
+            <div class="form-select" id="selection"></div>
+            `;
+
+            $("#selection").replaceWith(nameHTML);
+          }
+
+          // Search by brand
+          else if (this.value == "brand") {
+            let brandHTML = `
+              <div id="selection">
+                <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    id="brandSelection"
+                  >
+                </select>
+              </div>
+            `;
+            $("#selection").replaceWith(brandHTML);
+
+            // Get all brands
+            axios
+              .get(`${baseUrl}/brands`)
+              .then((response) => {
+                allBrands = response.data;
+                allBrands.forEach((brand) => {
+                  singleBrandOption = `
+                    <option value="${brand.brand}">${brand.brand}</option>
+                  `;
+                  $("#brandSelection").append(singleBrandOption);
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+
+          // Search by category
+          else if (this.value == "category") {
+            let categoryHTML = `
+              <div id="selection">
+                <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    id="categorySelection"
+                  >
+                </select>
+              </div>
+            `;
+            $("#selection").replaceWith(categoryHTML);
+
+            // Get all categories
+            axios
+              .get(`${baseUrl}/category`)
+              .then((response) => {
+                allCategories = response.data;
+                allCategories.forEach((category) => {
+                  singleCategoryOption = `
+                    <option value="${category.category}">${category.category}</option>
+                  `;
+                  $("#categorySelection").append(singleCategoryOption);
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            $("#selection").replaceWith(categoryHTML);
+          }
+        });
+      });
+
+      // Start searching
+      $("#search-form").submit((event) => {
+        event.preventDefault();
+        searchType = $("#searchType").val();
+
+        // Get text input value
+        searchValue = $("#search-bar").val();
+
+        if (searchType == "name") {
+          $("#resultsHeader").replaceWith(
+            `
+            <div id="resultsHeader">
+              <h2>Results for "${searchValue}"</h2>
+            </div>
+            `
+          );
+          $("#results").replaceWith(`
+          <div id="results"></div>
+            `);
+
+          // Search by name
+          axios
+            .post(`${baseUrl}/product/search/name`, {
+              productName: searchValue,
+            })
+            .then((response) => {
+              productList = response.data;
+              productList.forEach((product) => {
+                productHTML = `
+                    <div style="border: solid 1px red; width: 50%; padding: 1em; margin-bottom: 2.5em">
+                      <a href="/product/${product.productid}" style="text-decoration: none; color: black">
+                        <h4>${product.name}</h4>
+                        <p>
+                          Price:
+                          ${product.price}
+                        </p>
+                        <p>
+                          Description: ${product.description}
+                        </p>
+                        <p>Rating: 4 stars</p>
+                      </a>
+                    </div>
+                    `;
+
+                $("#results").append(productHTML);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+
+        if (searchType == "brand") {
+          $("#results").replaceWith(`
+          <div id="results"></div>
+            `);
+
+          // Get #brandSelection value
+          selectedBrand = $("#brandSelection").val();
+
+          console.log(selectedBrand);
+          console.log(searchValue);
+
+          $("#resultsHeader").replaceWith(
+            `
+            <div id="resultsHeader">
+              <h2>Results for "${searchValue}" in brand "${selectedBrand}"</h2>
+            </div>
+            `
+          );
+
+          // Search by brand and name
+          axios
+            .post(`${baseUrl}/product/search/brand`, {
+              productBrand: selectedBrand,
+              search: searchValue,
+            })
+            .then((response) => {
+              productList = response.data;
+              productList.forEach((product) => {
+                productHTML = `
+                    <div style="border: solid 1px red; width: 50%; padding: 1em; margin-bottom: 2.5em">
+                      <a href="/product/${product.productid}" style="text-decoration: none; color: black">
+                        <h4>${product.name}</h4>
+                        <p>
+                          Price:
+                          ${product.price}
+                        </p>
+                        <p>
+                          Description: ${product.description}
+                        </p>
+                        <p>Rating: 4 stars</p>
+                      </a>
+                    </div>
+                    `;
+                $("#results").append(productHTML);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+
+        if (searchType == "category") {
+          $("#results").replaceWith(`
+          <div id="results"></div>
+            `);
+
+          // Get #categorySelection value
+          selectedCategory = $("#categorySelection").val();
+
+          console.log(selectedCategory);
+          console.log(searchValue);
+
+          $("#resultsHeader").replaceWith(
+            `
+            <div id="resultsHeader">
+              <h2>Results for "${searchValue}" in category "${selectedCategory}"</h2>
+            </div>
+            `
+          );
+
+          // Search by category and name
+          axios
+            .post(`${baseUrl}/product/search/category`, {
+              category: selectedCategory,
+              search: searchValue,
+            })
+            .then((response) => {
+              productList = response.data;
+              productList.forEach((product) => {
+                productHTML = `
+                    <div style="border: solid 1px red; width: 50%; padding: 1em; margin-bottom: 2.5em">
+                      <a href="/product/${product.productid}" style="text-decoration: none; color: black">
+                        <h4>${product.name}</h4>
+                        <p>
+                          Price:
+                          ${product.price}
+                        </p>
+                        <p>
+                          Description: ${product.description}
+                        </p>
+                        <p>Rating: 4 stars</p>
+                      </a>
+                    </div>
+                    `;
+                $("#results").append(productHTML);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
+
+      // Log out user
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
+  </body>
+</html>

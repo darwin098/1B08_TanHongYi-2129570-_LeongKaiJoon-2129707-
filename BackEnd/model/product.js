@@ -58,7 +58,55 @@ let Product = {
     });
   },
   // [Done]
-  findByCategory: function (productCategory, callback) {
+  findByCategory: function (productCategory, productName, callback) {
+    var dbConn = db.getConnection();
+
+    console.log(productName);
+    console.log(productCategory);
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = `
+          SELECT 
+              P.productid,
+              P.name,
+              P.description,
+              P.categoryid,
+              C.category AS categoryname,
+              P.brand,
+              P.price
+          FROM 
+              ca1.product AS P,
+              ca1.category AS C 
+          WHERE 
+              P.categoryid = C.categoryid AND
+              C.category = "${productCategory}" AND
+              P.name LIKE "%${productName}%"
+          `;
+
+        dbConn.query(sql, (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findByCategoryFromInterest: function (productCategory, callback) {
     var dbConn = db.getConnection();
 
     dbConn.connect(function (err) {
@@ -102,7 +150,7 @@ let Product = {
     });
   },
   // [Done]
-  findByBrand: function (categoryBrand, callback) {
+  findByBrand: function (categoryBrand, productName, callback) {
     var dbConn = db.getConnection();
 
     dbConn.connect(function (err) {
@@ -125,17 +173,16 @@ let Product = {
               ca1.category AS C 
           WHERE 
               P.categoryid = C.categoryid AND
-              P.brand = ?
+              P.brand = "${categoryBrand}" AND
+              P.name LIKE "%${productName}%"
           `;
 
-        dbConn.query(sql, [categoryBrand], (error, resultSet) => {
+        dbConn.query(sql, (error, resultSet) => {
           dbConn.end();
           if (error) {
             console.log("query error");
             return callback(error, null);
           }
-          console.log(resultSet);
-
           if (resultSet.length == 0) {
             return callback(null, null);
           } else {
@@ -169,10 +216,10 @@ let Product = {
             ca1.category AS C 
         WHERE 
             P.categoryid = C.categoryid AND
-            P.name = ?
+            P.name LIKE "%${productName}%"
         `;
 
-        dbConn.query(sql, [productName], (error, resultSet) => {
+        dbConn.query(sql, [], (error, resultSet) => {
           dbConn.end();
           if (error) {
             console.log("query error");
@@ -233,7 +280,7 @@ let Product = {
       }
     });
   },
-  // [Working]
+  // [Done]
   findAllByDate: function (order, callback) {
     var dbConn = db.getConnection();
 

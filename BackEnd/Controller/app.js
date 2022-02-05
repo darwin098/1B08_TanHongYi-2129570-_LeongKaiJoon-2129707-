@@ -599,7 +599,7 @@ app.post("/product/", printDebugInfo, verifyToken, function (req, res) {
 // [Done]
 // Get product by name
 // http://localhost:3000/search/name
-app.get("/product/search/name", printDebugInfo, function (req, res) {
+app.post("/product/search/name", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let name = req.body.productName;
 
@@ -622,14 +622,14 @@ app.get("/product/search/name", printDebugInfo, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Get all products by date
-// http://localhost:3000/search/name
+// http://localhost:3000/search/asc
 app.get("/product/search/creation/:order", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let order = req.params.order;
 
-  if (order != "asc" || order != "desc") {
+  if (order != "asc" && order != "desc") {
     res.status(200).end;
   }
   // Step 2 and 3: Process and respond
@@ -652,14 +652,38 @@ app.get("/product/search/creation/:order", printDebugInfo, function (req, res) {
 // [Done]
 // Get product by brand
 // http://localhost:3000/search/name
-app.get("/product/search/brand", printDebugInfo, function (req, res) {
+app.post("/product/search/brand", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let brand = req.body.productBrand;
-
-  console.log(`Product brand: ${brand}`);
+  let search = req.body.search;
 
   // Step 2 and 3: Process and respond
-  Product.findByBrand(brand, function (err, result) {
+  Product.findByBrand(brand, search, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No such brand").end();
+      }
+    }
+  });
+});
+
+// [Done]
+// Get product by category with name
+// http://localhost:3000/search/category
+app.post("/product/search/category/", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let category = req.body.category;
+  let search = req.body.search;
+
+  // Step 2 and 3: Process and respond
+  Product.findByCategory(category, search, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();
@@ -678,36 +702,32 @@ app.get("/product/search/brand", printDebugInfo, function (req, res) {
 // [Done]
 // Get product by category
 // http://localhost:3000/search/category
-app.get(
-  "/product/search/category/:categoryid",
-  printDebugInfo,
-  function (req, res) {
-    // Step 1: extraction
-    let cid = req.params.categoryid;
+app.get("/interest/category/:categoryid", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let cid = req.params.categoryid;
 
-    if (isNaN(cid)) {
-      res.statusCode = 400;
-      res.send("Invalid Input");
-      res.end();
-    }
-
-    // Step 2 and 3: Process and respond
-    Product.findByCategory(cid, function (err, result) {
-      if (err) {
-        // Send error message response
-        res.status(500).send("Internal Server Error").end();
-      } else {
-        if (result) {
-          // Report good news
-          res.status(200).send(result).end();
-        } else {
-          // Send error message response
-          res.status(404).send("No such ID!").end();
-        }
-      }
-    });
+  if (isNaN(cid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
   }
-);
+
+  // Step 2 and 3: Process and respond
+  Product.findByCategoryFromInterest(cid, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No such ID!").end();
+      }
+    }
+  });
+});
 
 // [Working]
 // Edit product (admin) and edit image as well
@@ -838,6 +858,31 @@ app.get("/product/search/:id", printDebugInfo, function (req, res) {
       } else {
         // Send error message response
         res.status(404).send("No such ID!").end();
+      }
+    }
+  });
+});
+
+// -------------------------------------------------------------
+// Endpoints (brand)
+// -------------------------------------------------------------
+
+// [Done]
+// Show all brands
+// http://localhost:3000/brands
+app.get("/brands", printDebugInfo, function (req, res) {
+  Category.findAllBrands(function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result);
+        res.end();
+      } else {
+        // Send error message response
+        res.status(404).send("No categories found").end();
       }
     }
   });

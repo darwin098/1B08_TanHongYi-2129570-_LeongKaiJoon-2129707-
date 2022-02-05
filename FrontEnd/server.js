@@ -15,8 +15,8 @@ app.get("/promotions/", (req, res) => {
   res.sendFile("/public/promotions.html", { root: __dirname });
 });
 
-app.get("/allProducts/", (req, res) => {
-  res.sendFile("/public/allProducts.html", { root: __dirname });
+app.get("/search/", (req, res) => {
+  res.sendFile("/public/search.html", { root: __dirname });
 });
 
 app.get("/product/:pid", (req, res) => {
