@@ -35,10 +35,6 @@ app.get("/signIn/", (req, res) => {
   res.sendFile("/public/login.html", { root: __dirname });
 });
 
-app.get("/individualPage/", (req, res) => {
-  res.sendFile("/public/individualProduct.html", { root: __dirname });
-});
-
 app.get("/register/", (req, res) => {
   res.sendFile("/public/signUp.html", { root: __dirname });
 });
