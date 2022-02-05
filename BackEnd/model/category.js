@@ -81,6 +81,36 @@ let Category = {
       }
     });
   },
+  // [Done]
+  findAllBrands: function (callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const sql = "SELECT DISTINCT brand FROM ca1.product;";
+
+        dbConn.query(sql, (error, resultSet) => {
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
 };
 
 // -------------------------------------------------------------
