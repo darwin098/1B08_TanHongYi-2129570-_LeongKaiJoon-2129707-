@@ -40,6 +40,14 @@
 
                 <input type="file" class="form-control" />
               </div>
+              <form class="form-horizontal" role="form" id="edit-prefs-form">
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Preferences:</label>
+                  <div id="checkboxLine"></div>
+                  <button type="submit">Change Preferences</button>
+                  <button type="reset">Reset</button>
+                </div>
+              </form>
             </div>
 
             <!-- edit form column -->
@@ -69,10 +77,6 @@
                 <div class="form-group">
                   <label class="col-lg-3 control-label">Password:</label>
                   <div class="col-lg-8" id="passwordValue"></div>
-                </div>
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Preferences:</label>
-                  <div class="col-lg-8" id="checkboxLine"></div>
                 </div>
 
                 <button type="submit">Submit</button>
@@ -244,6 +248,65 @@
       }
 
       $("#edit-prof-form").submit((event) => {
+        somethingChanged = false;
+        // Prevent page reload
+        event.preventDefault();
+
+        const usernameEnter = $("#username").val();
+        const emailEnter = $("#email").val();
+        const contactEnter = $("#contact").val();
+        const passwordTemp = $("#password").val();
+
+        if (passwordTemp == "") {
+          passwordEnter = `${user.password}`;
+          // Checking whether current data matches their pre-populated data
+          if (
+            !(
+              usernameEnter == `${user.username}` &&
+              emailEnter == `${user.email}` &&
+              contactEnter == `${user.contact}`
+            )
+          ) {
+            somethingChanged = true;
+          }
+        } else {
+          passwordEnter = passwordTemp;
+        }
+
+        const requestBodyUser = {
+          username: usernameEnter,
+          email: emailEnter,
+          contact: contactEnter,
+          password: passwordEnter,
+          role: role,
+          profile_pic_url: user.profile_pic_url,
+        };
+
+        if (somethingChanged) {
+          somethingChanged = false;
+
+          axios
+            .put(
+              `${baseUrl}/users/edit/${userID}`,
+              requestBodyUser,
+              requestToken
+            )
+            .then((response) => {
+              alert("Success");
+              console.log("Profile Update Success");
+              window.location.reload;
+            })
+            .catch((error) => {
+              alert("Error! Something went wrong! :>@\n");
+              console.log("Error! Something went wrong! :>@");
+            });
+        } else {
+          console.log("Nothing Changed");
+        }
+      });
+
+      $("#edit-prefs-form").submit((event) => {
+        somethingChanged = false;
         // Prevent page reload
         event.preventDefault();
         exstingCateList[2] = [];
@@ -294,36 +357,13 @@
           }
         }
 
-        const usernameEnter = $("#username").val();
-        const emailEnter = $("#email").val();
-        const contactEnter = $("#contact").val();
-        const passwordTemp = $("#password").val();
-
-        if (passwordTemp == "") {
-          passwordEnter = `${user.password}`;
-          // Checking whether current data matches their pre-populated data
-          if (
-            usernameEnter == `${user.username}` &&
-            emailEnter == `${user.email}` &&
-            contactEnter == `${user.contact}` &&
-            prefEnter
-          ) {
-            somethingChanged = true;
-          }
-        } else {
-          passwordEnter = passwordTemp;
+        // Checking whether current data matches their pre-populated data
+        if (prefEnter) {
+          somethingChanged = true;
         }
 
         const requestBodyPreferences = {
           categoryids: tempString,
-        };
-        const requestBodyUser = {
-          username: usernameEnter,
-          email: emailEnter,
-          contact: contactEnter,
-          password: passwordEnter,
-          role: role,
-          profile_pic_url: user.profile_pic_url,
         };
 
         if (somethingChanged) {
@@ -345,22 +385,6 @@
             })
             .catch((error) => {
               console.log("Error In Deletion!");
-            });
-
-          axios
-            .put(
-              `${baseUrl}/users/edit/${userID}`,
-              requestBodyUser,
-              requestToken
-            )
-            .then((response) => {
-              alert("Success");
-              console.log("Profile Update Success");
-              window.location.reload;
-            })
-            .catch((error) => {
-              alert("Error! Something went wrong! :>@\n");
-              console.log("Error! Something went wrong! :>@");
             });
         } else {
           console.log("Nothing Changed");
