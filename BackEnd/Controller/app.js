@@ -1068,6 +1068,50 @@ app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
   });
 });
 
+app.delete(
+  "/interest/del/:userid",
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin" && req.role != "user") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
+    // Step 1: extraction
+    let uid = parseInt(req.params.userid);
+
+    if (isNaN(uid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
+
+      return;
+    }
+
+    // Step 2 and 3: Process and respond
+    Interest.delete(uid, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        if (result.affectedRows == 0) {
+          // Send error message response
+          res.status(404).send("User ID not found!").end();
+        } else {
+          res.status(200).send("Interests Successfully Deleted.").end();
+        }
+      }
+    });
+  }
+);
 // -------------------------------------------------------------
 // Endpoints (Image Uploading)
 // -------------------------------------------------------------

@@ -40,6 +40,14 @@
 
                 <input type="file" class="form-control" />
               </div>
+              <form class="form-horizontal" role="form" id="edit-prefs-form">
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Preferences:</label>
+                  <div id="checkboxLine"></div>
+                  <button type="submit">Change Preferences</button>
+                  <button type="reset">Reset</button>
+                </div>
+              </form>
             </div>
 
             <!-- edit form column -->
@@ -69,10 +77,6 @@
                 <div class="form-group">
                   <label class="col-lg-3 control-label">Password:</label>
                   <div class="col-lg-8" id="passwordValue"></div>
-                </div>
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Preferences:</label>
-                  <div class="col-lg-8" id="checkboxLine"></div>
                 </div>
 
                 <button type="submit">Submit</button>
@@ -105,9 +109,8 @@
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      var exstingCateList = [[], []];
+      var exstingCateList = [[], [], []];
       var interestsList = {};
-
       var somethingChanged = false;
 
       let requestToken = {
@@ -118,7 +121,7 @@
 
       const url = window.location.toString();
       // const userID = parseInt(url.split("/").slice(-1)[0]);
-      const userID = 35;
+      const userID = 32;
 
       // Scenarios for people editing profiles:
       // 1. Someone random, not logged in, trying to access the page
@@ -178,7 +181,8 @@
 
           // For every category in category table
           allCategories.forEach((category) => {
-            exstingCateList[0].push(`${category.category}Checkbox`);
+            exstingCateList[0].push(`${category.category}`);
+            exstingCateList[1].push(parseInt(`${category.categoryid}`));
             // If there's an interest enter possibility check for putting a checked box
             var effCheck = 0; // Variable to detect whenever interests has been matched ith box, to prevent looping if all interests are already matched
             if (interestsList != effCheck) {
@@ -199,7 +203,7 @@
                   // Check Box HTML
                   $("#checkboxLine").append(`
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox" checked>
+                      <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox" checked>
                       <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                     </div>
                   `);
@@ -211,17 +215,19 @@
               // If current category has not caught the interest *wink wink* of the user
               // Append the non-checked box
               if (!check) {
+                console.log("Unchecked");
                 $("#checkboxLine").append(`
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox">
+                    <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox">
                     <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                   </div>
                 `);
+                check = true;
               }
             } else {
               $("#checkboxLine").append(`
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" name="categories" value="${category.category}Checkbox">
+                  <input class="form-check-input" type="checkbox" name="categories" id="${category.category}" value="${category.category}Checkbox">
                   <label class="form-check-label" for="${category.category}checkbox">${category.category}</label>
                 </div>
               `);
@@ -242,13 +248,9 @@
       }
 
       $("#edit-prof-form").submit((event) => {
+        somethingChanged = false;
         // Prevent page reload
         event.preventDefault();
-        $("input:checkbox[name='categories']:checked").each(function () {
-          exstingCateList[1].push(this.value);
-        });
-
-        console.log(exstingCateList[1][0]);
 
         const usernameEnter = $("#username").val();
         const emailEnter = $("#email").val();
@@ -257,19 +259,19 @@
 
         if (passwordTemp == "") {
           passwordEnter = `${user.password}`;
-
+          // Checking whether current data matches their pre-populated data
           if (
-            usernameEnter == `${user.username}` &&
-            emailEnter == `${user.email}` &&
-            contactEnter == `${user.contact}`
+            !(
+              usernameEnter == `${user.username}` &&
+              emailEnter == `${user.email}` &&
+              contactEnter == `${user.contact}`
+            )
           ) {
             somethingChanged = true;
           }
         } else {
           passwordEnter = passwordTemp;
         }
-
-        const requestBodyPreferences = {};
 
         const requestBodyUser = {
           username: usernameEnter,
@@ -280,7 +282,9 @@
           profile_pic_url: user.profile_pic_url,
         };
 
-        if (!somethingChanged) {
+        if (somethingChanged) {
+          somethingChanged = false;
+
           axios
             .put(
               `${baseUrl}/users/edit/${userID}`,
@@ -290,13 +294,99 @@
             .then((response) => {
               alert("Success");
               console.log("Profile Update Success");
+              window.location.reload;
             })
             .catch((error) => {
               alert("Error! Something went wrong! :>@\n");
               console.log("Error! Something went wrong! :>@");
             });
         } else {
+          console.log("Nothing Changed");
+        }
+      });
+
+      $("#edit-prefs-form").submit((event) => {
+        somethingChanged = false;
+        // Prevent page reload
+        event.preventDefault();
+        exstingCateList[2] = [];
+        for (var z = 0; z < exstingCateList[0].length; z++) {
+          if (document.getElementById(exstingCateList[0][z]).checked) {
+            // console.log(exstingCateList[1][z]);
+            exstingCateList[2].push(exstingCateList[1][z]);
+          }
+        }
+        // Sanity Check
+        console.log(exstingCateList[2]);
+
+        var prefEnter = false;
+        var tempString = "";
+
+        if (interestsList.length == 0) {
+          prefEnter = true;
+        }
+        for (var b = 0; b < interestsList.length; b++) {
+          if (exstingCateList[2].includes(interestsList[b].fk_category_id)) {
+            if (exstingCateList[2].length != interestsList.length) {
+              console.log("Working: Diff Element No.");
+              prefEnter = true;
+              for (var c = 0; c < exstingCateList[2].length; c++) {
+                console.log("Enters *Cums*");
+                tempString += exstingCateList[2][c];
+                if (c + 1 != exstingCateList[2]) {
+                  tempString += ",";
+                }
+              }
+              console.log("tempString: " + tempString);
+              break;
+            } else {
+              console.log("Working As Intended: Is Same");
+            }
+          } else {
+            console.log("Working As Intended: Is Diff Same No.of Elements");
+            prefEnter = true;
+            for (var c = 0; c < exstingCateList[2].length; c++) {
+              console.log("Enters *Cums*");
+              tempString += exstingCateList[2][c];
+              if (c + 1 != exstingCateList[2].length) {
+                tempString += ",";
+              }
+            }
+            console.log("tempString: " + tempString);
+            break;
+          }
+        }
+
+        // Checking whether current data matches their pre-populated data
+        if (prefEnter) {
           somethingChanged = true;
+        }
+
+        const requestBodyPreferences = {
+          categoryids: tempString,
+        };
+
+        if (somethingChanged) {
+          somethingChanged = false;
+          axios
+            .delete(`${baseUrl}/interest/del/${userID}`, requestToken)
+            .then((response) => {
+              console.log("Preferences Successfully Delete");
+              axios
+                .post(
+                  `${baseUrl}/interest/${userID}`,
+                  requestBodyPreferences,
+                  requestToken
+                )
+                .then((response) => console.log("Successful Insertion"))
+                .catch((error) => {
+                  console.log("Error In Insertion!");
+                });
+            })
+            .catch((error) => {
+              console.log("Error In Deletion!");
+            });
+        } else {
           console.log("Nothing Changed");
         }
       });
