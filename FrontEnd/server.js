@@ -43,6 +43,10 @@ app.get("/register/", (req, res) => {
   res.sendFile("/public/signUp.html", { root: __dirname });
 });
 
+app.get("/tmp/", (req, res) => {
+  res.sendFile("/public/addProductPage.html", { root: __dirname });
+});
+
 // -------------------------------------------------------------
 // Config
 // -------------------------------------------------------------

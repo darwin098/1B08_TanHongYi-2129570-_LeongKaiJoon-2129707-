@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Add Products</title>
+    <title>Edit Product</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -25,52 +25,105 @@
 
       <div style="margin-top: 2rem" id="user-profile">
         <div class="container">
-          <h1 class="text-primary">Edit Profile</h1>
+          <!-- Header -->
+          <h1 class="text-primary">Add Product</h1>
           <hr />
-          <div class="row">
-            <!-- left column -->
-            <div class="col-md-3">
-              <div class="text-center">
-                <img
-                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                  class="avatar img-circle img-thumbnail"
-                  alt="avatar"
-                />
-                <h6>Upload a different photo...</h6>
 
-                <input type="file" class="form-control" />
+          <div class="row" id="productSection">
+            <div class="row" id="productSection">
+              <!-- left column -->
+              <!-- Image Section -->
+              <div class="col-md-3">
+                <div class="text-center">
+                  <img
+                    src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                    class="avatar img-circle img-thumbnail"
+                    alt="avatar"
+                  />
+                  <h6>Upload a different photo...</h6>
+
+                  <input type="file" class="form-control" />
+                </div>
               </div>
-            </div>
 
-            <!-- edit form column -->
-            <div class="col-md-9 personal-info">
-              <h3>Personal info</h3>
-
-              <form class="form-horizontal" role="form" id="edit-prof-form">
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Username:</label>
-                  <div class="col-lg-8" id="usernameValue"></div>
+              <!-- edit form column -->
+              <!-- Info Section -->
+              <div class="col-md-9" id="product-info">
+                <div class="alert alert-info alert-dismissable">
+                  <a class="panel-close close" data-dismiss="alert">×</a>
+                  <i class="fa fa-coffee"></i>
+                  Add error text!
                 </div>
 
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Contact:</label>
-                  <div class="col-lg-8" id="contactValue"></div>
-                </div>
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Email:</label>
-                  <div class="col-lg-8" id="emailValue"></div>
-                </div>
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Password:</label>
-                  <div class="col-lg-8" id="passwordValue"></div>
-                </div>
-                <button type="submit">Submit</button>
-                <button type="reset">Reset To Original</button>
-              </form>
+                <h3>Product info</h3>
+
+                <!-- Edit product section -->
+                <form class="form-horizontal" role="form" id="edit-prod-form">
+                  <!-- Product name -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Name:</label>
+                    <textarea
+                      class="form-control col-lg-9"
+                      type="text"
+                      value=""
+                      id="productNameInput"
+                      placeholder="e.g. AMD Ryzen 727 8200H Series"
+                    ></textarea>
+                  </div>
+
+                  <!-- Product description -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Description:</label>
+                    <textarea
+                      class="form-control col-lg-9"
+                      type="text"
+                      value=""
+                      id="productDescriptionInput"
+                      placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                    ></textarea>
+                  </div>
+
+                  <!-- Product category -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Category:</label>
+
+                    <select
+                      class="form-select col-lg-5"
+                      aria-label="Default"
+                      id="productCategoryInput"
+                    ></select>
+                  </div>
+
+                  <!-- Product brand -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Brand:</label>
+                    <input
+                      class="form-control col-lg-9"
+                      type="text"
+                      value=""
+                      id="productBrandInput"
+                    />
+                  </div>
+
+                  <!-- Product Price -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Price:</label>
+                    <input
+                      class="form-control col-lg-9"
+                      type="number"
+                      value=""
+                      id="productPriceInput"
+                    />
+                  </div>
+
+                  <button type="submit">Add</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <p></p>
     </div>
     <script
@@ -90,16 +143,18 @@
     ></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
+      const url = window.location.toString();
+      const productID = parseInt(url.split("/").slice(-1)[0]);
+
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
-      console.log("Bearer " + token);
-      const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      console.log(loggedInUserID);
 
-      const url = window.location.toString();
-      // const userID = parseInt(url.split("/").slice(-1)[0]);
-      const userID = 35;
+      let requestToken = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
 
       // Scenarios for people editing profiles:
       // 1. Someone random, not logged in, trying to access the page
@@ -107,89 +162,54 @@
       // 3. Admin editing one user
       // 4. User editing himself
 
-      if (loggedInUserID == userID || role == "admin") {
-        // 3. Admin editing one user
-        // 4. User editing himself
-        axios
-          .get(`${baseUrl}/users/${userID}/`, {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
-          .then((response) => {
-            user = response.data;
-            $("#usernameValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.username}"
-                      id="username"
-                    />
-                `);
-            $("#contactValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.contact}"
-                      id="contact"
-                    />
-                `);
-            $("#emailValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.email}"
-                      id="email"
-                    />
-                `);
-            $("#passwordValue").append(`
-            <input
-                      class="form-control"
-                      type="tel"
-                      value="${user.password}"
-                      id="password"
-                    />
-                `);
-          });
-      }
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      else {
+      if (role != "admin") {
+        // 1. Someone random, not logged in, trying to access this page
+        // 2. Some other user trying to edit the product
         window.location.href = "/signIn/";
         alert("Hacking the website? Naughty~~ ;)");
       }
 
-      $("#edit-prof-form").submit((event) => {
-        // prevent page reload
-        event.preventDefault();
-        const username = $("#username").val();
-        const password = $("#password").val();
-        const email = $("#email").val();
-        const contact = $("#contact").val();
+      axios
+        .get(`${baseUrl}/category`)
+        .then((response) => {
+          const allCategories = response.data;
+          // For every category in category table
+          allCategories.forEach((category) => {
+            $("#productCategoryInput").append(
+              `<option value="${category.categoryid}">${category.category}</option>`
+            );
+          });
+        })
+        .catch((error) => {
+          console.log("Error Getting Categories");
+        });
 
-        const requestBody = {
-          username: username,
-          email: email,
-          contact: contact,
-          password: password,
-          role: role,
-          profile_pic_url: user.profile_pic_url,
+      $("#edit-prod-form").submit((event) => {
+        // Prevent page reload
+        event.preventDefault();
+
+        const name = $("#productNameInput").val();
+        const desc = $("#productDescriptionInput").val();
+        const category = $("#productCategoryInput").val();
+        const brand = $("#productBrandInput").val();
+        const price = $("#productPriceInput").val();
+
+        requestBody = {
+          name: name,
+          description: desc,
+          categoryid: category,
+          brand: brand,
+          price: parseInt(price),
         };
 
+        // Update product
         axios
-          .put(`${baseUrl}/users/edit/${userID}`, requestBody, {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+          .post(`${baseUrl}/product`, requestBody, requestToken)
           .then((response) => {
-            alert("Success");
-            console.log("Profile Update Success");
-            window.location.reload();
+            alert("Successfully Added Product");
           })
           .catch((error) => {
-            alert("Error! Something went wrong! :>@\n" + error);
-            console.log("Error! Something went wrong! :>@");
+            alert("Error!" + error);
           });
       });
 
