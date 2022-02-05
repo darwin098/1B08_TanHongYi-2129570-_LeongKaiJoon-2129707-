@@ -241,6 +241,10 @@
                   });
                 // Append them to the carousel
               });
+            } else {
+              $("#forYouSection").append(`
+                <h2 style="text-align: center; margin: 2.5em; border: solid black 0.1em">You are currently not interested in any categories of products! </br> </br> Add some from a product page!</h2>
+              `);
             }
           })
           .catch((error) => {

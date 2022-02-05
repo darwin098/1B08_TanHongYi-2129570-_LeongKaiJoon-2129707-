@@ -353,6 +353,7 @@ let Product = {
       }
     });
   },
+  // [Incomplete]
   edit: function (newProductInfo, callback) {
     var dbConn = db.getConnection();
 
