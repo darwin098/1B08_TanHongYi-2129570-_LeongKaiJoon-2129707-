@@ -46,6 +46,53 @@
           ></div>
         </div>
       </section>
+
+      <!-- Review section -->
+      <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+          <div class="gx-4 gx-lg-5 align-items-center">
+            <h1>Reviews</h1>
+
+            <!-- Add review form -->
+            <div>
+              <form class="form-horizontal" role="form" id="review-form">
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Rating:</label>
+                  <div class="col-lg-1" style="display: flex">
+                    <select
+                      class="form-select"
+                      aria-label="Default select example"
+                      id="selectedRating"
+                    >
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                    <p style="margin-top: 20%">⭐</p>
+                  </div>
+
+                  <label class="col-lg-3 control-label">Description:</label>
+                  <div class="col-lg-8" id="usernameValue">
+                    <textarea
+                      class="form-control"
+                      type="text"
+                      id="reviewText"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <button type="submit">Submit</button>
+              </form>
+              <div id="userMessage" style="padding: 2.5em"></div>
+            </div>
+
+            <!-- Product reviews -->
+            <div id="review-display"></div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script
@@ -53,17 +100,21 @@
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
       crossorigin="anonymous"
     ></script>
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
       integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
       crossorigin="anonymous"
     ></script>
+
     <script
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <script>
       const baseUrl = "http://localhost:3000";
       const token = localStorage.getItem("token");
@@ -73,12 +124,7 @@
       console.log(loggedInUserID);
 
       const url = window.location.toString();
-
-      // Scenarios for people editing profiles:
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      // 3. Admin editing one user
-      // 4. User editing himself
+      const productID = parseInt(url.split("/").slice(-1)[0]);
 
       if (token && loggedInUserID != null) {
         let logoutButton = `
@@ -96,7 +142,7 @@
         })
         .then((response) => {
           console.log("Axios");
-          const user = response.data;
+          user = response.data;
           $("#product-display").append(`<div class="col-md-6">
             <img
               class="card-img-top mb-5 mb-md-0"
@@ -109,8 +155,9 @@
             <h1 class="display-5 fw-bolder">${user.name}</h1>
             <div class="fs-5 mb-5">
               <del>$${user.price}</del>
-              <ins>$${user.price}</de;>
+              <ins>$${user.price}</ins>
             </div>
+            <div id="rating"></div>
             <p class="lead">${user.description}</p>
             <div class="d-flex">
               <input
@@ -134,6 +181,116 @@
         localStorage.removeItem("role");
         alert("You have been logged out!");
         window.location.href = "/signIn/";
+      });
+
+      $(document).on("click", ".login", function () {
+        window.location.href = "/signIn/";
+      });
+
+      $(document).on("click", ".signUp", function () {
+        window.location.href = "/register/";
+      });
+
+      // Get reviews
+      // Show reviews
+      axios
+        .get(`${baseUrl}/product/${productID}/reviews`)
+        .then((response) => {
+          reviews = response.data;
+          reviews.forEach((review) => {
+            reviewHTML = `
+              <div class="card" style="margin-top: 2rem; width: 75%">
+                <div class="card-body">
+                  <p class="card-text">Rating: ${review.rating}</p>
+                  <h5 style="margin-top: 1rem">User: ${review.username}</h5>
+                  <p>
+                    Review: <br />
+                    ${review.review}
+                  </p>
+                </div>
+                <div class="card-footer text-muted">
+                  Written: ${review.created_at}
+                </div>
+              </div>
+            `;
+            $("#review-display").append(reviewHTML);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      $("#review-form").submit((event) => {
+        event.preventDefault();
+
+        // if user is not logged in,
+        if (!token && !loggedInUserID) {
+          // Prompt to go to log in, sign up, or cancel
+          $("#userMessage").append(
+            `
+              <p style="color: red">
+                You need to be a user to add a review! Use one of the options
+                below :)
+              </p>
+              <button class="btn btn-primary login">Login</button>
+              <button class="btn btn-primary signUp">Sign-up</button>
+            `
+          );
+        } else {
+          rating = $("#selectedRating").val();
+          review = $("#reviewText").val();
+          console.log(productID);
+
+          axios
+            .post(
+              `${baseUrl}/product/${productID}/review/`,
+              {
+                userid: loggedInUserID,
+                rating: rating,
+                review: review,
+              },
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              }
+            )
+            .then((response) => {
+              createdReview = response.data;
+              $("#review-form").replaceWith(`
+                  <h4>Review Added!</h4>
+                `);
+              axios
+                .get(`${baseUrl}/review/${createdReview.reviewid}`)
+                .then((response) => {
+                  newReview = response.data[0];
+
+                  newReviewHTML = `
+                  <div class="card" style="margin-top: 2rem; width: 75%">
+                    <div class="card-body">
+                      <p class="card-text">Rating: ${newReview.rating}</p>
+                      <h5 style="margin-top: 1rem">User: ${newReview.username}</h5>
+                      <p>
+                        Review: <br />
+                        ${newReview.review}
+                      </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                      Written: ${newReview.created_at}
+                    </div>
+                  </div>
+                  `;
+
+                  $("#review-display").prepend(newReviewHTML);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
       });
     </script>
   </body>

@@ -86,6 +86,41 @@ let Review = {
       }
     });
   },
+  // [Done]
+  findByID: function (productid, callback) {
+    var dbConn = db.getConnection();
+    dbConn.connect(function (err) {
+      if (err) {
+        //database connection got issue!
+        console.log(err);
+        return callback(err, null);
+      } else {
+        const findAllQuery = `
+        SELECT 
+          review.fk_product_id AS productid,
+          review.fk_user_id AS userid,
+            users.username AS username,
+          review.rating,
+          review.review,
+          review.created_at
+        FROM 
+          review
+        INNER JOIN
+          users ON review.fk_user_id=users.userid
+        WHERE 
+          review.reviewid = ?
+        `;
+        dbConn.query(findAllQuery, [productid], (error, results) => {
+          dbConn.end();
+          if (error) {
+            return callback(error, null);
+          }
+          console.log(results);
+          return callback(null, results);
+        });
+      }
+    });
+  },
 };
 
 // -------------------------------------------------------------

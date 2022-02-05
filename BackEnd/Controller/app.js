@@ -983,6 +983,40 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
   });
 });
 
+// [Done]
+// Get review by ID
+// http://localhost:3000/review/24/
+app.get("/review/:rid", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let rid = parseInt(req.params.rid);
+
+  if (isNaN(rid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  console.log(`Product ID: ${rid}`);
+
+  // Step 2 and 3: Process and respond
+  Review.findByID(rid, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No such ID!").end();
+      }
+    }
+  });
+});
+
 // -------------------------------------------------------------
 // Endpoints (interests)
 // -------------------------------------------------------------
