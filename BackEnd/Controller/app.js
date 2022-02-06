@@ -1087,7 +1087,7 @@ app.get("/review/:rid", printDebugInfo, function (req, res) {
 // Add image to product listing (admin)
 app.put(
   "/user/addimage/:userid",
-  prodImgupload.single("picture"),
+  pfpupload.single("picture"),
   printDebugInfo,
   verifyToken,
   function (req, res) {
@@ -1298,7 +1298,7 @@ app.delete(
 // Add image to product listing (admin)
 app.put(
   "/product/addimage/:itemid",
-  pfpupload.single("picture"),
+  prodImgupload.single("picture"),
   printDebugInfo,
   verifyToken,
   function (req, res) {
