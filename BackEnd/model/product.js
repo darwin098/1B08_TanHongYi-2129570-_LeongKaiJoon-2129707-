@@ -298,7 +298,6 @@ let Product = {
           ca1.product
         ORDER BY 
           timestamp ${order}
-          LIMIT 5;
           `;
 
         dbConn.query(sql, [], (error, resultSet) => {
@@ -309,6 +308,81 @@ let Product = {
             return callback(error, null);
           }
           console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findAllByName: function (order, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        console.log(`order = ` + order);
+        const sql = `
+          SELECT 
+            * 
+          FROM 
+            ca1.product
+          ORDER BY 
+            name ${order}
+            `;
+
+        dbConn.query(sql, [], (error, resultSet) => {
+          console.log(resultSet);
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
+          console.log(resultSet);
+
+          if (resultSet.length == 0) {
+            return callback(null, null);
+          } else {
+            return callback(null, resultSet);
+          }
+        });
+      }
+    });
+  },
+  // [Done]
+  findAllByPrice: function (order, callback) {
+    var dbConn = db.getConnection();
+
+    dbConn.connect(function (err) {
+      if (err) {
+        console.log("connection error");
+        console.log(err);
+        return callback(err, null);
+      } else {
+        console.log(`order = ` + order);
+        const sql = `
+            SELECT 
+              * 
+            FROM 
+              ca1.product
+            ORDER BY 
+              price ${order}
+              `;
+
+        dbConn.query(sql, (error, resultSet) => {
+          console.log(resultSet[0]);
+          dbConn.end();
+          if (error) {
+            console.log("query error");
+            return callback(error, null);
+          }
 
           if (resultSet.length == 0) {
             return callback(null, null);

@@ -659,6 +659,64 @@ app.get("/product/search/creation/:order", printDebugInfo, function (req, res) {
 });
 
 // [Done]
+// Get all products by alphabetical order
+// http://localhost:3000/search/asc
+app.get(
+  "/product/search/alphabetical/:order",
+  printDebugInfo,
+  function (req, res) {
+    // Step 1: extraction
+    let order = req.params.order;
+
+    if (order != "asc" && order != "desc") {
+      res.status(200).end;
+    }
+    // Step 2 and 3: Process and respond
+    Product.findAllByName(order, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        if (result) {
+          // Report good news
+          res.status(200).send(result).end();
+        } else {
+          // Send error message response
+          res.status(404).send("No results found").end();
+        }
+      }
+    });
+  }
+);
+
+// [Done]
+// Get all products by price order
+// http://localhost:3000/search/price/asc
+app.get("/product/search/price/:order", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let order = req.params.order;
+
+  if (order != "asc" && order != "desc") {
+    res.status(200).end;
+  }
+  // Step 2 and 3: Process and respond
+  Product.findAllByPrice(order, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No results found").end();
+      }
+    }
+  });
+});
+
+// [Done]
 // Get product by brand
 // http://localhost:3000/search/name
 app.post("/product/search/brand", printDebugInfo, function (req, res) {
