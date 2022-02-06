@@ -109,12 +109,6 @@
 
             <!-- edit form column -->
             <div class="col-md-9 personal-info">
-              <div class="alert alert-info alert-dismissable">
-                <a class="panel-close close" data-dismiss="alert">×</a>
-                <i class="fa fa-coffee"></i>
-                This is an <strong>.alert</strong>. Use this to show important
-                messages to the user.
-              </div>
               <h3>Personal info</h3>
 
               <form class="form-horizontal" role="form" id="edit-prof-form">
@@ -444,38 +438,50 @@
         var prefEnter = false;
         var tempString = "";
 
-        if (interestsList.length == 0) {
-          prefEnter = true;
-        }
-        for (var b = 0; b < interestsList.length; b++) {
-          if (exstingCateList[2].includes(interestsList[b].fk_category_id)) {
-            if (exstingCateList[2].length != interestsList.length) {
-              console.log("Working: Diff Element No.");
+        if (exstingCateList[2].length != 0) {
+          for (var b = 0; b < exstingCateList.length; b++) {
+            console.log("YESUHAVBEJUABSUDHVUASvb");
+            if (interestsList.length != 0) {
+              if (
+                exstingCateList[2].includes(interestsList[b].fk_category_id)
+              ) {
+                if (exstingCateList[2].length != interestsList.length) {
+                  console.log("Working: Diff Element No.");
+                  prefEnter = true;
+                  for (var c = 0; c < exstingCateList[2].length; c++) {
+                    tempString += exstingCateList[2][c];
+                    if (c + 1 != exstingCateList[2]) {
+                      tempString += ",";
+                    }
+                  }
+                  console.log("tempString: " + tempString);
+                  break;
+                } else {
+                  console.log("Working As Intended: Is Same");
+                }
+              } else {
+                console.log("Working As Intended: Is Diff Same No.of Elements");
+                prefEnter = true;
+                for (var c = 0; c < exstingCateList[2].length; c++) {
+                  tempString += exstingCateList[2][c];
+                  if (c + 1 != exstingCateList[2].length) {
+                    tempString += ",";
+                  }
+                }
+                console.log("tempString: " + tempString);
+                break;
+              }
+            } else {
               prefEnter = true;
               for (var c = 0; c < exstingCateList[2].length; c++) {
-                console.log("Enters *Cums*");
                 tempString += exstingCateList[2][c];
-                if (c + 1 != exstingCateList[2]) {
+                if (c + 1 != exstingCateList[2].length) {
                   tempString += ",";
                 }
               }
               console.log("tempString: " + tempString);
               break;
-            } else {
-              console.log("Working As Intended: Is Same");
             }
-          } else {
-            console.log("Working As Intended: Is Diff Same No.of Elements");
-            prefEnter = true;
-            for (var c = 0; c < exstingCateList[2].length; c++) {
-              console.log("Enters *Cums*");
-              tempString += exstingCateList[2][c];
-              if (c + 1 != exstingCateList[2].length) {
-                tempString += ",";
-              }
-            }
-            console.log("tempString: " + tempString);
-            break;
           }
         }
 
@@ -490,6 +496,7 @@
 
         if (somethingChanged) {
           somethingChanged = false;
+          console.log(requestBodyPreferences);
           axios
             .delete(`${baseUrl}/interest/del/${userID}`, requestToken)
             .then((response) => {
