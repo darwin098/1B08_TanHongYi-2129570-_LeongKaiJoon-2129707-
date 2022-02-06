@@ -331,15 +331,25 @@ app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
 
     return;
   }
-
-  let data = {
-    d_userName: req.body.username,
-    d_email: req.body.email,
-    d_contact: req.body.contact,
-    d_password: req.body.password,
-    d_role: req.body.role,
-    d_profilePic: req.body.profile_pic_url,
-  };
+  if (req.role == "admin") {
+    data = {
+      d_userName: req.body.username,
+      d_email: req.body.email,
+      d_contact: req.body.contact,
+      d_password: req.body.password,
+      d_role: req.body.role,
+      d_profilePic: req.body.profile_pic_url,
+    };
+  } else {
+    data = {
+      d_userName: req.body.username,
+      d_email: req.body.email,
+      d_contact: req.body.contact,
+      d_password: req.body.password,
+      d_role: "user",
+      d_profilePic: req.body.profile_pic_url,
+    };
+  }
 
   // Step 2 and 3: Process and respond
   User.edit(uid, data, function (err, result) {

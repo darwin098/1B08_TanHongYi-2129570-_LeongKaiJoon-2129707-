@@ -136,6 +136,9 @@
                 </div>
 
                 <button type="submit">Submit</button>
+                <button type="button" onclick="confirmation()">
+                  Delete User
+                </button>
                 <button type="reset">Reset To Original</button>
               </form>
             </div>
@@ -174,8 +177,7 @@
       };
 
       const url = window.location.toString();
-      // const userID = parseInt(url.split("/").slice(-1)[0]);
-      const userID = 32;
+      const userID = localStorage.getItem("loggedInUserID");
 
       if (role == "admin") {
         $(".navbar-nav").append(`<li class="nav-item dropdown">
@@ -204,6 +206,24 @@
                 >
               </div>
             </li>`);
+      }
+
+      function confirmation() {
+        if (confirm("Are you sure you want to delete this account?")) {
+          // Delete user
+          axios
+            .delete(
+              `${baseUrl}/user/${userID}
+          `
+            )
+            .then((response) => {
+              alert("Account has been deleted!");
+              window.location.href = "/";
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
       }
 
       // Scenarios for people editing profiles:
