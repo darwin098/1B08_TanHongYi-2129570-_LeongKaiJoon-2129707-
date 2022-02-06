@@ -139,7 +139,12 @@ app.post("/login/", printDebugInfo, function (req, res) {
     if (!err) {
       // -------|
       if (!result) {
-        res.status(401).type("json").send("Invalid login credentials");
+        let dataJSON = {
+          token: "",
+          userInfo: {},
+        };
+
+        res.status(200).type("json").send(dataJSON);
       } else {
         let dataJSON = {
           token: result.f_token,
@@ -726,7 +731,7 @@ app.get("/interest/category/:categoryid", printDebugInfo, function (req, res) {
 
 // [Working]
 // Edit product (admin) and edit image as well
-app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
+app.put("/product/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
@@ -740,9 +745,9 @@ app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   }
 
   // Step 1: extraction
-  let uid = parseInt(req.params.id);
+  let pid = parseInt(req.params.id);
 
-  if (isNaN(uid)) {
+  if (isNaN(pid)) {
     res.statusCode = 400;
     res.send("Invalid Input");
     res.end();
@@ -751,16 +756,15 @@ app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   }
 
   let data = {
-    d_userName: req.body.username,
-    d_email: req.body.email,
-    d_contact: req.body.contact,
-    d_password: req.body.password,
-    d_role: req.body.role,
-    d_profilePic: req.body.profile_pic_url,
+    d_name: req.body.name,
+    d_desc: req.body.description,
+    d_category: req.body.categoryid,
+    d_brand: req.body.brand,
+    d_price: req.body.price,
   };
 
   // Step 2 and 3: Process and respond
-  Product.edit(uid, data, function (err, result) {
+  Product.edit(pid, data, function (err, result) {
     if (err) {
       res.status(500).send("Internal Server Error").end();
     } else {
@@ -775,7 +779,7 @@ app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
         res
           .status(404)
           .type("json")
-          .send(`Message: User(id:${uid}) not found...`)
+          .send(`Message: Product(id:${uid}) not found...`)
           .end();
       } else if (result.changedRows == 1) {
         res.status(204).end();
@@ -792,15 +796,6 @@ app.put("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
 app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let pid = parseInt(req.params.id);
-
-  if (req.role != "admin") {
-    let errData = {
-      msg: "you are not authorised to perform this operation",
-    };
-    // 403 - Forbidden
-    res.status(403).type("text").send(errData);
-    return;
-  }
 
   if (isNaN(pid)) {
     res.statusCode = 400;
@@ -990,7 +985,7 @@ app.get("/product/:id/reviews", printDebugInfo, function (req, res) {
 // [Done]
 // Get review by ID
 // http://localhost:3000/review/24/
-app.get("/review/:rid", printDebugInfo, verifyToken, function (req, res) {
+app.get("/review/:rid", printDebugInfo, function (req, res) {
   // Step 1: extraction
   let rid = parseInt(req.params.rid);
 

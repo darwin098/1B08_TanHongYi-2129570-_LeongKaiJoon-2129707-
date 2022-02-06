@@ -354,7 +354,7 @@ let Product = {
     });
   },
   // [Incomplete]
-  edit: function (newProductInfo, callback) {
+  edit: function (pid, newPInfo, callback) {
     var dbConn = db.getConnection();
 
     dbConn.connect(function (err) {
@@ -365,17 +365,42 @@ let Product = {
       } else {
         const sql = `
         UPDATE
-          ca1.users
+          ca1.product
         SET
-          username = ?,
-          email = ?,
-          contact = ?,
-          password = ?,
-          role = ?,
-          profile_pic_url = ?
+          name = ?,
+          description = ?,
+          categoryid = ?,
+          brand = ?,
+          price = ?,
         WHERE
-          userid = ?
+          productid = ?
         `;
+        dbConn.query(
+          sql,
+          [
+            newPInfo.d_name,
+            newPInfo.d_desc,
+            newPInfo.d_category,
+            newPInfo.d_brand,
+            newPInfo.d_price,
+            pid,
+          ],
+          (error, q_result) => {
+            dbConn.end();
+
+            console.log(sql);
+
+            if (error) {
+              console.log("query error");
+              console.log(error);
+              return callback(error, null);
+            }
+
+            console.log(q_result);
+
+            return callback(null, q_result);
+          }
+        );
       }
     });
   },
