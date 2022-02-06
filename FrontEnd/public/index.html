@@ -11,15 +11,6 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <script>
-      const token = localStorage.getItem("token");
-      if (token) {
-        let logoutButton = `
-        <button class="btn btn-danger logout-button">Logout</button>
-        `;
-        $("#signInOutUp").replaceWith(logoutButton);
-      }
-    </script>
   </head>
   <body>
     <div class="container">
@@ -30,9 +21,7 @@
         <a class="nav-link" href="/search/">Search</a>
         <a class="nav-link" href="/editProfile/">Edit Profile</a>
         <a class="nav-link" href="/individualPage/">Individual Page</a>
-        <div id="signInOutUp">
-          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
-        </div>
+        <div id="signInOutUp"></div>
       </nav>
 
       <!-- Heading and search-bar -->
@@ -132,7 +121,17 @@
       const baseUrl = "http://localhost:3000";
 
       const loggedInUserID = localStorage.getItem("loggedInUserID");
-      console.log(loggedInUserID);
+
+      const token = localStorage.getItem("token");
+      if (token) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      } else {
+        loginButton = `<a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>`;
+        $("#signInOutUp").replaceWith(loginButton);
+      }
 
       let recomendations = `
           <div class="col-md-4 col-xs-12">
