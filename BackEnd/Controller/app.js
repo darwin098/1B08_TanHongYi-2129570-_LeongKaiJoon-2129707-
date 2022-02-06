@@ -131,10 +131,6 @@ app.get("/", (req, res) => {
 // Endpoints (users)
 // -------------------------------------------------------------
 
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (users)
-// -------------------------------------------------------------
-
 // [Done]
 // Login User
 // http://localhost:3000/api/login
@@ -233,7 +229,13 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
-  if (req.role != "admin") {
+  // Step 1: extraction
+  let uid = parseInt(req.params.id);
+
+  if (req.role != "admin" && req.userid != uid) {
+    console.log(req.role);
+    console.log(req.userid);
+    console.log(uid);
     let errData = {
       msg: "you are not authorised to perform this operation",
     };
@@ -241,9 +243,6 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
     res.status(403).type("text").send(errData);
     return;
   }
-
-  // Step 1: extraction
-  let uid = parseInt(req.params.id);
 
   if (isNaN(uid)) {
     res.statusCode = 400;
@@ -406,10 +405,6 @@ app.delete("/user/:userID", printDebugInfo, verifyToken, function (req, res) {
 // Endpoints (category)
 // -------------------------------------------------------------
 
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (category)
-// -------------------------------------------------------------
-
 // [Done]
 // Add Category (admin)
 // http://localhost:3000/category
@@ -480,10 +475,6 @@ app.get("/category", printDebugInfo, function (req, res) {
 
 // -------------------------------------------------------------
 // Endpoints (product)
-// -------------------------------------------------------------
-
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (product)
 // -------------------------------------------------------------
 
 // [Done]
@@ -896,10 +887,6 @@ app.get("/brands", printDebugInfo, function (req, res) {
 // Endpoints (review)
 // -------------------------------------------------------------
 
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (review)
-// -------------------------------------------------------------
-
 // [Done]
 // Add Product review (users)
 // http://localhost:3000/product/12/review/
@@ -1097,10 +1084,6 @@ app.get("/user/showimage/:userid", printDebugInfo, function (req, res) {
 // Endpoints (interests)
 // -------------------------------------------------------------
 
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (interests)
-// -------------------------------------------------------------
-
 // [Done]
 // Add Category interest (user)
 // http://localhost:3000/interest/28
@@ -1228,10 +1211,6 @@ app.delete(
 // Endpoints (Image Uploading)
 // -------------------------------------------------------------
 
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (Image uploading)
-// -------------------------------------------------------------
-
 // [Done]
 // Add image to product listing (admin)
 app.put(
@@ -1306,10 +1285,6 @@ app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
 
 // -------------------------------------------------------------
 // Endpoints (Promotional Events)
-// -------------------------------------------------------------
-
-// -------------------------------------------------------------
-// CA2 Needed Endpoints (Promotional Events)
 // -------------------------------------------------------------
 
 // [Done]

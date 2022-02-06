@@ -14,6 +14,7 @@
     <script>
       const role = localStorage.getItem("role");
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
+      const userID = localStorage.getItem("loggedInUserID");
       if (loggedInUserID != userID && role != "admin") {
         if (loggedInUserID != userID) {
           window.location.href = "/";
@@ -178,7 +179,6 @@
       };
 
       const url = window.location.toString();
-      const userID = localStorage.getItem("loggedInUserID");
 
       if (role == "admin") {
         $(".navbar-nav").append(`<li class="nav-item dropdown">
@@ -286,6 +286,14 @@
                 id="password"
               />
             `);
+        })
+        .catch((error) => {
+          // Second layer security check
+          console.log(error);
+          if (error.response.status == 404) {
+            window.location.href = "/";
+            alert("You are not authorized!");
+          }
         });
 
       axios.get(`${baseUrl}/users/interests/${userID}`).then((response) => {
