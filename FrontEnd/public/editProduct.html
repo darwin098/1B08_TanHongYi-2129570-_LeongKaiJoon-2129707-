@@ -150,6 +150,7 @@
 
       const url = window.location.toString();
       const prodID = parseInt(url.split("/").slice(-1)[0]);
+      const userID = localStorage.getItem("loggedInUserID");
 
       axios.get(`${baseUrl}/category`).then((response) => {
         const allCategories = response.data;
@@ -160,85 +161,86 @@
           .then((response) => {
             // Set the form only if product found
             $("#productSection").replaceWith(`
-            <div class="row" id="productSection">
-              <!-- left column -->
-              <!-- Image Section -->
-              <div class="col-md-3">
-                <div class="text-center">
-                  <div id="prodPictureBox"></div>
-                  <h6>Upload a different photo...</h6>
+              <div class="row" id="productSection">
+                <!-- left column -->
+                <!-- Image Section -->
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <div id="prodPictureBox"></div>
+                    <h6>Upload a different photo...</h6>
 
-                  <input type="file" class="form-control" id="img_file" />
-                </div>
-              </div>
-
-              <!-- edit form column -->
-              <!-- Info Section -->
-              <div class="col-md-9" id="edit-product-info">
-                <div class="alert alert-info alert-dismissable">
-                  <a class="panel-close close" data-dismiss="alert">×</a>
-                  <i class="fa fa-coffee">
-                    <div id="message">
-                      
-                    </div>  
-                  </i>
+                    <input type="file" class="form-control" id="img_file" />
+                  </div>
                 </div>
 
-                <h3>Product info</h3>
+                <!-- edit form column -->
+                <!-- Info Section -->
+                <div class="col-md-9" id="edit-product-info">
+                  <div class="alert alert-info alert-dismissable">
+                    <a class="panel-close close" data-dismiss="alert">×</a>
+                    <i class="fa fa-coffee">
+                      <div id="message">
 
-                <!-- Edit product section -->
-                <form class="form-horizontal" role="form" id="edit-prod-form">
-                  <!-- Product name -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Name:</label>
-                    <textarea
-                      class="form-control col-lg-9"
-                      type="text"
-                      value=""
-                      id="productNameInput"
-                      placeholder="e.g. AMD Ryzen 727 8200H Series"
-                    ></textarea>
+                      </div>
+                    </i>
                   </div>
 
-                  <!-- Product description -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Description:</label>
-                    <textarea
-                      class="form-control col-lg-9"
-                      type="text"
-                      value=""
-                      id="productDescriptionInput"
-                      placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-                    ></textarea>
-                  </div>
+                  <h3>Product info</h3>
 
-                  <!-- Product category -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Category:</label>
+                  <!-- Edit product section -->
+                  <form class="form-horizontal" role="form" id="edit-prod-form">
+                    <!-- Product name -->
+                    <div class="form-group">
+                      <label class="col-lg-3 control-label">Name:</label>
+                      <textarea
+                        class="form-control col-lg-9"
+                        type="text"
+                        value=""
+                        id="productNameInput"
+                        placeholder="e.g. AMD Ryzen 727 8200H Series"
+                      ></textarea>
+                    </div>
 
-                    <select
-                      class="form-select col-lg-5"
-                      aria-label="Default"
-                      id="productCategoryInput"
-                    ></select>
-                  </div>
+                    <!-- Product description -->
+                    <div class="form-group">
+                      <label class="col-lg-3 control-label">Description:</label>
+                      <textarea
+                        class="form-control col-lg-9"
+                        type="text"
+                        value=""
+                        id="productDescriptionInput"
+                        placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                      ></textarea>
+                    </div>
 
-                  <!-- Product brand -->
-                  <div class="form-group" id="productBrand">
-                    <label class="col-lg-3 control-label">Brand:</label>
-                  </div>
+                    <!-- Product category -->
+                    <div class="form-group">
+                      <label class="col-lg-3 control-label">Category:</label>
 
-                  <!-- Product Price -->
-                  <div class="form-group" id="productPrice">
-                    <label class="col-lg-3 control-label">Price:</label>
-                  </div>
+                      <select
+                        class="form-select col-lg-5"
+                        aria-label="Default"
+                        id="productCategoryInput"
+                      ></select>
+                    </div>
 
-                  <button type="submit" id="submitBtn">Submit Changes</button>
+                    <!-- Product brand -->
+                    <div class="form-group" id="productBrand">
+                      <label class="col-lg-3 control-label">Brand:</label>
+                    </div>
+
+                    <!-- Product Price -->
+                    <div class="form-group" id="productPrice">
+                      <label class="col-lg-3 control-label">Price:</label>
+                    </div>
+
+                    
+                  </form>
+                  <button type="button" onClick="submit()" id="submitBtn">Submit Changes</button>
                   <button type="button" onclick="deleteProduct()" >Delete</button>
-                </form>
+                </div>
               </div>
-            </div>
-            `);
+              `);
 
             // Let admin know ID of product he is editing
             $("#message").replaceWith(
@@ -246,33 +248,33 @@
             );
 
             $("#prodPictureBox").append(`
-              <img
-                src=${baseUrl}/product/showimage/${prodID}"
-                class="avatar img-circle img-thumbnail"
-                alt="productImg"
-              />
-            `);
+                <img
+                  src=${baseUrl}/product/showimage/${prodID}"
+                  class="avatar img-circle img-thumbnail"
+                  alt="productImg"
+                />
+              `);
 
             console.log("Axios");
             product = response.data;
             $("#productNameInput").append(`${product.name}`);
             $("#productDescriptionInput").append(`${product.description}`);
             $("#productBrand").append(`
-              <input
-                class="form-control col-lg-9"
-                type="text"
-                value="${product.brand}"
-                id="productBrandInput"
-              />
-            `);
+                <input
+                  class="form-control col-lg-9"
+                  type="text"
+                  value="${product.brand}"
+                  id="productBrandInput"
+                />
+              `);
             $("#productPrice").append(`
-              <input
-                class="form-control col-lg-9"
-                type="number"
-                value="${product.price}"
-                id="productPriceInput"
-              />
-            `);
+                <input
+                  class="form-control col-lg-9"
+                  type="number"
+                  value="${product.price}"
+                  id="productPriceInput"
+                />
+              `);
 
             allCategories.forEach((category) => {
               if (`${product.categoryid}` == `${category.categoryid}`) {
@@ -290,27 +292,26 @@
             // If product does not exist
             if (error.response.status == 404) {
               $("#productSection").replaceWith(`
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                margin-top: 20vh;
-              "
-            >
-              <h1 style="color: teal">404 - Product not found... :(</h1>
-              <p>
-                See all products <a href="/products/all">here!</a>
-              </p>
-            </div>
-            `);
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                  margin-top: 20vh;
+                "
+              >
+                <h1 style="color: teal">404 - Product not found... :(</h1>
+                <p>
+                  See all products <a href="/products/all">here!</a>
+                </p>
+              </div>
+              `);
             }
             console.log("Error Getting Products");
           });
       });
-
-      $("#edit-prod-info").submit((event) => {
+      function submit() {
         // Prevent page reload
         event.preventDefault();
 
@@ -319,6 +320,24 @@
         const category = $("#productCategoryInput").val();
         const brand = $("#productBrandInput").val();
         const price = $("#productPriceInput").val();
+
+        var bodyFormData = new FormData();
+        bodyFormData.append("picture", $("#img_file").prop("files")[0]);
+        axios({
+          method: "put",
+          url: `${baseUrl}/product/addimage/${prodID}`,
+          data: bodyFormData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then((response) => {
+            alert("success");
+          })
+          .catch((error) => {
+            alert("error");
+          });
 
         requestBody = {
           name: name,
@@ -337,7 +356,7 @@
           .catch((error) => {
             alert("Error!" + error);
           });
-      });
+      }
 
       function deleteProduct() {
         axios
@@ -350,26 +369,6 @@
             alert("Error!" + error);
           });
       }
-
-      $("#img_file").change(() => {
-        var bodyFormData = new FormData();
-        bodyFormData.append("picture", $("#img_file").prop("files")[0]);
-        axios({
-          method: "put",
-          url: `${baseUrl}/product/addimage/${userID}`,
-          data: bodyFormData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + token,
-          },
-        })
-          .then((response) => {
-            alert("success");
-          })
-          .catch((error) => {
-            alert("error");
-          });
-      });
 
       $(document).on("click", ".logout-button", function () {
         localStorage.removeItem("token");
