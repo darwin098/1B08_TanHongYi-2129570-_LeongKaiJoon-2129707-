@@ -188,8 +188,9 @@
                     <label class="col-lg-3 control-label">Price:</label>
                   </div>
 
-                  <button type="submit">Add</button>
+                  <button type="submit" id="submitBtn">Submit Changes</button>
                 </form>
+                <button type="button" id="delBtn">Delete</button>
               </div>
             </div>
           </div>
@@ -285,7 +286,7 @@
           });
       });
 
-      $("#edit-product-info").submit((event) => {
+      $("#edit-prod-info").submit((event) => {
         // Prevent page reload
         event.preventDefault();
 
@@ -303,12 +304,24 @@
           price: parseInt(price),
         };
 
-        alert("here");
         // Update product
         axios
-          .put(`${baseUrl}/product`, requestBody, requestToken)
+          .put(`${baseUrl}/product/edit/13`, requestBody, requestToken)
           .then((response) => {
-            alert("Successfully Added Product");
+            alert("Successfully Edited Product");
+          })
+          .catch((error) => {
+            alert("Error!" + error);
+          });
+      });
+
+      $("#delBtn").click(() => {
+        // Update product
+        axios
+          .delete(`${baseUrl}/product/delete/13`, requestToken)
+          .then((response) => {
+            alert("Successfully Deleted Product");
+            window.location.assign(`https://localhost:3001/`);
           })
           .catch((error) => {
             alert("Error!" + error);

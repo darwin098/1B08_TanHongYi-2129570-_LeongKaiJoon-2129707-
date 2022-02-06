@@ -793,40 +793,45 @@ app.put("/product/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
 // [Done]
 // Remove product and it's associated reviews(admin)
 // http://localhost:3000/product/7
-app.delete("/product/:id/", printDebugInfo, verifyToken, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.id);
+app.delete(
+  "/product/delete/:id/",
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // Step 1: extraction
+    let pid = parseInt(req.params.id);
 
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
+    if (isNaN(pid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
 
-    return;
-  }
+      return;
+    }
 
-  // Step 2 and 3: Process and respond
-  Product.delete(pid, function (err, result) {
-    if (err) {
-      // Send error message response
-      res.status(500).send("Internal Server Error").end();
-    } else {
-      /*
+    // Step 2 and 3: Process and respond
+    Product.delete(pid, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        /*
         affectedRows    changedRows
         0               0 <-- user not found
         0               1 <-- impossible
         1               0 <-- not updated
         1               1 <-- good news
       */
-      if (result.affectedRows == 0) {
-        // Send error message response
-        res.status(404).send("Product ID not found!").end();
-      } else {
-        res.status(204).end();
+        if (result.affectedRows == 0) {
+          // Send error message response
+          res.status(404).send("Product ID not found!").end();
+        } else {
+          res.status(204).end();
+        }
       }
-    }
-  });
-});
+    });
+  }
+);
 
 // [Done]
 // Get product by ID
