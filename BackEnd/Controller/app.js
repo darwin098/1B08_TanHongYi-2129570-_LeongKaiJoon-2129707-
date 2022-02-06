@@ -1,5 +1,3 @@
-// Considerations: Cart function? Checkout function? search promotion?
-
 console.log("----------------------------");
 console.log(
   "1B08_TanHongYi-2129570-_LeongKaiJoon-2129707- > BackEnd > controller > app.js"
@@ -379,40 +377,6 @@ app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
     }
   });
 });
-
-// [Reference]
-// Add image
-// app.put(
-//   "/user/addimage/:itemid",
-//   upload.single("picture"),
-//   printDebugInfo,
-//   verifyToken,
-//   function (req, res) {
-//     // Step 1: extraction
-//     let uid = parseInt(req.params.itemid);
-//     console.log(req.file);
-//     if (isNaN(uid)) {
-//       res.statusCode = 400;
-//       res.send("Invalid Input");
-//       res.end();
-//       return;
-//     } else if (req.file === undefined) {
-//       res.statusCode = 500;
-//       res.send("Internal Server Error");
-//       res.end;
-//       return;
-//     } else {
-//       // Step 2 and 3: Process and respond
-//       User.addImageById(uid, req.file.path, function (err, result) {
-//         if (err) {
-//           res.status(500).type("json").send("Internal Server Error").end();
-//         } else {
-//           res.status(201).end();
-//         }
-//       });
-//     }
-//   }
-// );
 
 // [Reference]
 // Show Image
@@ -1199,7 +1163,7 @@ app.get("/user/showimage/:userid", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (interests)
 // -------------------------------------------------------------
 
-// [Done(?)]
+// [Done]
 // Add Category interest (user)
 // http://localhost:3000/interest/28
 app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
@@ -1237,7 +1201,7 @@ app.post("/interest/:userid", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Working]
+// [Done]
 // Get category interests
 // http://localhost:3000/users/interests/1
 app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
@@ -1276,6 +1240,8 @@ app.get("/users/interests/:userID", printDebugInfo, function (req, res) {
   });
 });
 
+// [Done]
+// Delete category interests
 app.delete(
   "/interest/del/:userid",
   printDebugInfo,
@@ -1408,107 +1374,7 @@ app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
 // CA2 Needed Endpoints (Promotional Events)
 // -------------------------------------------------------------
 
-// [Working]
-// Add promotion (admin)
-// http://localhost:3000/promotion/add
-app.post(
-  "/promotion/addpromotion",
-  printDebugInfo,
-  verifyToken,
-  function (req, res) {
-    // -------------------------------------------------------------
-    // Authorisation check
-    // -------------------------------------------------------------
-    if (req.role != "admin") {
-      let errData = {
-        msg: "you are not authorised to perform this operation",
-      };
-      // 403 - Forbidden
-      res.status(403).type("text").send(errData);
-      return;
-    }
-
-    // Step 1: extraction
-    let data = {
-      d_productid: req.body.productid,
-      d_promotion: req.body.promotion,
-      d_discountamount: req.body.discountamount,
-      d_description: req.body.description,
-      d_promostart: req.body.promostart,
-      d_promoend: req.body.promoend,
-      d_duration: req.body.duration,
-    };
-    // Step 2 and 3: Process and respond
-    Promotion.insert(data, function (err, result) {
-      if (err) {
-        res.status(500).type("json").send("Internal Server Error").end();
-      } else {
-        if (result.affectedRows == 1) {
-          res
-            .status(201)
-            .type("json")
-            .send(
-              "Promotion Successfully Created!\nPromotion ID: " +
-                JSON.stringify(result.insertId)
-            )
-            .end();
-        } else {
-          res.status(500).type("json").send("Internal Server Error").end();
-        }
-      }
-    });
-  }
-);
-
-// [Working]
-// Remove promotion(admin)
-// http://localhost:3000/product/7
-app.delete(
-  "/promotion/remove/:promoid",
-  printDebugInfo,
-  verifyToken,
-  function (req, res) {
-    // -------------------------------------------------------------
-    // Authorisation check
-    // -------------------------------------------------------------
-    if (req.role != "admin") {
-      let errData = {
-        msg: "you are not authorised to perform this operation",
-      };
-      // 403 - Forbidden
-      res.status(403).type("text").send(errData);
-      return;
-    }
-
-    // Step 1: extraction
-    let pid = parseInt(req.params.promoid);
-
-    if (isNaN(pid)) {
-      res.statusCode = 400;
-      res.send("Invalid Input");
-      res.end();
-
-      return;
-    }
-
-    // Step 2 and 3: Process and respond
-    Promotion.deletePromo(pid, function (err, result) {
-      if (err) {
-        // Send error message response
-        res.status(500).send("Internal Server Error").end();
-      } else {
-        if (result.affectedRows == 0) {
-          // Send error message response
-          res.status(404).send("Promotion ID not found!").end();
-        } else {
-          res.status(200).send("Product Successfully Deleted.").end();
-        }
-      }
-    });
-  }
-);
-
-// [Working]
+// [Done]
 // Show all promos
 // http://localhost:3000//promo/getall
 app.get("/promotion/getall", printDebugInfo, function (req, res) {
@@ -1524,68 +1390,6 @@ app.get("/promotion/getall", printDebugInfo, function (req, res) {
         res.status(200).send(result).end();
       } else {
         res.status(404).type("json").send("No promotions found...").end();
-      }
-    }
-  });
-});
-
-// [Working]
-// Show promo by itemid
-// http://localhost:3000/promotion/byitem/13
-app.get("/promotion/byitem/:itemid", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.itemid);
-
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-    return;
-  }
-
-  // Step 2 and 3: Process and respond
-  Promotion.findByProductID(pid, function (err, result) {
-    if (err) {
-      res.status(500).type("json").send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result).end();
-      } else {
-        res
-          .status(200)
-          .type("json")
-          .send("No promotions for product found.")
-          .end();
-      }
-    }
-  });
-});
-
-// [Done]
-// Show promo by promoid
-// http://localhost:3000/promotion/promotionid/7
-app.get("/promotion/promotionid/:promoid", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let pid = parseInt(req.params.promoid);
-
-  if (isNaN(pid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-    return;
-  }
-
-  // Step 2 and 3: Process and respond
-  Promotion.findByPromoID(pid, function (err, result) {
-    if (err) {
-      res.status(500).type("json").send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result).end();
-      } else {
-        res.status(404).type("json").send("No such promotion found.").end();
       }
     }
   });
