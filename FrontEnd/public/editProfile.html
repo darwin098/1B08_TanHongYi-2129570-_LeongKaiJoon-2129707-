@@ -134,6 +134,7 @@
                   <label class="col-lg-3 control-label">Password:</label>
                   <div class="col-lg-8" id="passwordValue"></div>
                 </div>
+                <div id="roleSection"></div>
 
                 <button type="submit">Submit</button>
                 <button type="button" onclick="confirmation()">
@@ -206,6 +207,21 @@
                 >
               </div>
             </li>`);
+        $("#roleSection").append(`
+        <div class="form-group">
+          <label class="col-lg-3 control-label">Account role:</label>
+          <div class="col-lg-8">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="selectedRole"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+      `);
       }
 
       function confirmation() {
@@ -355,6 +371,12 @@
         const emailEnter = $("#email").val();
         const contactEnter = $("#contact").val();
         const passwordTemp = $("#password").val();
+
+        if (role != "admin") {
+          role = "user";
+        } else {
+          role = $("#selectedRole").val();
+        }
 
         if (passwordTemp == "") {
           passwordEnter = `${user.password}`;
