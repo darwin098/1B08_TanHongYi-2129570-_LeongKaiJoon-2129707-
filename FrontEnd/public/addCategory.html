@@ -226,7 +226,7 @@
           })
           .catch((error) => {
             if (error.response.status == 422) {
-              // Send message no product found
+              // Send message duplicate
               $("#alertMessage").replaceWith(`
                 <div id="alertMessage">Category already exists!</div>
               `);

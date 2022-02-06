@@ -210,7 +210,7 @@ app.post("/users/", printDebugInfo, function (req, res) {
 // [Working]
 // Show all users(admin) - Show profile picture as well
 // http://localhost:3000/users/
-app.get("/users/", printDebugInfo, function (req, res) {
+app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
@@ -295,6 +295,15 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
 app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
+
+  if (req.role != "admin" || req.role != "user") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
 
   if (isNaN(uid)) {
     res.statusCode = 400;

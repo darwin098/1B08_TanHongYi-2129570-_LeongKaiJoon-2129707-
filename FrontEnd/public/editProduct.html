@@ -113,86 +113,7 @@
           <h1 class="text-primary">Edit Product</h1>
           <hr />
 
-          <div class="row" id="productSection">
-            <div class="row" id="productSection">
-              <!-- left column -->
-              <!-- Image Section -->
-              <div class="col-md-3">
-                <div class="text-center">
-                  <img
-                    src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                    class="avatar img-circle img-thumbnail"
-                    alt="avatar"
-                  />
-                  <h6>Upload a different photo...</h6>
-
-                  <input type="file" class="form-control" />
-                </div>
-              </div>
-
-              <!-- edit form column -->
-              <!-- Info Section -->
-              <div class="col-md-9" id="edit-product-info">
-                <div class="alert alert-info alert-dismissable">
-                  <a class="panel-close close" data-dismiss="alert">×</a>
-                  <i class="fa fa-coffee"></i>
-                  Add error text!
-                </div>
-
-                <h3>Product info</h3>
-
-                <!-- Edit product section -->
-                <form class="form-horizontal" role="form" id="edit-prod-form">
-                  <!-- Product name -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Name:</label>
-                    <textarea
-                      class="form-control col-lg-9"
-                      type="text"
-                      value=""
-                      id="productNameInput"
-                      placeholder="e.g. AMD Ryzen 727 8200H Series"
-                    ></textarea>
-                  </div>
-
-                  <!-- Product description -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Description:</label>
-                    <textarea
-                      class="form-control col-lg-9"
-                      type="text"
-                      value=""
-                      id="productDescriptionInput"
-                      placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-                    ></textarea>
-                  </div>
-
-                  <!-- Product category -->
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Category:</label>
-
-                    <select
-                      class="form-select col-lg-5"
-                      aria-label="Default"
-                      id="productCategoryInput"
-                    ></select>
-                  </div>
-
-                  <!-- Product brand -->
-                  <div class="form-group" id="productBrand">
-                    <label class="col-lg-3 control-label">Brand:</label>
-                  </div>
-
-                  <!-- Product Price -->
-                  <div class="form-group" id="productPrice">
-                    <label class="col-lg-3 control-label">Price:</label>
-                  </div>
-
-                  <button type="submit">Add</button>
-                </form>
-              </div>
-            </div>
-          </div>
+          <div class="row" id="productSection"></div>
         </div>
       </div>
 
@@ -228,27 +149,101 @@
       };
 
       const url = window.location.toString();
-
-      // Scenarios for people editing profiles:
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      // 3. Admin editing one user
-      // 4. User editing himself
-
-      if (role != "admin") {
-        // 1. Someone random, not logged in, trying to access this page
-        // 2. Some other user trying to edit the product
-        window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
+      const productID = parseInt(url.split("/").slice(-1)[0]);
 
       axios.get(`${baseUrl}/category`).then((response) => {
         const allCategories = response.data;
         // For every category in category table
 
         axios
-          .get(`${baseUrl}/product/search/13/`, requestToken)
+          .get(`${baseUrl}/product/search/${productID}/`, requestToken)
           .then((response) => {
+            // Set the form only if product found
+            $("#productSection").append(`
+            <!-- left column -->
+            <!-- Image Section -->
+            <div class="col-md-3">
+              <div class="text-center">
+                <img
+                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                  class="avatar img-circle img-thumbnail"
+                  alt="avatar"
+                />
+                <h6>Upload a different photo...</h6>
+
+                <input type="file" class="form-control" />
+              </div>
+            </div>
+
+            <!-- edit form column -->
+            <!-- Info Section -->
+            <div class="col-md-9" id="edit-product-info">
+              <div class="alert alert-info alert-dismissable">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee">
+                  <div id="message"></div>
+                </i>
+              </div>
+
+              <h3>Product info</h3>
+
+              <!-- Edit product section -->
+              <form class="form-horizontal" role="form" id="edit-prod-form">
+                <!-- Product name -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Name:</label>
+                  <textarea
+                    class="form-control col-lg-9"
+                    type="text"
+                    value=""
+                    id="productNameInput"
+                    placeholder="e.g. AMD Ryzen 727 8200H Series"
+                  ></textarea>
+                </div>
+
+                <!-- Product description -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Description:</label>
+                  <textarea
+                    class="form-control col-lg-9"
+                    type="text"
+                    value=""
+                    id="productDescriptionInput"
+                    placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                  ></textarea>
+                </div>
+
+                <!-- Product category -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label">Category:</label>
+
+                  <select
+                    class="form-select col-lg-5"
+                    aria-label="Default"
+                    id="productCategoryInput"
+                  ></select>
+                </div>
+
+                <!-- Product brand -->
+                <div class="form-group" id="productBrand">
+                  <label class="col-lg-3 control-label">Brand:</label>
+                </div>
+
+                <!-- Product Price -->
+                <div class="form-group" id="productPrice">
+                  <label class="col-lg-3 control-label">Price:</label>
+                </div>
+
+                <button type="submit">Add</button>
+              </form>
+            </div>
+            `);
+
+            // Let admin know ID of product he is editing
+            $("#message").replaceWith(
+              `<div id="message">This product's ID is ${productID}</div>`
+            );
+
             console.log("Axios");
             product = response.data;
             $("#productNameInput").append(`${product.name}`);
@@ -281,6 +276,25 @@
             });
           })
           .catch((error) => {
+            // If product does not exist
+            if (error.response.status == 404) {
+              $("#productSection").replaceWith(`
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-top: 20vh;
+              "
+            >
+              <h1 style="color: teal">404 - Product not found... :(</h1>
+              <p>
+                See all products <a href="/products/all">here!</a>
+              </p>
+            </div>
+            `);
+            }
             console.log("Error Getting Products");
           });
       });
