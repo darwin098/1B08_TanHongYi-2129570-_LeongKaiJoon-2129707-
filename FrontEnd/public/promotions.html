@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Promotions</title>
+    <title>Edit Product</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -14,7 +14,6 @@
   </head>
   <body>
     <div class="container" style="margin-bottom: 10rem">
-      <!-- Navigation -->
       <nav
         class="navbar navbar-expand-lg navbar-light bg-light"
         style="margin: 1.5vh"
@@ -46,8 +45,11 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" style="font-size: x-large" href="/promotions/"
-                >Promotions</a
+              <a
+                class="nav-link active"
+                style="font-size: x-large"
+                href="/promotions/"
+                >Promotions <span class="sr-only">(current)</span></a
               >
             </li>
 
@@ -65,121 +67,8 @@
                 >Profile</a
               >
             </li>
-          </ul>
-          <div id="signInOutUp"></div>
-        </div>
-      </nav>
 
-      <div style="margin-top: 2rem">
-        <div class="col-md-8 col-xs-12">
-          <h1>Promotions</h1>
-
-          <form id="create-post-form" style="margin-top: 2rem">
-            <div class="form-group">
-              <input
-                class="form-control"
-                id="search-bar-form-body"
-                rows="3"
-                placeholder="Search for a product"
-              />
-            </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-          </form>
-        </div>
-      </div>
-
-      <div style="margin-top: 2rem">
-        <div class="col-md-4 col-xs-12">
-          <h2>Filters</h2>
-          <div id="Filters">
-            <form>
-              <input type="checkbox" id="all" name="all" value="15" />
-              <label for="all">All</label>
-              <br />
-              <input type="checkbox" id="laptop" name="laptop" value="15" />
-              <label for="laptop">Laptop</label>
-              <br />
-              <input type="checkbox" id="phones" name="phones" value="10" />
-              <label for="phones">phones</label>
-              <br />
-            </form>
-            <p></p>
-            <button type="submit" class="btn btn-primary">Filter</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top: 2rem">
-        <div class="col-md-4 col-xs-12">
-          <h2>Sort by</h2>
-          <div id="Filters">
-            <select class="form-select" aria-label="Default select example">
-              <option selected>Filter</option>
-              <option value="AZ">A - Z</option>
-              <option value="ZA">Z - A</option>
-              <option value="price">Price</option>
-              <option value="rating">Rating</option>
-            </select>
-
-            <p></p>
-
-            <button type="submit" class="btn btn-primary">Sort</button>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top: 2rem">
-        <div class="col-md-4 col-xs-12">
-          <h2>Results</h2>
-        </div>
-        <div id="results">
-          <div style="border: solid 1px red; width: fit-content; padding: 1em">
-            <a href="#" style="text-decoration: none; color: black">
-              <h4>SP AMD Ryzen 3600 Laptop</h4>
-              <p>
-                Price:
-                <del>$999.00</del>
-                <ins>$669.33</ins>
-              </p>
-              <p>Promotion period: 26/12/2021 - 31/12/2021</p>
-              <p>Description: thingy</p>
-              <p>Rating: 4 stars</p>
-            </a>
-          </div>
-        </div>
-      </div>
-      <p></p>
-    </div>
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.min.js"
-      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-      const baseUrl = "http://localhost:3000";
-
-      const loggedInUserID = localStorage.getItem("loggedInUserID");
-
-      const role = localStorage.getItem("role");
-      const token = localStorage.getItem("token");
-      if (token) {
-        let logoutButton = `
-        <button class="btn btn-danger logout-button">Logout</button>
-        `;
-        $("#signInOutUp").replaceWith(logoutButton);
-        if (role == "admin") {
-          $(".navbar-nav").append(`<li class="nav-item dropdown">
+            <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
                 href="#"
@@ -204,15 +93,393 @@
                   >Add product</a
                 >
               </div>
-            </li>`);
-        }
-      } else {
-        loginButton = `<a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>`;
-        $("#signInOutUp").replaceWith(loginButton);
-      }
+            </li>
+          </ul>
+          <button class="btn btn-danger logout-button">Logout</button>
+        </div>
+      </nav>
 
-      // When search is submitted
-      $("#edit-prof-form").submit((event) => {});
+      <div style="margin-top: 2rem" id="user-profile">
+        <div class="container">
+          <!-- Header -->
+          <h1>All Promotions</h1>
+          <hr />
+
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <h4 style="margin-right: 1em">Sort by:</h4>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="searchType"
+            >
+              <option value="AZ">A - Z</option>
+              <option value="ZA">Z - A</option>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="lowest">Lowest Price</option>
+              <option value="highest">Highest Price</option>
+            </select>
+            <button
+              class="btn btn-primary"
+              id="search"
+              style="margin-left: 1em"
+            >
+              Sort
+            </button>
+          </div>
+          <hr />
+
+          <div>
+            <h3>
+              <div id="sorting"></div>
+            </h3>
+            <div
+              class="row"
+              id="productsList"
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+
+      $(document).on("click", "#search", function () {
+        search = $("#searchType").val();
+        switch (search) {
+          case "AZ":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: A - Z</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/alphabetical/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            break;
+          case "ZA":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Z - A</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/alphabetical/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            break;
+          case "newest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Newest products</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/creation/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "oldest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Oldest products</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/creation/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "lowest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Lowest price</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/price/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "highest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Highest price</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/price/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+        }
+      });
 
       $(document).on("click", ".logout-button", function () {
         localStorage.removeItem("token");
