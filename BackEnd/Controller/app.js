@@ -226,44 +226,8 @@ app.post("/users/", printDebugInfo, function (req, res) {
   });
 });
 
-// [Working]
-// Show all users(admin) - Show profile picture as well
-// http://localhost:3000/users/
-app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
-  // -------------------------------------------------------------
-  // Authorisation check
-  // -------------------------------------------------------------
-  if (req.role != "admin") {
-    let errData = {
-      msg: "you are not authorised to perform this operation",
-    };
-    // 403 - Forbidden
-    res.status(403).type("text").send(errData);
-    return;
-  }
-
-  // Step 1: extraction
-
-  // Step 2 and 3: Process and respond
-  User.findAll(function (err, result) {
-    if (err) {
-      // Send error message response
-      res.status(500).send("Internal Server Error").end();
-    } else {
-      if (result) {
-        // Report good news
-        res.status(200).send(result);
-        res.end();
-      } else {
-        // Send error message response
-        res.status(500).send("Internal Server Error").end();
-      }
-    }
-  });
-});
-
-// [Working]
-// Find user by ID(admin) - Show profile picture as well
+// [Done]
+// Find user by ID(admin)
 // http://localhost:3000/users/24/
 app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
@@ -308,8 +272,8 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
   });
 });
 
-// [Working]
-// Edit User - Edit profile picture as well
+// [Done]
+// Edit User
 // http://localhost:3000/users/28
 app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
@@ -374,32 +338,6 @@ app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
       } else {
         res.status(422).send("The data already exists!").end();
       }
-    }
-  });
-});
-
-// [Reference]
-// Show Image
-app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
-  // Step 1: extraction
-  let uid = parseInt(req.params.itemid);
-
-  if (isNaN(uid)) {
-    res.statusCode = 400;
-    res.send("Invalid Input");
-    res.end();
-
-    return;
-  }
-
-  // Step 2 and 3: Process and respond
-  Product.getImageById(uid, function (err, result) {
-    if (err) {
-      res.status(500).type("json").send("Internal Server Error").end();
-    } else {
-      console.log(result[0].picture);
-      let abImgPath = path.resolve(result[0].picture);
-      res.status(201).sendFile(abImgPath);
     }
   });
 });
