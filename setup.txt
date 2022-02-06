@@ -20,4 +20,8 @@
 
 11) Run "nodemon server.js" in both the consoles.
 
-12) 
+12) open "http://localhost:3001/" in your browser.
+
+13) Admin login: Username"Admin1", password: "p1"
+
+14) User login: Username"Terry Tan", password: "abc123456"
