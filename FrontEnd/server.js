@@ -12,7 +12,7 @@ const app = express();
 // Pages for general public
 // -------------------------------------------------------------
 
-// Home page (required)
+// Home page
 app.get("/", (req, res) => {
   res.sendFile("/public/index.html", { root: __dirname });
 });
@@ -35,6 +35,11 @@ app.get("/search/", (req, res) => {
 // product page (required)
 app.get("/product/:pid", (req, res) => {
   res.sendFile("/public/individualProduct.html", { root: __dirname });
+});
+
+// All products page (additional)
+app.get("/products/all", (req, res) => {
+  res.sendFile("/public/products.html", { root: __dirname });
 });
 
 // promotions page (additional)
@@ -68,6 +73,13 @@ app.get("/tmp/", (req, res) => {
 // Edit product page (additional)
 app.get("/products/edit/:pid", (req, res) => {
   res.sendFile("/public/editProduct.html", { root: __dirname });
+});
+
+// -------------------------------------------------------------
+// 404 page
+// -------------------------------------------------------------
+app.get("*", function (req, res) {
+  res.status(404).sendFile("/public/404page.html", { root: __dirname });
 });
 
 // -------------------------------------------------------------

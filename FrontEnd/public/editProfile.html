@@ -14,7 +14,7 @@
     <script>
       const role = localStorage.getItem("role");
       const loggedInUserID = parseInt(localStorage.getItem("loggedInUserID"));
-      if (loggedInUserID == userID || role == "admin") {
+      if (loggedInUserID != userID && role != "admin") {
         if (loggedInUserID != userID) {
           window.location.href = "/";
           alert("This is not your account!");

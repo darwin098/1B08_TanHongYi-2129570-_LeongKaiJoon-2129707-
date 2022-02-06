@@ -167,87 +167,95 @@
         `;
       $("#forYouSection").append(recomendations);
 
-      // Get recommended (Working)
-      // Get user's interests
-      axios
-        .get(`${baseUrl}/users/interests/${loggedInUserID}`)
-        .then((response) => {
-          const data = response.data;
-
-          // forEach category ID,
-          if (data) {
-            data.forEach((category, interestIndex) => {
-              // Get all products
-              axios
-                .get(`${baseUrl}/interest/category/${category.fk_category_id}`)
-                .then((productResponse) => {
-                  products = productResponse.data;
-
-                  // Append all products
-                  products.forEach((product, productsIndex) => {
-                    // For this one product
-
-                    // If it is the first one being appended to the carousel
-                    const firstContentHTML = `
-                            <div class="carousel-item active">
-                              <div style="width: 50%; padding: 1em">
-                                <a href="/product/${
-                                  product.productid
-                                }" style="text-decoration: none; color: black">
-                                  <h4>${product.name}</h4>
-                                  <p>
-                                    Price: $${product.price.toFixed(2)}
-                                  </p>
-                                  <p>
-                                    Description: ${product.description}
-                                  </p>
-                                  <p>Rating: 4 stars</p>
-                                </a>
-                              </div>
-                            </div>
-                                `;
-
-                    // It is not the first one to be appended
-                    const ContentHTML = `
-                            <div class="carousel-item">
-                              <div style="width: 50%; padding: 1em">
-                                <a href="/product/${
-                                  product.productid
-                                }" style="text-decoration: none; color: black">
-                                  <h4>${product.name}</h4>
-                                  <p>
-                                    Price: $${product.price.toFixed(2)}
-                                  </p>
-                                  <p>
-                                    Description: ${product.description}
-                                  </p>
-                                  <p>Rating: 4 stars</p>
-                                </a>
-                              </div>
-                            </div>
-                                `;
-
-                    if (interestIndex == 0 && productsIndex == 0) {
-                      $("#forUser").append(firstContentHTML);
-                    } else {
-                      $("#forUser").append(ContentHTML);
-                    }
-                  });
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-              // Append them to the carousel
-            });
-          } else {
-            $("#forYouSection").append(`
-                <h2 style="text-align: center; margin: 2.5em; border: solid black 0.1em">You are currently not interested in any categories of products! </br> </br> Add some from a product page!</h2>
+      if (!loggedInUserID) {
+        $("#forYouSection").append(`
+                <h2 style="text-align: center; margin: 2.5em; border: solid black 0.1em">You are currently not Logged in! </br> </br> Sign up to see recommended products!</h2>
               `);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      } else {
+        // Get recommended (Working)
+        // Get user's interests
+        axios
+          .get(`${baseUrl}/users/interests/${loggedInUserID}`)
+          .then((response) => {
+            const data = response.data;
+
+            // forEach category ID,
+            if (data) {
+              data.forEach((category, interestIndex) => {
+                // Get all products
+                axios
+                  .get(
+                    `${baseUrl}/interest/category/${category.fk_category_id}`
+                  )
+                  .then((productResponse) => {
+                    products = productResponse.data;
+
+                    // Append all products
+                    products.forEach((product, productsIndex) => {
+                      // For this one product
+
+                      // If it is the first one being appended to the carousel
+                      const firstContentHTML = `
+                                  <div class="carousel-item active">
+                                    <div style="width: 50%; padding: 1em">
+                                      <a href="/product/${
+                                        product.productid
+                                      }" style="text-decoration: none; color: black">
+                                        <h4>${product.name}</h4>
+                                        <p>
+                                          Price: $${product.price.toFixed(2)}
+                                        </p>
+                                        <p>
+                                          Description: ${product.description}
+                                        </p>
+                                        <p>Rating: 4 stars</p>
+                                      </a>
+                                    </div>
+                                  </div>
+                                      `;
+
+                      // It is not the first one to be appended
+                      const ContentHTML = `
+                                  <div class="carousel-item">
+                                    <div style="width: 50%; padding: 1em">
+                                      <a href="/product/${
+                                        product.productid
+                                      }" style="text-decoration: none; color: black">
+                                        <h4>${product.name}</h4>
+                                        <p>
+                                          Price: $${product.price.toFixed(2)}
+                                        </p>
+                                        <p>
+                                          Description: ${product.description}
+                                        </p>
+                                        <p>Rating: 4 stars</p>
+                                      </a>
+                                    </div>
+                                  </div>
+                                      `;
+
+                      if (interestIndex == 0 && productsIndex == 0) {
+                        $("#forUser").append(firstContentHTML);
+                      } else {
+                        $("#forUser").append(ContentHTML);
+                      }
+                    });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+                // Append them to the carousel
+              });
+            } else {
+              $("#forYouSection").append(`
+                      <h2 style="text-align: center; margin: 2.5em; border: solid black 0.1em">You are currently not interested in any categories of products! </br> </br> Add some from a product page!</h2>
+                    `);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
 
       // Get promotions (Done)
       axios

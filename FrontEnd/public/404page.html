@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>BED-CA2</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script>
+      const token = localStorage.getItem("token");
+      if (token) {
+        let logoutButton = `
+        <button class="btn btn-danger logout-button">Logout</button>
+        `;
+        $("#signInOutUp").replaceWith(logoutButton);
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Navigation -->
+      <nav class="nav" style="display: flex; justify-content: center">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/promotions/">Promotions</a>
+        <a class="nav-link" href="/search/">Search</a>
+        <a class="nav-link" href="/editProfile/">Edit Profile</a>
+        <a class="nav-link" href="/individualPage/">Individual Page</a>
+        <div id="signInOutUp">
+          <a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>
+        </div>
+      </nav>
+
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-top: 40vh;
+        "
+      >
+        <h1 style="color: teal">404 - Page not found... :(</h1>
+        <a href="/">Bring me back to home!</a>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+
+      const loggedInUserID = localStorage.getItem("loggedInUserID");
+      console.log(loggedInUserID);
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
+  </body>
+</html>
