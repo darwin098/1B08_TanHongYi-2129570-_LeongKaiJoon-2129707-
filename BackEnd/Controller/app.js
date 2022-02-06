@@ -1212,11 +1212,11 @@ app.delete(
     Interest.delete(uid, function (err, result) {
       if (err) {
         // Send error message response
-        res.status(500).send("Internal Server Error").end();
+        res.status(200).send("Internal Server Error").end();
       } else {
         if (result.affectedRows == 0) {
           // Send error message response
-          res.status(404).send("User ID not found!").end();
+          res.status(200).send("User ID not found!").end();
         } else {
           res.status(200).send("Interests Successfully Deleted.").end();
         }

@@ -4,24 +4,22 @@
 
 3)  Update 1B08_TanHongYi(2129570)_LeongKaiJoon(2129707)/BackEnd > Controller > databaseConfig.js with correct username, password.
 
-4)  Go to postman, and import a collection from this link :"".
+4)	Create a new Schema in mySql Workbench.
 
-5)	Create a new Schema in mySql Workbench.
+5)	Select the schema. Double click on the title in the schema tab and make sure the name is in bold.
 
-6)	Select the schema. Double click on the title in the schema tab and make sure the name is in bold.
+6)	Create a new SQL tab to execute a new query.
 
-7)	Create a new SQL tab to execute a new query.
+7)	Paste the contents of “CA2Database.sql” into the query.
 
-8)	Paste the contents of “CA2Database.sql” into the query.
+8)	Press the lightning button to run the SQL script.
 
-9)	Press the lightning button to run the SQL script.
+9)  Update Controller > databaseConfig.js with correct database name.
 
-10)  Update Controller > databaseConfig.js with correct database name.
+10) Run "nodemon server.js" in both the consoles.
 
-11) Run "nodemon server.js" in both the consoles.
+11) open "http://localhost:3001/" in your browser.
 
-12) open "http://localhost:3001/" in your browser.
+12) Admin login: Username"Admin1", password: "p1"
 
-13) Admin login: Username"Admin1", password: "p1"
-
-14) User login: Username"Terry Tan", password: "abc123456"
+13) User login: Username"Terry Tan", password: "abc123456"
