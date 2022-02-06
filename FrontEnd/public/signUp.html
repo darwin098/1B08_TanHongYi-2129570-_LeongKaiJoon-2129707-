@@ -91,7 +91,14 @@
         </div>
         <div class="form-group">
           <label for="contact">Contact Number</label>
-          <input type="number" class="form-control" id="contact" required />
+          <input
+            type="number"
+            class="form-control"
+            id="contact"
+            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+            required
+            maxlength="8"
+          />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -136,15 +143,19 @@
           password: password,
         };
 
-        axios
-          .post(`${baseUrl}/users`, requestBody)
-          .then((response) => {
-            alert("You have been registered!");
-            window.location.href = "/signIn/";
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        if (contact >= 10000000) {
+          axios
+            .post(`${baseUrl}/users`, requestBody)
+            .then((response) => {
+              alert("You have been registered!");
+              window.location.href = "/signIn/";
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          alert("Contact number cannot be less than 8 digits!");
+        }
       });
     </script>
   </body>

@@ -249,7 +249,7 @@
                   </div>
                 </div>
                 </form>
-                <button class="btn btn-primary submit">Submit</button>
+                <button type="button" class="btn btn-primary" onClick="submitReview()">Submit</button>
               <div id="userMessage" style="padding: 2.5em"></div>
             </div>
 
@@ -321,8 +321,7 @@
           }
         });
 
-      $(document).on("click", ".submit", function () {
-        location.reload();
+      function submitReview() {
         console.log(`success`);
 
         // if user is not logged in,
@@ -390,12 +389,13 @@
                 .catch((error) => {
                   console.log(error);
                 });
+              location.reload();
             })
             .catch((error) => {
               console.log(error);
             });
         }
-      });
+      }
 
       $(document).ready(function () {
         $(document).on("click", ".logout-button", function () {

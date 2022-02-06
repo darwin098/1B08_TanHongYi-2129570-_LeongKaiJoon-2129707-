@@ -234,8 +234,8 @@
                   </div>
 
                   <button type="submit" id="submitBtn">Submit Changes</button>
+                  <button type="button" onclick="deleteProduct()" >Delete</button>
                 </form>
-                <button type="button" id="delBtn">Delete</button>
               </div>
             </div>
             `);
@@ -330,7 +330,7 @@
 
         // Update product
         axios
-          .put(`${baseUrl}/product/edit/13`, requestBody, requestToken)
+          .put(`${baseUrl}/product/edit/${prodID}`, requestBody, requestToken)
           .then((response) => {
             alert("Successfully Edited Product");
           })
@@ -339,18 +339,17 @@
           });
       });
 
-      $("#delBtn").click(() => {
-        // Update product
+      function deleteProduct() {
         axios
-          .delete(`${baseUrl}/product/delete/13`, requestToken)
+          .delete(`${baseUrl}/product/delete/${prodID}`, requestToken)
           .then((response) => {
             alert("Successfully Deleted Product");
-            window.location.assign(`https://localhost:3001/`);
+            window.location.href(`/`);
           })
           .catch((error) => {
             alert("Error!" + error);
           });
-      });
+      }
 
       $("#img_file").change(() => {
         var bodyFormData = new FormData();
