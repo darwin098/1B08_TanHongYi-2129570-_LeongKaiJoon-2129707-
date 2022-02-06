@@ -371,7 +371,7 @@ let Product = {
           description = ?,
           categoryid = ?,
           brand = ?,
-          price = ?,
+          price = ?
         WHERE
           productid = ?
         `;

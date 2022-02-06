@@ -15,13 +15,59 @@
   <body>
     <div class="container">
       <!-- Navigation -->
-      <nav class="nav">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="/promotions/">Promotions</a>
-        <a class="nav-link" href="/search/">Search</a>
-        <a class="nav-link" href="/editProfile/">Edit Profile</a>
-        <a class="nav-link" href="/individualPage/">Individual Page</a>
-        <div id="signInOutUp"></div>
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-light"
+        style="margin: 1.5vh"
+      >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/" style="font-size: x-large">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                style="font-size: x-large"
+                href="/products/all"
+                >All Products</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" style="font-size: x-large" href="/promotions/"
+                >Promotions</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" style="font-size: x-large" href="/search/"
+                >Search</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                style="font-size: x-large"
+                href="/editProfile/"
+                >Profile</a
+              >
+            </li>
+          </ul>
+          <div id="signInOutUp"></div>
+        </div>
       </nav>
 
       <!-- Heading and search-bar -->
@@ -122,12 +168,41 @@
 
       const loggedInUserID = localStorage.getItem("loggedInUserID");
 
+      const role = localStorage.getItem("role");
       const token = localStorage.getItem("token");
       if (token) {
         let logoutButton = `
         <button class="btn btn-danger logout-button">Logout</button>
         `;
         $("#signInOutUp").replaceWith(logoutButton);
+        if (role == "admin") {
+          $(".navbar-nav").append(`<li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                style="font-size: x-large"
+              >
+                Admin
+              </a>
+
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a
+                  class="dropdown-item"
+                  style="font-size: x-large"
+                  href="/categories/add"
+                  >Add category</a
+                >
+                <a class="dropdown-item" style="font-size: x-large" href="/tmp/"
+                  >Add product</a
+                >
+              </div>
+            </li>`);
+        }
       } else {
         loginButton = `<a class="nav-link" href="/signIn/"> Sign-in / Sign-up </a>`;
         $("#signInOutUp").replaceWith(loginButton);
