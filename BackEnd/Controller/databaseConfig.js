@@ -17,8 +17,8 @@ var dbconnect = {
     var conn = mysql.createConnection({
       host: "localhost",
       user: "root",
-      // password: "1hitko123C",
-      password: "JkC33wYjaP+yD9*p",
+      password: "1hitko123C",
+      // password: "JkC33wYjaP+yD9*p",
       database: "ca1",
       dateStrings: true,
     });

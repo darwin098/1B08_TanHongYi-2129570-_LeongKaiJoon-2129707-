@@ -104,7 +104,9 @@ function printDebugInfo(req, res, next) {
 // -------------------------------------------------------------
 app.use(urlEncodedParser);
 app.use(jsonParser);
-app.use("../uploads", express.static("uploads"));
+app.use("./productImg", express.static("productImg"));
+app.use("./profileImg", express.static("profileImg"));
+
 app.use(cors());
 
 app.options("*", cors());
