@@ -249,7 +249,7 @@
 
             $("#prodPictureBox").append(`
                 <img
-                  src=${baseUrl}/product/showimage/${prodID}"
+                  src="${baseUrl}/product/showimage/${prodID}"
                   class="avatar img-circle img-thumbnail"
                   alt="productImg"
                 />
@@ -333,10 +333,10 @@
           },
         })
           .then((response) => {
-            alert("success");
+            alert("Image Upload Success");
           })
           .catch((error) => {
-            alert("error");
+            alert("No Image Detected");
           });
 
         requestBody = {

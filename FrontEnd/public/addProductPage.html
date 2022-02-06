@@ -116,31 +116,20 @@
           <hr />
 
           <div class="row" id="productSection">
-            <div class="row" id="productSection">
+            <div class="row" id="productSection" style="width: 100%">
               <!-- left column -->
               <!-- Image Section -->
               <div class="col-md-3">
                 <div class="text-center">
-                  <img
-                    src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                    class="avatar img-circle img-thumbnail"
-                    alt="avatar"
-                  />
-                  <h6>Upload a different photo...</h6>
+                  <h6>Upload a photo</h6>
 
-                  <input type="file" class="form-control" />
+                  <input type="file" class="form-control" id="img_file" />
                 </div>
               </div>
 
               <!-- edit form column -->
               <!-- Info Section -->
               <div class="col-md-9" id="product-info">
-                <div class="alert alert-info alert-dismissable">
-                  <a class="panel-close close" data-dismiss="alert">×</a>
-                  <i class="fa fa-coffee"></i>
-                  Add error text!
-                </div>
-
                 <h3>Product info</h3>
 
                 <!-- Edit product section -->
@@ -279,6 +268,23 @@
           .post(`${baseUrl}/product`, requestBody, requestToken)
           .then((response) => {
             alert("Successfully Added Product");
+            var bodyFormData = new FormData();
+            bodyFormData.append("picture", $("#img_file").prop("files")[0]);
+            axios({
+              method: "put",
+              url: `${baseUrl}/product/addimage/${response.data.productid}`,
+              data: bodyFormData,
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: "Bearer " + token,
+              },
+            })
+              .then((response) => {
+                alert("Image Upload Success");
+              })
+              .catch((error) => {
+                alert("No Image Detected");
+              });
           })
           .catch((error) => {
             alert("Error!" + error);
