@@ -113,7 +113,61 @@
           <h1 class="text-primary">Edit Product</h1>
           <hr />
 
-          <div class="row" id="productSection">
+          <div class="row" id="productSection"></div>
+        </div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+      var exstingCateList = [[], [], []];
+      var interestsList = {};
+      var somethingChanged = false;
+
+      let requestToken = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const url = window.location.toString();
+      const prodID = parseInt(url.split("/").slice(-1)[0]);
+
+      $("#prodPictureBox").append(`
+        <img
+          src=${baseUrl}/product/showimage/${prodID}"
+          class="avatar img-circle img-thumbnail"
+          alt="avatar"
+        />
+      `);
+
+      axios.get(`${baseUrl}/category`).then((response) => {
+        const allCategories = response.data;
+        // For every category in category table
+
+        axios
+          .get(`${baseUrl}/product/search/${prodID}/`, requestToken)
+          .then((response) => {
+            // Set the form only if product found
+            $("#productSection").replaceWith(`
             <div class="row" id="productSection">
               <!-- left column -->
               <!-- Image Section -->
@@ -131,8 +185,11 @@
               <div class="col-md-9" id="edit-product-info">
                 <div class="alert alert-info alert-dismissable">
                   <a class="panel-close close" data-dismiss="alert">×</a>
-                  <i class="fa fa-coffee"></i>
-                  Add error text!
+                  <i class="fa fa-coffee">
+                    <div id="message">
+                      
+                    </div>  
+                  </i>
                 </div>
 
                 <h3>Product info</h3>
@@ -189,72 +246,13 @@
                 <button type="button" id="delBtn">Delete</button>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+            `);
 
-      <p></p>
-    </div>
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.min.js"
-      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-      const baseUrl = "http://localhost:3000";
-      const token = localStorage.getItem("token");
-      var exstingCateList = [[], [], []];
-      var interestsList = {};
-      var somethingChanged = false;
+            // Let admin know ID of product he is editing
+            $("#message").replaceWith(
+              `<div id="message">This product's ID is ${prodID}</div>`
+            );
 
-      let requestToken = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-
-      const url = window.location.toString();
-      const prodID = 17;
-
-      // Scenarios for people editing profiles:
-      // 1. Someone random, not logged in, trying to access the page
-      // 2. Some other user trying to edit another user
-      // 3. Admin editing one user
-      // 4. User editing himself
-
-      if (role != "admin") {
-        // 1. Someone random, not logged in, trying to access this page
-        // 2. Some other user trying to edit the product
-        window.location.href = "/signIn/";
-        alert("Hacking the website? Naughty~~ ;)");
-      }
-
-      $("#prodPictureBox").append(`
-        <img
-          src=${baseUrl}/product/showimage/${prodID}"
-          class="avatar img-circle img-thumbnail"
-          alt="avatar"
-        />
-      `);
-
-      axios.get(`${baseUrl}/category`).then((response) => {
-        const allCategories = response.data;
-        // For every category in category table
-
-        axios
-          .get(`${baseUrl}/product/search/13/`, requestToken)
-          .then((response) => {
             console.log("Axios");
             product = response.data;
             $("#productNameInput").append(`${product.name}`);
@@ -289,6 +287,25 @@
             });
           })
           .catch((error) => {
+            // If product does not exist
+            if (error.response.status == 404) {
+              $("#productSection").replaceWith(`
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-top: 20vh;
+              "
+            >
+              <h1 style="color: teal">404 - Product not found... :(</h1>
+              <p>
+                See all products <a href="/products/all">here!</a>
+              </p>
+            </div>
+            `);
+            }
             console.log("Error Getting Products");
           });
       });
