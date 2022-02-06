@@ -505,6 +505,26 @@
         }
       });
 
+      $("#img_file").change(() => {
+        var bodyFormData = new FormData();
+        bodyFormData.append("picture", $("#img_file").prop("files")[0]);
+        axios({
+          method: "put",
+          url: `${baseUrl}/user/addimage/${userID}`,
+          data: bodyFormData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then((response) => {
+            alert("success");
+          })
+          .catch((error) => {
+            alert("error");
+          });
+      });
+
       $(document).on("click", ".logout-button", function () {
         localStorage.removeItem("token");
         localStorage.removeItem("loggedInUserID");

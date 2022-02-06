@@ -151,14 +151,6 @@
       const url = window.location.toString();
       const prodID = parseInt(url.split("/").slice(-1)[0]);
 
-      $("#prodPictureBox").append(`
-        <img
-          src=${baseUrl}/product/showimage/${prodID}"
-          class="avatar img-circle img-thumbnail"
-          alt="avatar"
-        />
-      `);
-
       axios.get(`${baseUrl}/category`).then((response) => {
         const allCategories = response.data;
         // For every category in category table
@@ -176,7 +168,7 @@
                   <div id="prodPictureBox"></div>
                   <h6>Upload a different photo...</h6>
 
-                  <input type="file" class="form-control" />
+                  <input type="file" class="form-control" id="img_file" />
                 </div>
               </div>
 
@@ -252,6 +244,14 @@
             $("#message").replaceWith(
               `<div id="message">This product's ID is ${prodID}</div>`
             );
+
+            $("#prodPictureBox").append(`
+              <img
+                src=${baseUrl}/product/showimage/${prodID}"
+                class="avatar img-circle img-thumbnail"
+                alt="productImg"
+              />
+            `);
 
             console.log("Axios");
             product = response.data;
@@ -349,6 +349,26 @@
           })
           .catch((error) => {
             alert("Error!" + error);
+          });
+      });
+
+      $("#img_file").change(() => {
+        var bodyFormData = new FormData();
+        bodyFormData.append("picture", $("#img_file").prop("files")[0]);
+        axios({
+          method: "put",
+          url: `${baseUrl}/product/addimage/${userID}`,
+          data: bodyFormData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then((response) => {
+            alert("success");
+          })
+          .catch((error) => {
+            alert("error");
           });
       });
 
