@@ -173,23 +173,22 @@
         })
         .then((response) => {
           console.log("Axios");
-          user = response.data;
+          product = response.data;
           $("#product-display").append(`<div class="col-md-6">
             <img
               class="card-img-top mb-5 mb-md-0"
-              src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg"
+              src="${baseUrl}/product/showimage/${productID}"
               alt="..."
             />
           </div>
           <div class="col-md-6"  id="productOptions">
-            <div class="small mb-1">${user.categoryname}-${user.categoryid}${user.productid}</div>
-            <h1 class="display-5 fw-bolder">${user.name}</h1>
+            <div class="small mb-1">${product.categoryname}-${product.categoryid}${product.productid}</div>
+            <h1 class="display-5 fw-bolder">${product.name}</h1>
             <div class="fs-5 mb-5">
-              <del>$${user.price}</del>
-              <ins>$${user.price}</ins>
+              <ins>$${product.price}</ins>
             </div>
             <div id="rating"></div>
-            <p class="lead">${user.description}</p>
+            <p class="lead">${product.description}</p>
             <div class="d-flex">
               <input
                 class="form-control text-center me-3"
