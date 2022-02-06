@@ -36,10 +36,6 @@ function verifyToken(req, res, next) {
     });
   } else {
     // obtain the token’s value
-    // "Bearer <token>".split('Bearer ') = [
-    //      [0] => "Bearer ",
-    //      [1] => <token>,
-    // ]
     token = token.split("Bearer ")[1];
 
     // <token>

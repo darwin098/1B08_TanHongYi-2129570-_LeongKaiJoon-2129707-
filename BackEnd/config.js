@@ -8,14 +8,3 @@ console.log("----------------------------");
 var secret = "s12xyz00";
 
 module.exports.key = secret;
-
-// Equilavent of the above
-/*
-
-var my_secret = {
-  key: "s12xyz00",
-};
-
-module.exports = my_secret;
-
-*/
