@@ -216,8 +216,8 @@ let User = {
                 config.key,
                 // (3) Lifetime of token
                 {
-                  //expires in 24 hrs(in)
-                  expiresIn: 86400,
+                  // Supposed lifetime of token, removed as unneccessary
+                  // expiresIn: 86400,
                 }
               );
 
@@ -234,7 +234,6 @@ let User = {
               };
 
               return callback(null, finalResult);
-              // return callback(null, token);
             }
           }
         });
