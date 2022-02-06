@@ -19,10 +19,20 @@ const bodyParser = require("body-parser");
 // Multer helps to process form-data elements, like how body-parser helps with process body elements/data
 // Sub Section For Multer Intro
 const multer = require("multer");
-const uploadStorage = multer.diskStorage({
+const pfpStorage = multer.diskStorage({
   // Sets storage location
   destination: function (req, file, cb) {
-    cb(null, "../uploads");
+    cb(null, "./profileImg");
+  },
+  // Sets File Name
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname);
+  },
+});
+const prodImgStorage = multer.diskStorage({
+  // Sets storage location
+  destination: function (req, file, cb) {
+    cb(null, "./productImg");
   },
   // Sets File Name
   filename: function (req, file, cb) {
@@ -37,8 +47,17 @@ const uploadFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-const upload = multer({
-  storage: uploadStorage,
+const pfpupload = multer({
+  storage: pfpStorage,
+  limits: {
+    // File Size is done in bytes
+    // 1024 * 1024 Bytes = 1 MB
+    fileSize: 1024 * 1024,
+  },
+  fileFilter: uploadFilter,
+});
+const prodImgupload = multer({
+  storage: prodImgStorage,
   limits: {
     // File Size is done in bytes
     // 1024 * 1024 Bytes = 1 MB
@@ -342,37 +361,37 @@ app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
 
 // [Reference]
 // Add image
-app.put(
-  "/user/addimage/:itemid",
-  upload.single("picture"),
-  printDebugInfo,
-  verifyToken,
-  function (req, res) {
-    // Step 1: extraction
-    let uid = parseInt(req.params.itemid);
-    console.log(req.file);
-    if (isNaN(uid)) {
-      res.statusCode = 400;
-      res.send("Invalid Input");
-      res.end();
-      return;
-    } else if (req.file === undefined) {
-      res.statusCode = 500;
-      res.send("Internal Server Error");
-      res.end;
-      return;
-    } else {
-      // Step 2 and 3: Process and respond
-      User.addImageById(uid, req.file.path, function (err, result) {
-        if (err) {
-          res.status(500).type("json").send("Internal Server Error").end();
-        } else {
-          res.status(201).end();
-        }
-      });
-    }
-  }
-);
+// app.put(
+//   "/user/addimage/:itemid",
+//   upload.single("picture"),
+//   printDebugInfo,
+//   verifyToken,
+//   function (req, res) {
+//     // Step 1: extraction
+//     let uid = parseInt(req.params.itemid);
+//     console.log(req.file);
+//     if (isNaN(uid)) {
+//       res.statusCode = 400;
+//       res.send("Invalid Input");
+//       res.end();
+//       return;
+//     } else if (req.file === undefined) {
+//       res.statusCode = 500;
+//       res.send("Internal Server Error");
+//       res.end;
+//       return;
+//     } else {
+//       // Step 2 and 3: Process and respond
+//       User.addImageById(uid, req.file.path, function (err, result) {
+//         if (err) {
+//           res.status(500).type("json").send("Internal Server Error").end();
+//         } else {
+//           res.status(201).end();
+//         }
+//       });
+//     }
+//   }
+// );
 
 // [Reference]
 // Show Image
@@ -729,8 +748,8 @@ app.get("/interest/category/:categoryid", printDebugInfo, function (req, res) {
   });
 });
 
-// [Working]
-// Edit product (admin) and edit image as well
+// [Done]
+// Edit product (admin)
 app.put("/product/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
@@ -1021,6 +1040,78 @@ app.get("/review/:rid", printDebugInfo, function (req, res) {
   });
 });
 
+// [Done]
+// Add image to product listing (admin)
+app.put(
+  "/user/addimage/:userid",
+  prodImgupload.single("picture"),
+  printDebugInfo,
+  verifyToken,
+  function (req, res) {
+    // -------------------------------------------------------------
+    // Authorisation check
+    // -------------------------------------------------------------
+    if (req.role != "admin") {
+      let errData = {
+        msg: "you are not authorised to perform this operation",
+      };
+      // 403 - Forbidden
+      res.status(403).type("text").send(errData);
+      return;
+    }
+
+    // Step 1: extraction
+    let uid = parseInt(req.params.userid);
+    console.log(req.file);
+    if (isNaN(uid)) {
+      res.statusCode = 400;
+      res.send("Invalid Input");
+      res.end();
+      return;
+    } else if (req.file === undefined) {
+      res.statusCode = 500;
+      res.send("Internal Server Error");
+      res.end;
+      return;
+    } else {
+      // Step 2 and 3: Process and respond
+      User.addImageById(uid, req.file.path, function (err, result) {
+        if (err) {
+          res.status(500).type("json").send("Internal Server Error").end();
+        } else {
+          res.status(201).end();
+        }
+      });
+    }
+  }
+);
+
+// [Done]
+// Show Image
+app.get("/user/showimage/:userid", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let uid = parseInt(req.params.userid);
+
+  if (isNaN(uid)) {
+    res.statusCode = 400;
+    res.send("Invalid Input");
+    res.end();
+
+    return;
+  }
+
+  // Step 2 and 3: Process and respond
+  User.getImageById(uid, function (err, result) {
+    if (err) {
+      res.status(500).type("json").send("Internal Server Error").end();
+    } else {
+      console.log(result[0].profile_pic_url);
+      let abImgPath = path.resolve(result[0].profile_pic_url);
+      res.status(201).sendFile(abImgPath);
+    }
+  });
+});
+
 // -------------------------------------------------------------
 // Endpoints (interests)
 // -------------------------------------------------------------
@@ -1158,11 +1249,11 @@ app.delete(
 // CA2 Needed Endpoints (Image uploading)
 // -------------------------------------------------------------
 
-// [Working]
+// [Done]
 // Add image to product listing (admin)
 app.put(
   "/product/addimage/:itemid",
-  upload.single("picture"),
+  pfpupload.single("picture"),
   printDebugInfo,
   verifyToken,
   function (req, res) {
@@ -1204,7 +1295,7 @@ app.put(
   }
 );
 
-// [Working]
+// [Done]
 // Show Image
 app.get("/product/showimage/:itemid", printDebugInfo, function (req, res) {
   // Step 1: extraction

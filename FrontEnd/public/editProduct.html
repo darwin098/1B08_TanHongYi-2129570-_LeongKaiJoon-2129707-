@@ -119,11 +119,7 @@
               <!-- Image Section -->
               <div class="col-md-3">
                 <div class="text-center">
-                  <img
-                    src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                    class="avatar img-circle img-thumbnail"
-                    alt="avatar"
-                  />
+                  <div id="prodPictureBox"></div>
                   <h6>Upload a different photo...</h6>
 
                   <input type="file" class="form-control" />
@@ -229,6 +225,7 @@
       };
 
       const url = window.location.toString();
+      const prodID = 17;
 
       // Scenarios for people editing profiles:
       // 1. Someone random, not logged in, trying to access the page
@@ -243,6 +240,14 @@
         alert("Hacking the website? Naughty~~ ;)");
       }
 
+      $("#prodPictureBox").append(`
+        <img
+          src=${baseUrl}/product/showimage/${prodID}"
+          class="avatar img-circle img-thumbnail"
+          alt="avatar"
+        />
+      `);
+
       axios.get(`${baseUrl}/category`).then((response) => {
         const allCategories = response.data;
         // For every category in category table
@@ -255,19 +260,21 @@
             $("#productNameInput").append(`${product.name}`);
             $("#productDescriptionInput").append(`${product.description}`);
             $("#productBrand").append(`
-                    <input
-                      class="form-control col-lg-9"
-                      type="text"
-                      value="${product.brand}"
-                      id="productBrandInput"
-                    />`);
+              <input
+                class="form-control col-lg-9"
+                type="text"
+                value="${product.brand}"
+                id="productBrandInput"
+              />
+            `);
             $("#productPrice").append(`
-                    <input
-                      class="form-control col-lg-9"
-                      type="number"
-                      value="${product.price}"
-                      id="productPriceInput"
-                    />`);
+              <input
+                class="form-control col-lg-9"
+                type="number"
+                value="${product.price}"
+                id="productPriceInput"
+              />
+            `);
 
             allCategories.forEach((category) => {
               if (`${product.categoryid}` == `${category.categoryid}`) {

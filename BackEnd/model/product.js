@@ -404,7 +404,7 @@ let Product = {
       }
     });
   },
-  // [Working]
+  // [Done]
   // Image Extra Feature
   // Saving Images
   addImageById: function (productID, picture, callback) {
@@ -442,7 +442,7 @@ let Product = {
       }
     });
   },
-  // [Working]
+  // [Done]
   // Retrieving Images
   getImageById: function (productID, callback) {
     var dbConn = db.getConnection();

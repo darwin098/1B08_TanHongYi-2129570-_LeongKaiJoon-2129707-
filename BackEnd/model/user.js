@@ -328,11 +328,11 @@ let User = {
       } else {
         const sql = `
         UPDATE
-          ca1.product 
+          ca1.users 
         SET
-          product.picture = ?
+          users.profile_pic_url = ?
         WHERE
-          product.productid = ?
+          users.userid = ?
         `;
 
         dbConn.query(sql, [picture, userID], (error, q_result) => {
@@ -354,7 +354,7 @@ let User = {
 
   // [Done]
   // Retrieving Images
-  getImageById: function (productID, callback) {
+  getImageById: function (userID, callback) {
     var dbConn = db.getConnection();
 
     dbConn.connect(function (err) {

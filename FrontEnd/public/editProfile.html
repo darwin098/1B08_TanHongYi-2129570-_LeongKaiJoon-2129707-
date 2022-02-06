@@ -90,14 +90,11 @@
             <!-- left column -->
             <div class="col-md-3">
               <div class="text-center">
-                <img
-                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                  class="avatar img-circle img-thumbnail"
-                  alt="avatar"
-                />
+                <div id="profImgBox" class="container bg-dark"></div>
+
                 <h6>Upload a different photo...</h6>
 
-                <input type="file" class="form-control" />
+                <input type="file" class="form-control" id="img_file" />
               </div>
               <form class="form-horizontal" role="form" id="edit-prefs-form">
                 <div class="form-group">
@@ -217,6 +214,15 @@
 
       // 3. Admin editing one user
       // 4. User editing himself
+
+      $("#profImgBox").append(`
+        <img
+          src=${baseUrl}/user/showimage/${userID}"
+          class="avatar img-circle img-thumbnail"
+          alt="avatar"
+        />
+      `);
+
       axios
         .get(`${baseUrl}/users/${userID}/`, requestToken)
         .then((response) => {
@@ -373,6 +379,8 @@
               alert("Error! Something went wrong! :>@\n");
               console.log("Error! Something went wrong! :>@");
             });
+
+          axios.put(``);
         } else {
           console.log("Nothing Changed");
         }
