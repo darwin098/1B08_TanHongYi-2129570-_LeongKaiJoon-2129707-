@@ -450,7 +450,7 @@
                   prefEnter = true;
                   for (var c = 0; c < exstingCateList[2].length; c++) {
                     tempString += exstingCateList[2][c];
-                    if (c + 2 != exstingCateList[2]) {
+                    if (c != exstingCateList[2].length - 1) {
                       tempString += ",";
                     }
                   }
@@ -464,7 +464,7 @@
                 prefEnter = true;
                 for (var c = 0; c < exstingCateList[2].length; c++) {
                   tempString += exstingCateList[2][c];
-                  if (c + 2 != exstingCateList[2].length) {
+                  if (c != exstingCateList[2].length - 1) {
                     tempString += ",";
                   }
                 }
@@ -475,7 +475,7 @@
               prefEnter = true;
               for (var c = 0; c < exstingCateList[2].length; c++) {
                 tempString += exstingCateList[2][c];
-                if (c + 2 != exstingCateList[2].length) {
+                if (c != exstingCateList[2].length - 1) {
                   tempString += ",";
                 }
               }
@@ -483,6 +483,8 @@
               break;
             }
           }
+        } else {
+          prefEnter = true;
         }
 
         // Checking whether current data matches their pre-populated data
@@ -501,16 +503,18 @@
             .delete(`${baseUrl}/interest/del/${userID}`, requestToken)
             .then((response) => {
               console.log("Preferences Successfully Delete");
-              axios
-                .post(
-                  `${baseUrl}/interest/${userID}`,
-                  requestBodyPreferences,
-                  requestToken
-                )
-                .then((response) => console.log("Successful Insertion"))
-                .catch((error) => {
-                  console.log("Error In Insertion!");
-                });
+              if (tempString != "") {
+                axios
+                  .post(
+                    `${baseUrl}/interest/${userID}`,
+                    requestBodyPreferences,
+                    requestToken
+                  )
+                  .then((response) => console.log("Successful Insertion"))
+                  .catch((error) => {
+                    console.log("Error In Insertion!");
+                  });
+              }
             })
             .catch((error) => {
               console.log("Error In Deletion!");
