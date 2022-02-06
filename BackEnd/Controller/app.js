@@ -229,7 +229,7 @@ app.post("/users/", printDebugInfo, function (req, res) {
 // [Working]
 // Show all users(admin) - Show profile picture as well
 // http://localhost:3000/users/
-app.get("/users/", printDebugInfo, function (req, res) {
+app.get("/users/", printDebugInfo, verifyToken, function (req, res) {
   // -------------------------------------------------------------
   // Authorisation check
   // -------------------------------------------------------------
@@ -314,6 +314,15 @@ app.get("/users/:id/", printDebugInfo, verifyToken, function (req, res) {
 app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
+
+  if (req.role != "admin" || req.role != "user") {
+    let errData = {
+      msg: "you are not authorised to perform this operation",
+    };
+    // 403 - Forbidden
+    res.status(403).type("text").send(errData);
+    return;
+  }
 
   if (isNaN(uid)) {
     res.statusCode = 400;
@@ -653,6 +662,64 @@ app.get("/product/search/creation/:order", printDebugInfo, function (req, res) {
   }
   // Step 2 and 3: Process and respond
   Product.findAllByDate(order, function (err, result) {
+    if (err) {
+      // Send error message response
+      res.status(500).send("Internal Server Error").end();
+    } else {
+      if (result) {
+        // Report good news
+        res.status(200).send(result).end();
+      } else {
+        // Send error message response
+        res.status(404).send("No results found").end();
+      }
+    }
+  });
+});
+
+// [Done]
+// Get all products by alphabetical order
+// http://localhost:3000/search/asc
+app.get(
+  "/product/search/alphabetical/:order",
+  printDebugInfo,
+  function (req, res) {
+    // Step 1: extraction
+    let order = req.params.order;
+
+    if (order != "asc" && order != "desc") {
+      res.status(200).end;
+    }
+    // Step 2 and 3: Process and respond
+    Product.findAllByName(order, function (err, result) {
+      if (err) {
+        // Send error message response
+        res.status(500).send("Internal Server Error").end();
+      } else {
+        if (result) {
+          // Report good news
+          res.status(200).send(result).end();
+        } else {
+          // Send error message response
+          res.status(404).send("No results found").end();
+        }
+      }
+    });
+  }
+);
+
+// [Done]
+// Get all products by price order
+// http://localhost:3000/search/price/asc
+app.get("/product/search/price/:order", printDebugInfo, function (req, res) {
+  // Step 1: extraction
+  let order = req.params.order;
+
+  if (order != "asc" && order != "desc") {
+    res.status(200).end;
+  }
+  // Step 2 and 3: Process and respond
+  Product.findAllByPrice(order, function (err, result) {
     if (err) {
       // Send error message response
       res.status(500).send("Internal Server Error").end();

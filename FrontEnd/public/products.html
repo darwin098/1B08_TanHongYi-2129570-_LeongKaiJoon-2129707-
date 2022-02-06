@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Edit Product</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container" style="margin-bottom: 10rem">
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-light"
+        style="margin: 1.5vh"
+      >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/" style="font-size: x-large">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                style="font-size: x-large"
+                href="/products/all"
+                >All Products</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" style="font-size: x-large" href="/promotions/"
+                >Promotions</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" style="font-size: x-large" href="/search/"
+                >Search</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                style="font-size: x-large"
+                href="/editProfile/"
+                >Profile</a
+              >
+            </li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                style="font-size: x-large"
+              >
+                Admin
+              </a>
+
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a
+                  class="dropdown-item"
+                  style="font-size: x-large"
+                  href="/categories/add"
+                  >Add category</a
+                >
+                <a class="dropdown-item" style="font-size: x-large" href="/tmp/"
+                  >Add product</a
+                >
+              </div>
+            </li>
+          </ul>
+          <button class="btn btn-danger logout-button">Logout</button>
+        </div>
+      </nav>
+
+      <div style="margin-top: 2rem" id="user-profile">
+        <div class="container">
+          <!-- Header -->
+          <h1 class="text-primary">All Products</h1>
+          <hr />
+
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <h4 style="margin-right: 1em">Sort by:</h4>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="searchType"
+            >
+              <option value="AZ">A - Z</option>
+              <option value="ZA">Z - A</option>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="lowest">Lowest Price</option>
+              <option value="highest">Highest Price</option>
+            </select>
+            <button
+              class="btn btn-primary"
+              id="search"
+              style="margin-left: 1em"
+            >
+              Sort
+            </button>
+          </div>
+          <hr />
+
+          <div>
+            <h3>
+              <div id="sorting"></div>
+            </h3>
+            <div
+              class="row"
+              id="productsList"
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <p></p>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const baseUrl = "http://localhost:3000";
+      const token = localStorage.getItem("token");
+
+      $(document).on("click", "#search", function () {
+        search = $("#searchType").val();
+        switch (search) {
+          case "AZ":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: A - Z</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/alphabetical/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            break;
+          case "ZA":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Z - A</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/alphabetical/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+            break;
+          case "newest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Newest products</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/creation/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "oldest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Oldest products</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/creation/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "lowest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Lowest price</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/price/asc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+          case "highest":
+            $("#sorting").replaceWith(`
+                <div id="sorting">Sorted by: Highest price</div>
+              `);
+            axios
+              .get(`${baseUrl}/product/search/price/desc`)
+              .then((response) => {
+                $("#productsList").replaceWith(`
+                  <div
+                    class="row"
+                    id="productsList"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    "
+                    ></div>
+                  `);
+                const products = response.data;
+                if (products) {
+                  products.forEach((product, index) => {
+                    const productHTML = `
+                <div style="width: 50%; padding: 1em; margin:2.5em ; background-color: lightgray;">
+                <a href="/product/${
+                  product.productid
+                }" style="text-decoration: none; color: black">
+                  <h4>${product.name}</h4>
+                  <p>
+                    Price: $${product.price.toFixed(2)}
+                  </p>
+                  <p>
+                    Description: ${product.description}
+                  </p>
+                  <p>
+                    Date added: ${product.timestamp}
+                  </p>
+                </a>
+              </div>
+                              `;
+
+                    $("#productsList").append(productHTML);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+
+            break;
+        }
+      });
+
+      $(document).on("click", ".logout-button", function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUserID");
+        localStorage.removeItem("role");
+        alert("You have been logged out!");
+        window.location.href = "/signIn/";
+      });
+    </script>
+  </body>
+</html>

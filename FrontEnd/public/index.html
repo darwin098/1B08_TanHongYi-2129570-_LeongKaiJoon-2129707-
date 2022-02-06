@@ -282,7 +282,6 @@
                                         <p>
                                           Description: ${product.description}
                                         </p>
-                                        <p>Rating: 4 stars</p>
                                       </a>
                                     </div>
                                   </div>
@@ -302,7 +301,6 @@
                                         <p>
                                           Description: ${product.description}
                                         </p>
-                                        <p>Rating: 4 stars</p>
                                       </a>
                                     </div>
                                   </div>
@@ -362,7 +360,6 @@
                   <p>Promotion period: ${promotion.promotionperiodstart} - ${
                 promotion.promotionperiodend
               }</p>
-                  <p>Rating: 4 stars</p>
                 </a>
               </div>
             </div>
@@ -389,7 +386,6 @@
                   <p>Promotion period: ${promotion.promotionperiodstart} - ${
                 promotion.promotionperiodend
               } </p>
-                  <p>Rating: 4 stars</p>
                 </a>
               </div>
             </div>
@@ -414,7 +410,8 @@
           const newProducts = response.data;
           if (newProducts) {
             newProducts.forEach((newProducts, index) => {
-              const firstNewProductHTML = `
+              if (index < 5) {
+                const firstNewProductHTML = `
               <div class="carousel-item active">
               <div style="width: 50%; padding: 1em">
                 <a href="/product/${
@@ -427,13 +424,12 @@
                   <p>
                     Description: ${newProducts.description}
                   </p>
-                  <p>Rating: 4 stars</p>
                 </a>
               </div>
             </div>
                               `;
 
-              const productHTML = `
+                const productHTML = `
               <div class="carousel-item">
                 <div style="width: 50%; padding: 1em">
                 <a href="/product/${
@@ -446,16 +442,16 @@
                   <p>
                     Description: ${newProducts.description}
                   </p>
-                  <p>Rating: 4 stars</p>
                 </a>
               </div>
-            </div>
+            </div>              
                               `;
 
-              if (index == 0) {
-                $("#newProducts").append(firstNewProductHTML);
-              } else {
-                $("#newProducts").append(productHTML);
+                if (index == 0) {
+                  $("#newProducts").append(firstNewProductHTML);
+                } else {
+                  $("#newProducts").append(productHTML);
+                }
               }
             });
           }
