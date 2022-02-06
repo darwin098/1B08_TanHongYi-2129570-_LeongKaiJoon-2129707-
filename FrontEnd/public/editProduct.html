@@ -161,82 +161,84 @@
             // Set the form only if product found
             $("#productSection").append(`
             <!-- left column -->
-            <!-- Image Section -->
-            <div class="col-md-3">
-              <div class="text-center">
-                <img
-                  src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
-                  class="avatar img-circle img-thumbnail"
-                  alt="avatar"
-                />
-                <h6>Upload a different photo...</h6>
+              <!-- Image Section -->
+              <div class="col-md-3">
+                <div class="text-center">
+                  <img
+                    src="https://cdn.discordapp.com/attachments/780983913145171968/938302398856831006/unknown.png"
+                    class="avatar img-circle img-thumbnail"
+                    alt="avatar"
+                  />
+                  <h6>Upload a different photo...</h6>
 
-                <input type="file" class="form-control" />
-              </div>
-            </div>
-
-            <!-- edit form column -->
-            <!-- Info Section -->
-            <div class="col-md-9" id="edit-product-info">
-              <div class="alert alert-info alert-dismissable">
-                <a class="panel-close close" data-dismiss="alert">×</a>
-                <i class="fa fa-coffee">
-                  <div id="message"></div>
-                </i>
+                  <input type="file" class="form-control" />
+                </div>
               </div>
 
-              <h3>Product info</h3>
-
-              <!-- Edit product section -->
-              <form class="form-horizontal" role="form" id="edit-prod-form">
-                <!-- Product name -->
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Name:</label>
-                  <textarea
-                    class="form-control col-lg-9"
-                    type="text"
-                    value=""
-                    id="productNameInput"
-                    placeholder="e.g. AMD Ryzen 727 8200H Series"
-                  ></textarea>
+              <!-- edit form column -->
+              <!-- Info Section -->
+              <div class="col-md-9" id="edit-product-info">
+                <div class="alert alert-info alert-dismissable">
+                  <a class="panel-close close" data-dismiss="alert">×</a>
+                  <i class="fa fa-coffee"></i>
+                  Add error text!
                 </div>
 
-                <!-- Product description -->
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Description:</label>
-                  <textarea
-                    class="form-control col-lg-9"
-                    type="text"
-                    value=""
-                    id="productDescriptionInput"
-                    placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-                  ></textarea>
-                </div>
+                <h3>Product info</h3>
 
-                <!-- Product category -->
-                <div class="form-group">
-                  <label class="col-lg-3 control-label">Category:</label>
+                <!-- Edit product section -->
+                <form class="form-horizontal" role="form" id="edit-prod-form">
+                  <!-- Product name -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Name:</label>
+                    <textarea
+                      class="form-control col-lg-9"
+                      type="text"
+                      value=""
+                      id="productNameInput"
+                      placeholder="e.g. AMD Ryzen 727 8200H Series"
+                    ></textarea>
+                  </div>
 
-                  <select
-                    class="form-select col-lg-5"
-                    aria-label="Default"
-                    id="productCategoryInput"
-                  ></select>
-                </div>
+                  <!-- Product description -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Description:</label>
+                    <textarea
+                      class="form-control col-lg-9"
+                      type="text"
+                      value=""
+                      id="productDescriptionInput"
+                      placeholder="e.g. Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                    ></textarea>
+                  </div>
 
-                <!-- Product brand -->
-                <div class="form-group" id="productBrand">
-                  <label class="col-lg-3 control-label">Brand:</label>
-                </div>
+                  <!-- Product category -->
+                  <div class="form-group">
+                    <label class="col-lg-3 control-label">Category:</label>
 
-                <!-- Product Price -->
-                <div class="form-group" id="productPrice">
-                  <label class="col-lg-3 control-label">Price:</label>
-                </div>
+                    <select
+                      class="form-select col-lg-5"
+                      aria-label="Default"
+                      id="productCategoryInput"
+                    ></select>
+                  </div>
 
-                <button type="submit">Add</button>
-              </form>
+                  <!-- Product brand -->
+                  <div class="form-group" id="productBrand">
+                    <label class="col-lg-3 control-label">Brand:</label>
+                  </div>
+
+                  <!-- Product Price -->
+                  <div class="form-group" id="productPrice">
+                    <label class="col-lg-3 control-label">Price:</label>
+                  </div>
+
+                  <button type="submit" id="submitBtn">Submit Changes</button>
+                </form>
+                <button type="button" id="delBtn">Delete</button>
+              </div>
             </div>
+          </div>
             `);
 
             // Let admin know ID of product he is editing
@@ -299,7 +301,7 @@
           });
       });
 
-      $("#edit-product-info").submit((event) => {
+      $("#edit-prod-info").submit((event) => {
         // Prevent page reload
         event.preventDefault();
 
@@ -317,12 +319,24 @@
           price: parseInt(price),
         };
 
-        alert("here");
         // Update product
         axios
-          .put(`${baseUrl}/product`, requestBody, requestToken)
+          .put(`${baseUrl}/product/edit/13`, requestBody, requestToken)
           .then((response) => {
-            alert("Successfully Added Product");
+            alert("Successfully Edited Product");
+          })
+          .catch((error) => {
+            alert("Error!" + error);
+          });
+      });
+
+      $("#delBtn").click(() => {
+        // Update product
+        axios
+          .delete(`${baseUrl}/product/delete/13`, requestToken)
+          .then((response) => {
+            alert("Successfully Deleted Product");
+            window.location.assign(`https://localhost:3001/`);
           })
           .catch((error) => {
             alert("Error!" + error);

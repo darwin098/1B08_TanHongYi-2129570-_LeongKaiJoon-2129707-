@@ -353,7 +353,7 @@ let Product = {
       }
     });
   },
-  // [Incomplete]
+  // [Done]
   edit: function (pid, newPInfo, callback) {
     var dbConn = db.getConnection();
 
