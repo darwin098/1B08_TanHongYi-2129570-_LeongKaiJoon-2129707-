@@ -278,7 +278,7 @@ app.put("/users/edit/:id/", printDebugInfo, verifyToken, function (req, res) {
   // Step 1: extraction
   let uid = parseInt(req.params.id);
 
-  if (req.role != "admin" || req.role != "user") {
+  if (req.role != "admin" && req.role != "user") {
     let errData = {
       msg: "you are not authorised to perform this operation",
     };
